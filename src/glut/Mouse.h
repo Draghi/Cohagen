@@ -22,6 +22,6 @@ struct Mouse_s {
 
 typedef struct Mouse_s Mouse;
 
-extern Mouse mouse;
+extern const Mouse mouse;
 
 #endif /* SRC_GLUT_MOUSE_H_ */

@@ -175,4 +175,4 @@ static int32_t getYMove() {
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
 
-Mouse mouse = {init, update, isButtonDown, getScrollUp, getScrollDown, getScrollCount, getXPos, getYPos, getXMove, getYMove};
+const Mouse mouse = {init, update, isButtonDown, getScrollUp, getScrollDown, getScrollCount, getXPos, getYPos, getXMove, getYMove};
