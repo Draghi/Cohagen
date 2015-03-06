@@ -53,7 +53,7 @@ static void render() {
  	 	 glRotatef(camRotY, 0.0, 1.0, 0.0);
  	 	 glTranslatef(0.0, -2.0, 0.0);
 
- 	 	 int size = 50;
+ 	 	 int size = 25;
 
 			 int i = 0;
 			 int j = 0;
@@ -141,6 +141,10 @@ int main(int argc, char **argv) {
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glFrontFace(GL_CCW);
 
     glutMainLoop();
 
