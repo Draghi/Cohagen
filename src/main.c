@@ -1,5 +1,6 @@
 #include "glut/Display.h"
 #include "glut/Mouse.h"
+#include "glut/Keyboard.h"
 #include"glut/GlutCallbacks.h"
 #include <GL/glut.h>
 
@@ -81,8 +82,6 @@ static void render() {
 /**@todo Remove testing code.*/
 static void update() {
 	rot++;
-	if (rot>=3600)
-		rot = 0;
 
 	if (mouse.isButtonDown(GLUT_LEFT_BUTTON)) {
 		camRotX += mouse.getYMove();
@@ -92,6 +91,20 @@ static void update() {
 	dist -= mouse.getScrollCount();
 	if (dist<0)
 		dist=0;
+
+	if (keyboard.isKeyDown('w')) {
+		rot += 2;
+	}
+
+	if (keyboard.isKeyDown('s')) {
+		rot -= 3;
+	}
+
+	if (rot>=3600)
+		rot -= 3600;
+
+	if (rot<0)
+		rot += 3600;
 }
 
 /**@todo Remove testing code.*/
