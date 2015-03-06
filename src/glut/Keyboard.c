@@ -1,10 +1,3 @@
-/*
- * Keyboard.c
- *
- *  Created on: 6 Mar 2015
- *      Author: draghi
- */
-
 #define MAX_KEYBOARD_KEYS 256
 
 #include "Keyboard.h"
@@ -52,6 +45,10 @@ static void onSpecKeyUp(int key, int x, int y) {
 	keyStates[key] = false;
 }
 
+/////////////////////
+// Class Functions //
+/////////////////////
+
 /**
  * Initializes the glut callbacks and other variables.
  */
@@ -68,21 +65,38 @@ static void init() {
     glutSpecialFunc(onSpecKeyUp);
 }
 
+/**
+ * Updates the keyboard's state.
+ * Should always be called either before or after any keyboard related calls.
+ **/
 static void update() {
     for(int i = 0; i<MAX_KEYBOARD_KEYS; i++) {
     	oldKeyStates[i] = keyStates[i];
     }
 }
 
+/////////////
+// Getters //
+/////////////
+
 /**
- * Returns if the given GLUT key was pressed.
+ * Returns if the given GLUT key is currently pressed.
+ *
  * @param key The GLUT key to check ('A' or KEY_F1 eg.)
- * @return if the given GLUT key was pressed.
+ * @return if the given GLUT key is currently pressed.
  */
 static bool isKeyDown(unsigned char key) {
 	return keyStates[key];
 }
 
+/**
+ * Returns if the given GLUT key was pressed since the last update.
+ *
+ * @param key The GLUT key to check ('A' or KEY_F1 eg.)
+ * @return if the given GLUT key was pressed since the last update.
+ *
+ * @todo Check reliability (might not work with fast key presses)
+ */
 static bool wasKeyPressed(unsigned char key) {
 	if ((oldKeyStates[key]==false) && (keyStates[key]==true))
 		return true;
@@ -90,6 +104,14 @@ static bool wasKeyPressed(unsigned char key) {
 		return false;
 }
 
+/**
+ * Returns if the given GLUT key was pressed since the last update.
+ *
+ * @param key The GLUT key to check ('A' or KEY_F1 eg.)
+ * @return if the given GLUT key was released since the last update.
+ *
+ * @todo Check reliability (might not work with fast key presses)
+ */
 static bool wasKeyReleased(unsigned char key) {
 	if ((oldKeyStates[key]==true) && (keyStates[key]==false))
 		return true;
