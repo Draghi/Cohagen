@@ -81,8 +81,7 @@ static void update() {
  * Initializes the mouse variables and sets the callback functions.
  **/
 static void init() {
-	int i;
-    for(i = 0; i<MAX_MOUSE_BUTTONS; i++)
+    for(int i = 0; i<MAX_MOUSE_BUTTONS; i++)
     	buttons[i] = false;
 
     xPos = 0;
