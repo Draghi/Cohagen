@@ -1,3 +1,7 @@
+/**
+ * The Keyboard unit monitors the glut keyboard events and provides various methods to check the state of the keyboard.
+ */
+
 #define MAX_KEYBOARD_KEYS 256
 
 #include "Keyboard.h"

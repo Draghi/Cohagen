@@ -1,3 +1,7 @@
+/**
+ * The Mouse unit monitors the glut mouse events and provides various methods to check the state of the mouse.
+ */
+
 #define MAX_MOUSE_BUTTONS 3
 
 #include <stdbool.h>
