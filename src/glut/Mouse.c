@@ -45,8 +45,8 @@ static void onMouseMove(int x, int y) {
  *
  * @param button The glut mouse button.
  * @param state The state the button is now in.
- * @param The current x position of the mouse.
- * @param The current y position of the mouse.
+ * @param x The current x position of the mouse.
+ * @param y The current y position of the mouse.
  */
 static void onMouseButton(int button, int state, int x, int y) {
 
