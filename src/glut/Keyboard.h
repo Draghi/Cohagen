@@ -1,10 +1,3 @@
-/*
- * Keyboard.h
- *
- *  Created on: 6 Mar 2015
- *      Author: draghi
- */
-
 #ifndef SRC_GLUT_KEYBOARD_H_
 #define SRC_GLUT_KEYBOARD_H_
 
