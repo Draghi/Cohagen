@@ -6,6 +6,7 @@
 
 #include"Display.h"
 #include"GlutCallbacks.h"
+#include"Mouse.h"
 #include <GL/freeglut.h>
 #include <stdbool.h>
 
@@ -69,6 +70,7 @@ static void onUpdate() {
 			(*mainCallbacks).onUpdate();
 
 	glutPostRedisplay();
+	mouse.update();
 }
 
 /**
@@ -115,6 +117,8 @@ static bool createWindow(int* pargc, char** argv) {
 		glutInitWindowPosition(winX, winY);
 	    glutInitWindowSize(winWidth, winHeight);
 	    glutCreateWindow(winTitle);
+
+	    mouse.init();
 
 	    //Sets all the callback functions to the internal display ones.
 	    glutIdleFunc(onUpdate);
