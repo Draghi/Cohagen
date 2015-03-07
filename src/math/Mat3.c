@@ -72,7 +72,7 @@ Mat3 createMat3Vec3(const Vec3 *const v0, const Vec3 *const v1, const Vec3 *cons
  *  @param matrix   const pointer to const Mat3 to clone.
  *  @return         Mat3 clone.
  */
-Mat3 cloneMat3(const Mat3 *const matrix) {
+Mat3 createMat3Mat3(const Mat3 *const matrix) {
     return (
         createMat3Vec3(
             &(matrix->data[0]),
