@@ -143,15 +143,15 @@ Mat3 mulMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2) {
     Vec3 col1 = mat2->data[1];
     Vec3 col2 = mat2->data[2];
 
-    float x0 = dotVec3(&row0, &col0);
-    float y0 = dotVec3(&row1, &col0);
-    float z0 = dotVec3(&row2, &col0);
-    float x1 = dotVec3(&row0, &col1);
-    float y1 = dotVec3(&row1, &col1);
-    float z1 = dotVec3(&row2, &col1);
-    float x2 = dotVec3(&row0, &col2);
-    float y2 = dotVec3(&row1, &col2);
-    float z2 = dotVec3(&row2, &col2);
+    scalar x0 = dotVec3(&row0, &col0);
+    scalar y0 = dotVec3(&row1, &col0);
+    scalar z0 = dotVec3(&row2, &col0);
+    scalar x1 = dotVec3(&row0, &col1);
+    scalar y1 = dotVec3(&row1, &col1);
+    scalar z1 = dotVec3(&row2, &col1);
+    scalar x2 = dotVec3(&row0, &col2);
+    scalar y2 = dotVec3(&row1, &col2);
+    scalar z2 = dotVec3(&row2, &col2);
 
     Vec3 v0 = createVec3(x0, y0, z0);
     Vec3 v1 = createVec3(x1, y1, z1);
@@ -161,21 +161,41 @@ Mat3 mulMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2) {
 }
 
 /**
- *  Return a Vec3 equal to the result of multiplying the given Mat3 and the given Vec3.
- *  (ie. matrix * vec).
+ *  Return a Vec3 equal to the result of multiplying the given Mat3 and the given Vec3 column vector.
+ *  (ie. matrix * col).
  *
  *  @param  matrix  const pointer to const Mat3.
- *  @param  vec     const pointer to const Vec3.
- *  @return         Vec3 equal to result of matrix * vec.
+ *  @param  col     const pointer to const Vec3, column-vector.
+ *  @return         Vec3 equal to result of matrix * col.
  */
-Vec3 mulMat3Vec3(const Mat3 *const matrix, const Vec3 *const vec) {
+Vec3 mulMat3Vec3(const Mat3 *const matrix, const Vec3 *const col) {
     Vec3 row0 = createVec3(matrix->data[0].x, matrix->data[1].x, matrix->data[2].x);
     Vec3 row1 = createVec3(matrix->data[0].y, matrix->data[1].y, matrix->data[2].y);
     Vec3 row2 = createVec3(matrix->data[0].z, matrix->data[1].z, matrix->data[2].z);
 
-    scalar x = dotVec3(&row0, vec);
-    scalar y = dotVec3(&row1, vec);
-    scalar z = dotVec3(&row2, vec);
+    scalar x = dotVec3(&row0, col);
+    scalar y = dotVec3(&row1, col);
+    scalar z = dotVec3(&row2, col);
+
+    return (createVec3(x, y, z));
+}
+
+/**
+ *  Return a Vec3 equal to the result of multiplying the given Mat3 and the given Vec3 row vector.
+ *  (ie. row * matrix).
+ *
+ *  @param  row     const pointer to const Vec3, row-vector.
+ *  @param  matrix  const pointer to const Mat3.
+ *  @return         Vec3 equal to result of row * matrix.
+ */
+Vec3 mulVec3Mat3(const Vec3 *const row, const Mat3 *const matrix) {
+    Vec3 col0 = createVec3(matrix->data[0].x, matrix->data[1].x, matrix->data[2].x);
+    Vec3 col1 = createVec3(matrix->data[0].y, matrix->data[1].y, matrix->data[2].y);
+    Vec3 col2 = createVec3(matrix->data[0].z, matrix->data[1].z, matrix->data[2].z);
+
+    scalar x = dotVec3(&col0, row);
+    scalar y = dotVec3(&col1, row);
+    scalar z = dotVec3(&col2, row);
 
     return (createVec3(x, y, z));
 }
