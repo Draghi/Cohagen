@@ -244,3 +244,4 @@ Vec4 mulVec4Mat4(const Vec4 *const row, const Mat4 *const matrix) {
  *  @return         Mat4, inverse of given Mat4.
  */
 // Mat4 inverseMat4(const Mat4 *const matrix);
+
