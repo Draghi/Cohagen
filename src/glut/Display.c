@@ -251,7 +251,7 @@ static void setWindowHeight(const int32_t height) {
  *
  * @param title The new title of the window.
  */
-static void setWindowTitle(const char const* title) {
+static void setWindowTitle(const char const title[]) {
 	winTitle = title;
 
 	if (isCreated)
@@ -263,7 +263,7 @@ static void setWindowTitle(const char const* title) {
  *
  * @param callbacks The GlutMainCallbacks containing the callbacks.
  */
-static void setMainCallbacks(const GlutMainCallbacks const* callbacks) {
+static void setMainCallbacks(const GlutMainCallbacks *const callbacks) {
 	mainCallbacks = callbacks;
 }
 
@@ -272,7 +272,7 @@ static void setMainCallbacks(const GlutMainCallbacks const* callbacks) {
  *
  * @param callbacks The GlutWindowCallbacks
  */
-static void setWindowCallbacks(const GlutWindowCallbacks const* callbacks) {
+static void setWindowCallbacks(const GlutWindowCallbacks *const callbacks) {
 	windowCallbacks = callbacks;
 }
 

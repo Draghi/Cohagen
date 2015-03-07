@@ -98,14 +98,14 @@ struct Display_s {
 	 *
 	 * @param callbacks The GlutMainCallbacks containing the callbacks.
 	 */
-	void(*setMainCallbacks)(const GlutMainCallbacks const *);
+	void(*setMainCallbacks)(const GlutMainCallbacks  *const);
 
 	/**
 	 * Sets the window callback functions (Such as onResize)
 	 *
 	 * @param callbacks The GlutWindowCallbacks
 	 */
-	void(*setWindowCallbacks)(const GlutWindowCallbacks const *);
+	void(*setWindowCallbacks)(const GlutWindowCallbacks  *const);
 
 	/**
 	 * Returns the OpenGL major version (OpenGL x.3 eg.)
