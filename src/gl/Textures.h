@@ -22,14 +22,14 @@ struct Texture_s {
 	 * @param slotID The slot to attempt to bind too, must be bellow MAX_TEXTURE_SLOTS.
 	 * @return True if the texture is bound, false if the texture fails to bind.
 	 */
-	bool(* bind)(struct Texture_s*, GLuint);
+	bool(* bind)(struct Texture_s *const, const GLuint);
 
 	/**
 	 * Attempts to unbind the texture.
 	 * @param tex The texture to attempt to unbind.
 	 * @return Whether the texture was unbound. Note: If another texture bound itself to the same slot, this will fail to unbind.
 	 */
-	bool(* unbind)(struct Texture_s*);
+	bool(* unbind)(struct Texture_s *const);
 
 	/**
 	 * Attempts to set the given textures data
@@ -43,7 +43,7 @@ struct Texture_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
 	 */
-	bool(* setTextureData)(struct Texture_s*, GLubyte*, GLint, GLint, uint32_t, uint32_t, GLint, GLint);
+	bool(* setTextureData)(struct Texture_s* const, const GLubyte*const , const GLint, const GLint, const uint32_t, const uint32_t, const GLint, const GLint);
 };
 
 
@@ -71,7 +71,7 @@ struct TextureManager_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return A new texture object describing the created Blank OpenGL texture.
 	 */
-	Texture*(* createBlankRGBATexture)(uint32_t, uint32_t, GLint, GLint);
+	Texture*(* createBlankRGBATexture)(const uint32_t, const uint32_t, const GLint, const GLint);
 
 	/**
 	 * Creates a noisy RGBA texture (all bytes set to random values)
@@ -81,7 +81,7 @@ struct TextureManager_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return A new texture object describing the created Blank OpenGL texture.
 	 */
-	Texture*(* createNoiseRGBATexture)(uint32_t, uint32_t, GLint, GLint);
+	Texture*(* createNoiseRGBATexture)(const uint32_t, uint32_t, const GLint, const GLint);
 };
 
 

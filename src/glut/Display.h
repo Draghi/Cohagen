@@ -32,7 +32,7 @@ struct Display_s {
 	 * @param major The major version number of OpenGL (OpenGL x.0 eg.)
 	 * @param minor The minor version number of OpenGL (OpenGL 0.x eg.)
 	 */
-	void(*setOGLVersion)(uint8_t, uint8_t);
+	void(*setOGLVersion)(const uint8_t, const uint8_t);
 
 	/**
 	 * Sets the display mode of the window (Doublebuffer, multisampling etc.)
@@ -40,7 +40,7 @@ struct Display_s {
 	 *
 	 * @param displayMode The bitmasked glut display mode.
 	 */
-	void(*setDisplayMode)(uint32_t);
+	void(*setDisplayMode)(const uint32_t);
 
 	/**
 	 * Changes the position of the window.
@@ -48,21 +48,21 @@ struct Display_s {
 	 * @param x The new x-position of the window.
 	 * @param y The new y-position of the window.
 	 */
-	void(*setWindowPos)(int32_t, int32_t);
+	void(*setWindowPos)(const int32_t, const int32_t);
 
 	/**
 	 * Changes the x-position of the window.
 	 *
 	 * @param x The new x position of the window.
 	 */
-	void(*setWindowX)(int32_t);
+	void(*setWindowX)(const int32_t);
 
 	/**
 	 * Changes the y-position of the window.
 	 *
 	 * @param y The new y position of the window.
 	 */
-	void(*setWindowY)(int32_t);
+	void(*setWindowY)(const int32_t);
 
 	/**
 	 * Changes the size of the window.
@@ -70,42 +70,42 @@ struct Display_s {
 	 * @param width The new width of the window.
 	 * @param height The new height of the window.
 	 */
-	void(*setWindowSize)(int32_t, int32_t);
+	void(*setWindowSize)(const int32_t, const int32_t);
 
 	/**
 	 * Changes the width of window.
 	 *
 	 * @param width The new width of the window.
 	 */
-	void(*setWindowWidth)(int32_t);
+	void(*setWindowWidth)(const int32_t);
 
 	/**
 	 * Changes the height of the window.
 	 *
 	 * @param height The new height of the window.
 	 */
-	void(*setWindowHeight)(int32_t);
+	void(*setWindowHeight)(const int32_t);
 
 	/**
 	 * Changes the window's title.
 	 *
 	 * @param title The new title of the window.
 	 */
-	void(*setWindowTitle)(char[]);
+	void(*setWindowTitle)(const char[]);
 
 	/**
 	 * Sets the main callback functions (Such as Update or Render)
 	 *
 	 * @param callbacks The GlutMainCallbacks containing the callbacks.
 	 */
-	void(*setMainCallbacks)(GlutMainCallbacks*);
+	void(*setMainCallbacks)(const GlutMainCallbacks  *const);
 
 	/**
 	 * Sets the window callback functions (Such as onResize)
 	 *
 	 * @param callbacks The GlutWindowCallbacks
 	 */
-	void(*setWindowCallbacks)(GlutWindowCallbacks*);
+	void(*setWindowCallbacks)(const GlutWindowCallbacks  *const);
 
 	/**
 	 * Returns the OpenGL major version (OpenGL x.3 eg.)
