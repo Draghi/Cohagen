@@ -107,7 +107,7 @@ static void init() {
  * @param button The glut button to be checked.
  * @return Whether the given button is pressed or not
  */
-static bool isButtonDown(int32_t button) {
+static bool isButtonDown(const int32_t button) {
 	if ((button<MAX_MOUSE_BUTTONS) && (button>=0))
 		return buttons[button];
 	else

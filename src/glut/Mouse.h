@@ -25,7 +25,7 @@ struct Mouse_s {
 	 * @param button The glut button to be checked.
 	 * @return Whether the given button is pressed or not
 	 */
-	bool(*isButtonDown)(int);
+	bool(*isButtonDown)(const int);
 
 	/**
 	 * Returns the number of clicks the mouse wheel has scrolled up.
