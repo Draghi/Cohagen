@@ -35,7 +35,7 @@ static int32_t findOpenSlot() {
  * @param slotID The slot to attempt to bind too, must be bellow MAX_TEXTURE_SLOTS.
  * @return True if the texture is bound, false if the texture fails to bind.
  */
-static bool bind(Texture *tex, GLuint slotID) {
+static bool bind(Texture * const tex, const GLuint slotID) {
 	if (slotID<MAX_TEXTURE_SLOTS) {
 		tex->slotID = slotID;
 
@@ -58,7 +58,7 @@ static bool bind(Texture *tex, GLuint slotID) {
  * @param tex The texture to attempt to unbind.
  * @return Whether the texture was unbound. Note: If another texture bound itself to the same slot, this will fail to unbind.
  */
-static bool unbind(Texture *tex) {
+static bool unbind(Texture * const tex) {
 	if (slots[tex->slotID] == tex) {
 		glActiveTexture(GL_TEXTURE0+tex->slotID);
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -84,7 +84,7 @@ static bool unbind(Texture *tex) {
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
  */
-static bool setTextureData(Texture *tex, GLubyte *data, GLint internalFormat, GLint format, uint32_t width, uint32_t height, GLint minFilter, GLint magFilter) {
+static bool setTextureData(Texture *const tex, const GLubyte *const data, const GLint internalFormat, const GLint format, const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
 	int32_t slot = findOpenSlot();
 
 	if (slot>=0) {
@@ -138,7 +138,7 @@ static Texture* createTexture() {
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return A new texture object describing the created Blank OpenGL texture.
  */
-static Texture* createBlankRGBATexture(uint32_t width, uint32_t height, GLint minFilter, GLint magFilter) {
+static Texture* createBlankRGBATexture(const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
 	Texture* tex = createTexture();
 
 	uint32_t size = width * height * sizeof(GLubyte) * 4;
@@ -164,7 +164,7 @@ static Texture* createBlankRGBATexture(uint32_t width, uint32_t height, GLint mi
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return A new texture object describing the created Blank OpenGL texture.
  */
-static Texture* createNoiseRGBATexture(uint32_t width, uint32_t height, GLint minFilter, GLint magFilter) {
+static Texture* createNoiseRGBATexture(const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
 	Texture* tex = createTexture();
 
 	uint32_t size = width * height * sizeof(GLubyte) * 4;
