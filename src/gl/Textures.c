@@ -1,6 +1,6 @@
 #include"Textures.h"
 
-#include<GL/gl.h>
+#include"../graphics.h"
 #include<stdlib.h>
 #include<stdbool.h>
 

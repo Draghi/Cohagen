@@ -3,7 +3,7 @@
 
 #include<stdint.h>
 #include<stdbool.h>
-#include<GL/gl.h>
+#include"../graphics.h"
 
 /**
  * Fake texture object.
