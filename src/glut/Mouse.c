@@ -5,7 +5,7 @@
 #define MAX_MOUSE_BUTTONS 3
 
 #include <stdbool.h>
-#include <GL/freeglut.h>
+#include"../graphics.h"
 #include "Mouse.h"
 
 static int32_t xPos;

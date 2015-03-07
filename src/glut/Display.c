@@ -8,7 +8,8 @@
 #include"GlutCallbacks.h"
 #include"Mouse.h"
 #include"Keyboard.h"
-#include <GL/freeglut.h>
+#include"../graphics.h"
+
 #include <stdbool.h>
 
 /** Whether or not the main window has been created or not. **/
@@ -121,6 +122,7 @@ static bool createWindow(int* pargc, char** argv) {
 	    glutInitWindowSize(winWidth, winHeight);
 	    glutCreateWindow(winTitle);
 
+	    glewInit();
 	    mouse.init();
 	    keyboard.init();
 

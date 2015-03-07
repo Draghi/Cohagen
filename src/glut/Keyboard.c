@@ -6,7 +6,7 @@
 
 #include "Keyboard.h"
 #include <stdbool.h>
-#include <GL/freeglut.h>
+#include"../graphics.h"
 
 
 bool keyStates[MAX_KEYBOARD_KEYS];

@@ -1,9 +1,11 @@
 #include "glut/Display.h"
 #include "glut/Mouse.h"
 #include "glut/Keyboard.h"
-#include"glut/GlutCallbacks.h"
-#include"gl/Textures.h"
-#include <GL/glut.h>
+#include "glut/GlutCallbacks.h"
+#include "gl/Textures.h"
+#include "gl/VBO.h"
+#include "graphics.h"
+
 #include <time.h>
 
 GLfloat vertices[][3] = {{-1.0,-1.0,-1.0},{ 1.0,-1.0,-1.0},{ 1.0, 1.0,-1.0},{-1.0, 1.0,-1.0},
@@ -185,6 +187,8 @@ int main(int argc, char **argv) {
     srand((unsigned)time(NULL));
 
     texture = textureManager.createNoiseRGBATexture(128, 96, GL_LINEAR, GL_LINEAR);
+
+
 
     glutMainLoop();
 
