@@ -18,7 +18,8 @@ Mat3 createMat3Mat3(const Mat3 *const matrix);
 Mat3 sumMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2);
 Mat3 subMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2);
 Mat3 mulMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2);
-Vec3 mulMat3Vec3(const Mat3 *const matrix, const Vec3 *const vec);
+Vec3 mulMat3Vec3(const Mat3 *const matrix, const Vec3 *const col);
+Vec3 mulVec3Mat3(const Vec3 *const row, const Mat3 *const matrix);
 Mat3 inverseMat3(const Mat3 *const matrix);
 
 #endif
