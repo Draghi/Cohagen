@@ -2,7 +2,9 @@
 #include "glut/Mouse.h"
 #include "glut/Keyboard.h"
 #include"glut/GlutCallbacks.h"
+#include"gl/Textures.h"
 #include <GL/glut.h>
+#include <time.h>
 
 GLfloat vertices[][3] = {{-1.0,-1.0,-1.0},{ 1.0,-1.0,-1.0},{ 1.0, 1.0,-1.0},{-1.0, 1.0,-1.0},
 						 {-1.0,-1.0, 1.0},{ 1.0,-1.0, 1.0},{ 1.0, 1.0, 1.0},{-1.0, 1.0, 1.0}};
@@ -15,16 +17,20 @@ float rot = 0;
 float camRotX = 45;
 float camRotY = 0;
 float dist = 15.0;
+Texture *texture;
 
 /**@todo Remove testing code.*/
 static void polygon(int a, int b, int c , int d) {
 	glBegin(GL_POLYGON);
 		glColor3fv(colors[a]);
 		glVertex3fv(vertices[a]);
+
 		glColor3fv(colors[b]);
 		glVertex3fv(vertices[b]);
+
 		glColor3fv(colors[c]);
 		glVertex3fv(vertices[c]);
+
 		glColor3fv(colors[d]);
 		glVertex3fv(vertices[d]);
 	glEnd();
@@ -44,6 +50,7 @@ static void colorcube() {
 static void render() {
 	 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+ 	 glColor4f(1.0, 1.0, 1.0, 1.0);
 	 glLoadIdentity();
 	 glPushMatrix();
  	 	 //"Camera"
@@ -53,26 +60,55 @@ static void render() {
  	 	 glRotatef(camRotY, 0.0, 1.0, 0.0);
  	 	 glTranslatef(0.0, -2.0, 0.0);
 
+
+ 	     glDisable(GL_BLEND);
  	 	 int size = 25;
 
-			 int i = 0;
-			 int j = 0;
-			 for(i=0; i<size; i++) {
-				 for(j=0; j<size; j++) {
-					 glPushMatrix();
-						 //"Model"
-						 glTranslatef(i*4-(size/2*4-1.5), -2.0, -(j*4-(size/2*4-1.5)));
-						 glRotatef(rot, 0.0, 1.0, 0.0);
-						 colorcube();
-					 glPopMatrix();
-				 }
+		 int i = 0;
+		 int j = 0;
+		 for(i=0; i<size; i++) {
+			 for(j=0; j<size; j++) {
+				 glPushMatrix();
+					 //"Model"
+					 glTranslatef(i*4-(size/2*4-1.5), -2.0, -(j*4-(size/2*4-1.5)));
+					 glRotatef(rot, 0.0, 1.0, 0.0);
+					 glRotatef(-rot, 1.0, 0.0, 0.0);
+					 glRotatef(rot/10, 0.0, 0.0, 1.0);
+					 colorcube();
+				 glPopMatrix();
 			 }
+		 }
+ 	     glEnable(GL_BLEND);
 
- 		 glPushMatrix();
+
+
+ 	 	 glColor4f(1.0, 1.0, 1.0, 1.0);
+	 	 glEnable(GL_TEXTURE_2D);
+	 	 glDisable(GL_CULL_FACE);
+
+	 	 glFrontFace(GL_CW);
+		 glPushMatrix();
+		 	 texture->bind(texture, 0);
+
+		 	 glRotatef(-rot/10, 0.0, 1.0, 0.0);
+			 glTranslatef(0, 5.0, 0);
+			 glutSolidTeapot(5);
+
+			 texture->unbind(texture);
+		 glPopMatrix();
+
+		 glFrontFace(GL_CCW);
+		 glEnable(GL_CULL_FACE);
+		 glDisable(GL_TEXTURE_2D);
+
+	 	 glColor4f(1.0, 1.0, 1.0, 1.0);
+		 glPushMatrix();
 			 glRotatef(-rot/10, 0.0, 1.0, 0.0);
 			 glTranslatef(0, 5.0, 0);
-	 	 	 glutWireTeapot(5);
+			 glutWireTeapot(5);
 		 glPopMatrix();
+
+
 	 glPopMatrix();
 	 glFlush();
 
@@ -97,7 +133,7 @@ static void update() {
 	}
 
 	if (keyboard.isKeyDown('s')) {
-		rot -= 3;
+		rot -= 4;
 	}
 
 	if (rot>=3600)
@@ -145,6 +181,10 @@ int main(int argc, char **argv) {
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
+
+    srand((unsigned)time(NULL));
+
+    texture = textureManager.createNoiseRGBATexture(128, 96, GL_LINEAR, GL_LINEAR);
 
     glutMainLoop();
 
