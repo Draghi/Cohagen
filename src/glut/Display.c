@@ -33,12 +33,12 @@ static int32_t winWidth = 0;
 static int32_t winHeight = 0;
 
 /** The title of the window. */
-static char* winTitle;
+static const char const* winTitle;
 
 /** The callbacks for the update loop and the render loop etc.. */
-static GlutMainCallbacks * mainCallbacks = NULL;
+static GlutMainCallbacks const* mainCallbacks = NULL;
 /** The callbacks for the resizing etc. */
-static GlutWindowCallbacks * windowCallbacks = NULL;
+static GlutWindowCallbacks const* windowCallbacks = NULL;
 
 //Just a note on the callback struts, the purpose of them is to allow us to add extra callbacks too them,
 //  without having to rewrite function params and everywhere we call said functions.
@@ -93,7 +93,7 @@ static void onRender() {
  * @param width The new width  of the window.
  * @param height The new height of the window.
  */
-static void onReshape(int width, int height) {
+static void onReshape(const int width, const int height) {
 	winWidth = width;
 	winHeight = height;
 
@@ -158,7 +158,7 @@ static void doCenterWindow() {
  * @param major The major version number of OpenGL (OpenGL x.0 eg.)
  * @param minor The minor version number of OpenGL (OpenGL 0.x eg.)
  */
-static void setOGLVersion(uint8_t major, uint8_t minor) {
+static void setOGLVersion(const uint8_t major, const uint8_t minor) {
 	if (!isCreated) {
 		glMajor = major;
 		glMinor = minor;
@@ -171,7 +171,7 @@ static void setOGLVersion(uint8_t major, uint8_t minor) {
  *
  * @param displayMode The bitmasked glut display mode.
  */
-static void setDisplayMode(uint32_t displayMode) {
+static void setDisplayMode(const uint32_t displayMode) {
 	if (!isCreated)
 		dispMode = displayMode;
 }
@@ -182,7 +182,7 @@ static void setDisplayMode(uint32_t displayMode) {
  * @param x The new x-position of the window.
  * @param y The new y-position of the window.
  */
-static void setWindowPos(int32_t x, int32_t y) {
+static void setWindowPos(const int32_t x, const int32_t y) {
 	winX = x;
 	winY = y;
 
@@ -194,7 +194,7 @@ static void setWindowPos(int32_t x, int32_t y) {
  *
  * @param x The new x position of the window.
  */
-static void setWindowX(int32_t x) {
+static void setWindowX(const int32_t x) {
 	winX = x;
 
 	repositionWindow();
@@ -205,7 +205,7 @@ static void setWindowX(int32_t x) {
  *
  * @param y The new y position of the window.
  */
-static void setWindowY(int32_t y) {
+static void setWindowY(const int32_t y) {
 	winY = y;
 
 	repositionWindow();
@@ -217,7 +217,7 @@ static void setWindowY(int32_t y) {
  * @param width The new width of the window.
  * @param height The new height of the window.
  */
-static void setWindowSize(int32_t width, int32_t height) {
+static void setWindowSize(const int32_t width, const int32_t height) {
 	winWidth = width;
 	winHeight = height;
 
@@ -229,7 +229,7 @@ static void setWindowSize(int32_t width, int32_t height) {
  *
  * @param width The new width of the window.
  */
-static void setWindowWidth(int32_t width) {
+static void setWindowWidth(const int32_t width) {
 	winWidth = width;
 
 	resizeWindow();
@@ -240,7 +240,7 @@ static void setWindowWidth(int32_t width) {
  *
  * @param height The new height of the window.
  */
-static void setWindowHeight(int32_t height) {
+static void setWindowHeight(const int32_t height) {
 	winHeight = height;
 
 	resizeWindow();
@@ -251,7 +251,7 @@ static void setWindowHeight(int32_t height) {
  *
  * @param title The new title of the window.
  */
-static void setWindowTitle(char title[]) {
+static void setWindowTitle(const char const* title) {
 	winTitle = title;
 
 	if (isCreated)
@@ -263,7 +263,7 @@ static void setWindowTitle(char title[]) {
  *
  * @param callbacks The GlutMainCallbacks containing the callbacks.
  */
-static void setMainCallbacks(GlutMainCallbacks *callbacks) {
+static void setMainCallbacks(const GlutMainCallbacks const* callbacks) {
 	mainCallbacks = callbacks;
 }
 
@@ -272,7 +272,7 @@ static void setMainCallbacks(GlutMainCallbacks *callbacks) {
  *
  * @param callbacks The GlutWindowCallbacks
  */
-static void setWindowCallbacks(GlutWindowCallbacks *callbacks) {
+static void setWindowCallbacks(const GlutWindowCallbacks const* callbacks) {
 	windowCallbacks = callbacks;
 }
 
