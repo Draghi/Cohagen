@@ -1,6 +1,8 @@
 #include <math.h>
 #include "Vec3.h"
 
+static scalar magnitudeVec3(const Vec3 *const self);
+
 /**
  *  Return a Vec3 with the given x, y and z components.
  *
@@ -15,6 +17,8 @@ Vec3 createVec3(scalar x, scalar y, scalar z) {
     result.x = x;
     result.y = y;
     result.z = z;
+
+    result.magnitude = magnitudeVec3;
 
     return result;
 }
@@ -158,16 +162,6 @@ Vec3 crossVec3(const Vec3 *const v1, const Vec3 *const v2) {
 }
 
 /**
- *  Returns the magnitude of the given Vec3.
- *
- *  @param vec  const pointer to const Vec3, given vector.
- *  @return     scalar representing the magnitude of the Vec3.
- */
-scalar magnitudeVec3(const Vec3 *const vec) {
-    return (sqrt(pow(vec->x, 2) + pow(vec->y, 2) + pow(vec->z, 2)));
-}
-
-/**
  *  Returns a unit-length Vec3 in the direction of the
  *  given Vec3.
  *
@@ -177,7 +171,7 @@ scalar magnitudeVec3(const Vec3 *const vec) {
  *  @return         Vec3 normalized.
  */
 Vec3 normalizeVec3(const Vec3 *const vec) {
-    scalar magnitude = magnitudeVec3(vec);
+    scalar magnitude = vec->magnitude((const struct Vec3_s *const) &vec);
 
     return (
         createVec3(
@@ -186,4 +180,14 @@ Vec3 normalizeVec3(const Vec3 *const vec) {
             vec->z / magnitude
         )
     );
+}
+
+/**
+ *  Returns the magnitude of the given Vec3.
+ *
+ *  @param vec  const pointer to const Vec3, given vector.
+ *  @return     scalar representing the magnitude of the Vec3.
+ */
+static scalar magnitudeVec3(const Vec3 *const self) {
+    return (sqrt(pow(self->x, 2) + pow(self->y, 2) + pow(self->z, 2)));
 }
