@@ -181,8 +181,6 @@ scalar dotVec4(const Vec4 *const v1, const Vec4 *const v2) {
 Vec4 normalizeVec4(const Vec4 *const vec) {
     scalar magnitude = vec->magnitude((const struct Vec4_s *const) vec);
 
-    printf("Magnitude %f\n", magnitude);
-
     return (
         createVec4(
             vec->x / magnitude,
