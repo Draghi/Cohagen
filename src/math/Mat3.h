@@ -8,7 +8,7 @@ typedef struct Mat3_s {
     Vec3 data[3];
 } Mat3;
 
-Mat3 createMat3( scalar el00, scalar el10, scalar el20,
+Mat3 createMat3(        scalar el00, scalar el10, scalar el20,
                         scalar el01, scalar el11, scalar el21,
                         scalar el02, scalar el12, scalar el22);
 Mat3 createMat3Leading(scalar leading);
