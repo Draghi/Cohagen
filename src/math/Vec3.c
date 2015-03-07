@@ -30,7 +30,7 @@ Vec3 createVec3(scalar x, scalar y, scalar z) {
  *  @param vec  const pointer to const Vec3 to clone.
  *  @param      Vec3 clone.
  */
-Vec3 cloneVec3(const Vec3 *const vec) {
+Vec3 createVec3Vec3(const Vec3 *const vec) {
     return (
         createVec3(
             vec->x,
@@ -171,7 +171,7 @@ Vec3 crossVec3(const Vec3 *const v1, const Vec3 *const v2) {
  *  @return         Vec3 normalized.
  */
 Vec3 normalizeVec3(const Vec3 *const vec) {
-    scalar magnitude = vec->magnitude((const struct Vec3_s *const) &vec);
+    scalar magnitude = vec->magnitude((const struct Vec3_s *const) vec);
 
     return (
         createVec3(

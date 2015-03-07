@@ -16,7 +16,7 @@ typedef struct Vec2_s {
 } Vec2;
 
 Vec2    createVec2(scalar x, scalar y);
-Vec2    cloneVec2(const Vec2 *const vec);
+Vec2    createVec2Vec2(const Vec2 *const vec);
 
 Vec2    sumVec2Vec2(const Vec2 *const v1, const Vec2 *const v2);
 Vec2    subVec2Vec2(const Vec2 *const v1, const Vec2 *const v2);

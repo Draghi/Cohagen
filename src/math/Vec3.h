@@ -16,7 +16,7 @@ typedef struct Vec3_s {
 } Vec3;
 
 Vec3     createVec3(scalar x, scalar y, scalar z);
-Vec3     cloneVec3(const Vec3 *const vec);
+Vec3     createVec3Vec3(const Vec3 *const vec);
 
 Vec3     sumVec3Vec3(const Vec3 *const v1, const Vec3 *const v2);
 Vec3     subVec3Vec3(const Vec3 *const v1, const Vec3 *const v2);

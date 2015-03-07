@@ -28,7 +28,7 @@ Vec2 createVec2(scalar x, scalar y) {
  *  @param  vec     const pointer to const Vec2 to clone.
  *  @return         Vec2, clone.
  */
-Vec2 cloneVec2(const Vec2 *const vec) {
+Vec2 createVec2Vec2(const Vec2 *const vec) {
     return (
         createVec2(
             vec->x,
@@ -120,7 +120,7 @@ Vec2 mulScalarVec2(scalar factor, const Vec2 *const vec) {
  *  @return         Vec2, normalized version of given vec.
  */
 Vec2 normalizeVec2(const Vec2 *const vec) {
-    scalar magnitude = vec->magnitude((const struct Vec2_s *const) &vec);
+    scalar magnitude = vec->magnitude((const struct Vec2_s *const) vec);
 
     return (
         createVec2(
