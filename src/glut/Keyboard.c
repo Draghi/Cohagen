@@ -89,7 +89,7 @@ static void update() {
  * @param key The GLUT key to check ('A' or KEY_F1 eg.)
  * @return if the given GLUT key is currently pressed.
  */
-static bool isKeyDown(unsigned char key) {
+static bool isKeyDown(const unsigned char key) {
 	return keyStates[key];
 }
 
@@ -101,7 +101,7 @@ static bool isKeyDown(unsigned char key) {
  *
  * @todo Check reliability (might not work with fast key presses)
  */
-static bool wasKeyPressed(unsigned char key) {
+static bool wasKeyPressed(const unsigned char key) {
 	if ((oldKeyStates[key]==false) && (keyStates[key]==true))
 		return true;
 	else
@@ -116,7 +116,7 @@ static bool wasKeyPressed(unsigned char key) {
  *
  * @todo Check reliability (might not work with fast key presses)
  */
-static bool wasKeyReleased(unsigned char key) {
+static bool wasKeyReleased(const unsigned char key) {
 	if ((oldKeyStates[key]==true) && (keyStates[key]==false))
 		return true;
 	else

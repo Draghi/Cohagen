@@ -26,7 +26,7 @@ struct Keyboard_S {
 	 * @param key The GLUT key to check ('A' or KEY_F1 eg.)
 	 * @return if the given GLUT key is currently pressed.
 	 */
-	bool(* isKeyDown)(unsigned char);
+	bool(* isKeyDown)(const unsigned char);
 
 	/**
 	 * Returns if the given GLUT key was pressed since the last update.
@@ -36,7 +36,7 @@ struct Keyboard_S {
 	 *
 	 * @todo Check reliability (might not work with fast key presses)
 	 */
-	bool(* wasKeyPressed)(unsigned char);
+	bool(* wasKeyPressed)(const unsigned char);
 
 	/**
 	 * Returns if the given GLUT key was pressed since the last update.
@@ -46,7 +46,7 @@ struct Keyboard_S {
 	 *
 	 * @todo Check reliability (might not work with fast key presses)
 	 */
-	bool(* wasKeyReleased)(unsigned char);
+	bool(* wasKeyReleased)(const unsigned char);
 };
 
 
