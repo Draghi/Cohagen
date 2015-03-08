@@ -1,8 +1,10 @@
 #include <math.h>
+#include <stdio.h>
 
 #include "Quat.h"
 
 static void offsetAxis(struct Quat_s *const self, const Vec3 *const axis, float angle);
+static void offsetAxisXYZ(struct Quat_s *const self, scalar x, scalar y, scalar z, float angle);
 static scalar magnitudeQuat(const struct Quat_s *const self);
 
 /**
@@ -24,6 +26,7 @@ Quat createQuat(scalar x, scalar y, scalar z, scalar w) {
     quaternion.w = w;
 
     quaternion.offsetAxis = offsetAxis;
+    quaternion.offsetAxisXYZ = offsetAxisXYZ;
     quaternion.magnitude = magnitudeQuat;
 
     return quaternion;
@@ -114,7 +117,14 @@ Quat normalizeQuat(const Quat *const quat) {
  *  @param  q2  Quat, operand 2.
  *  @return     scalar, dot product of two given quaternions.
  */
-// scalar dotQuat(const Quat *const q1, const Quat *const q2);
+scalar dotQuat(const Quat *const q1, const Quat *const q2) {
+    return (
+        q1->x * q2->x + 
+        q1->y * q2->y +
+        q1->z * q2->z +
+        q1->w * q2->w
+    );
+}
 
 /**
  *  Converts the given quaternion to a matrix, useful for rotations.
@@ -123,32 +133,46 @@ Quat normalizeQuat(const Quat *const quat) {
  *  @return         Mat4, transformation matrix representing the same rotation
  *                  as the given quaternion.
  */
-// Mat4 castQuatMat4(const Quat *const quat);
+Mat4 castQuatMat4(const Quat *const quat) {
+    // Mat4f columns
+    Vec4 col0 = createVec4(1 - 2*quat->y*quat->y - 2*quat->z*quat->z, 2*quat->x*quat->y + 2*quat->w*quat->z, 2*quat->x*quat->z - 2*quat->w*quat->y, 0.0f);
+    Vec4 col1 = createVec4(2*quat->x*quat->y - 2*quat->w*quat->z, 1 - 2*quat->x*quat->x - 2*quat->z*quat->z, 2*quat->y*quat->z + 2*quat->w*quat->x, 0.0f);
+    Vec4 col2 = createVec4(2*quat->x*quat->z + 2*quat->w*quat->y, 2*quat->y*quat->z - 2*quat->w*quat->x, 1 - 2*quat->x*quat->x - 2*quat->y*quat->y, 0.0f);
+    Vec4 col3 = createVec4(0.0f, 0.0f, 0.0f, 1.0f);
+        
+    return ( createMat4Vec4(&col0, &col1, &col2, &col3) );
+}
 
 /** 
  *  Offset given Quaternion around given axis by given number
- *  of radians.
+ *  of radians. Quaternion is not guaranteed to be normalized after this function
+ *  is called.
  *  
  *  @param  self    Quat to operate on.
  *  @param  axis    Vec3, axis to rotate around.
  *  @param  angle   float, angle in radians to rotate.
  */
-// static void offsetAxis(struct Quat_s *const self, const Vec3 *const axis, float angle) {
-//     Vec3 axisN = normalizeVec3(axis);
+static void offsetAxis(struct Quat_s *const self, const Vec3 *const axis, float angle) {
+    Vec3 axisN = normalizeVec3(axis);
 
-//     axisN = mulVec3Scalar(&axisN, sinf(angle / 2.0f));
-//     scalar scalar = cosf(angle / 2.0f);
+    axisN = mulVec3Scalar(&axisN, sinf(angle / 2.0f));
+    scalar scalar = cosf(angle / 2.0f);
 
-//     Quat offset = createQuatAxisScalar(&axisN, scalar);
+    Quat offset = createQuatAxisScalar(&axisN, scalar);
     
-//     *self = mulQuatQuat(self, &offset);
+    *self = mulQuatQuat(self, &offset);
 
-//     *self = normalizeQuat((const Quat *const) self);
-// }
+    /**
+     *  I've commented this line out because trying to normalize a (0, 0, 0, 0) quaternion will cause a divide by zero error.
+     *  Let the user be responsible for normalizing their quaternion.
+     */
+    // *self = normalizeQuat((const Quat *const) self);
+}
 
 /** 
  *  Offset given Quaternion around given axis by given number
- *  of radians.
+ *  of radians. Quaternion is not guaranteed to be normalized after this function
+ *  is called.
  *  
  *  @param  self    Quat to operate on.
  *  @param  x       scalar, x-component of rotation axis.
@@ -156,7 +180,17 @@ Quat normalizeQuat(const Quat *const quat) {
  *  @param  z       scalar, z-component of rotation axis.
  *  @param  angle   float, angle in radians to rotate.
  */
-// static void offsetAxisXYZ(struct Quat_s *const self, scalar x, scalar y, scalar z, float angle);
+static void offsetAxisXYZ(struct Quat_s *const self, scalar x, scalar y, scalar z, float angle) {
+    Vec3 axis = createVec3(x, y, z);
+    Vec3 axisN = normalizeVec3(&axis);
+
+    axisN = mulVec3Scalar(&axisN, sinf(angle / 2.0f));
+    scalar scalar = cosf(angle / 2.0f);
+
+    Quat offset = createQuatAxisScalar(&axisN, scalar);
+    
+    *self = mulQuatQuat(self, &offset);
+}
 
 /**
  *  Calculates the magnitude of the given Quaternion.
