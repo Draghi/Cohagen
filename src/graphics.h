@@ -2,7 +2,6 @@
 #define SRC_OGL_H_
 
 #define GLEW_STATIC
-#define FREEGLUT_STATIC
 
 #include "lib/glew/glew.h"
 #include <GL/freeglut.h>
