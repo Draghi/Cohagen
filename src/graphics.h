@@ -1,11 +1,11 @@
 #ifndef SRC_OGL_H_
 #define SRC_OGL_H_
 
-#if defined(_WIN32)
-#  define GLEW_STATIC
-#endif
+#define GLEW_STATIC
+#define FREEGLUT_STATIC
 
-#include "glew/glew.h"
+#include "lib/glew/glew.h"
 #include <GL/freeglut.h>
+#include "debug/GLDebugUtil.h"
 
 #endif /* SRC_OGL_H_ */
