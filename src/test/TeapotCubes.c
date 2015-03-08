@@ -1,5 +1,6 @@
 #include "Tests.h"
 
+#include "../input.h"
 #include "../graphics.h"
 
 #include <math.h>

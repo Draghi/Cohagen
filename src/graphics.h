@@ -18,8 +18,6 @@
 // Helper Utils //
 //////////////////
 #include "glut/Display.h"
-#include "glut/Mouse.h"
-#include "glut/Keyboard.h"
 #include "gl/GLUtil.h"
 
 ///////////////////

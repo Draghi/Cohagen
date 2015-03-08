@@ -2,6 +2,7 @@
 #define SRC_GLUT_MOUSE_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 
 /**
  * The fake object struct for the mouse.
