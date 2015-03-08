@@ -7,6 +7,7 @@
 #include "graphics.h"
 
 #include <time.h>
+#include <string.h>
 #include <stdio.h>
 
 /**@todo Remove testing code.*/
@@ -41,7 +42,7 @@ static void render() {
 		 vboc->bind(vboc);
 		 glColorPointer(3, GL_FLOAT, 0, 0);
 
- 	 	 int size = 100;
+ 	 	 int size = 80;
 		 int i = 0;
 		 int j = 0;
 		 for(i=0; i<size; i++) {
@@ -75,7 +76,7 @@ static void render() {
 		 glPopMatrix();
 
 		 glFrontFace(GL_CCW);
-		 //glEnable(GL_CULL_FACE);
+		 glEnable(GL_CULL_FACE);
 		 glDisable(GL_TEXTURE_2D);
 
 	 	 glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -117,6 +118,10 @@ static void update() {
 
 	if (rot<0)
 		rot += 3600;
+	char title[64];
+	strcpy(title, "FPS: ");
+	sprintf(title, "FPS: %d", display.getFPS());
+	display.setWindowTitle(title);
 }
 
 /**@todo Remove testing code.*/
@@ -154,7 +159,7 @@ int main(int argc, char **argv) {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
 
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
     glFrontFace(GL_CCW);
 
