@@ -92,6 +92,9 @@ static void onRender() {
 		if ((*mainCallbacks).onRender!=NULL)
 			(*mainCallbacks).onRender();
 
+	glFlush();
+	glutSwapBuffers();
+
 	frame++;
 	time=glutGet(GLUT_ELAPSED_TIME);
 	if (time-timebase>=1000) {
