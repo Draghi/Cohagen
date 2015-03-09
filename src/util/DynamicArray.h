@@ -4,7 +4,6 @@
 /**
  *  A DynamicArray (ie. vector) pseudo-class.
  *
- *  Only pointers to heap memory may be appended to this class.
  *  
  *  All interaction with this class should happen via the supplied functions.
  *  Do not attempt to modify member variables directly, although they can be assumed
@@ -29,20 +28,6 @@ typedef struct DynamicArray_s {
      *  @param  element     const pointer to const void, element to append.
      */
     void (*append)(struct DynamicArray_s *, void *const);
-
-    /**
-     *  Exception to the rule. Use this function to append
-     *  stack memory to the Dynamic Array.
-     * 
-     *  Memory is created on the heap with the same value as the
-     *  given stack memory and a pointer to that heap memory is appended
-     *  to the class.
-     *
-     *  @param  array           pointer to DynamicArray to append element to.
-     *  @param  elementSize     unsigned int, size of element to append.
-     *  @param  element         const pointer to const void, pointer to element on the stack.
-     */
-    // void (*appendStackMemory)(struct DynamicArray_s *, unsigned int, const void *const);
 
     /**
      *  Size of array (number of elements in array.)

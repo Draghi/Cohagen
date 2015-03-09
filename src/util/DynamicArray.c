@@ -26,20 +26,13 @@ void newDynamicArray(DynamicArray *const array, unsigned int initialCapacity, un
 }
 
 /**
- *  Loops through each element in the DynamicArray, freeing the memory associated with it.
- *  The given dynamic array is ready to be used again with "newDynamicArray" after this function is called.
- *
- *  Note that this function only works with heap memory. Do not attempt to append a pointer to stack memory
- *  to this structure.
+ *  Reset the structure and free the memory associated with it.
+ *  Note that this does not mean pointers passed to the array will be freed,
+ *  they will not. Only the memory used by this struct will be freed.
  *
  *  @param  array   pointer to DynamicArray to clear.
  */
 void clearDynamicArray(DynamicArray *const array) {
-    // Free each element
-    for (unsigned int i = 0; i < array->size; ++i) {
-        free(array->contents[i]);
-    }
-
     // Free array of elements
     free(array->contents);
 
@@ -81,24 +74,3 @@ static void appendDynamicArrayElement(DynamicArray *array, void *const element) 
     array->contents[array->size] = element;
     ++(array->size);
 }
-
-/**
- *  Exception to the rule. Use this function to append
- *  stack memory to the Dynamic Array.
- * 
- *  Memory is created on the heap with the same value as the
- *  given stack memory and a pointer to that heap memory is appended
- *  to the class.
- *
- *  @param  array           pointer to DynamicArray to append element to.
- *  @param  elementSize     unsigned int, size of element to append.
- *  @param  element         pointer to void, pointer to element on the stack.
- */
-// static void appendStackMemory(struct DynamicArray_s *array, unsigned int elementSize, void *const element) {
-//     // Copy element onto heap.
-//     void *cloneElement = malloc(elementSize);
-//     *cloneElement = *element;
-
-//     // Append cloned element to array.
-//     array->append(array, cloneElement);
-// }
