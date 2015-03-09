@@ -138,6 +138,30 @@ Mat4 subMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
     );
 }
 
+/**
+ *  Multiply every element of the given Mat4 by a constant factor
+ *  and return the result.
+ *
+ *  @param  matrix  const pointer to const Mat4, matrix to multiply.
+ *  @param  factor  scalar, factor to multiply each element by.
+ *  @return         Mat4, given Mat4 with each element multiplied by given factor.
+ */
+Mat4 mulMat4Scalar(const Mat4 *const matrix, scalar factor) {
+    Vec4 col0 = mulVec4Scalar(&(matrix->data[0]), factor);
+    Vec4 col1 = mulVec4Scalar(&(matrix->data[1]), factor);
+    Vec4 col2 = mulVec4Scalar(&(matrix->data[2]), factor);
+    Vec4 col3 = mulVec4Scalar(&(matrix->data[3]), factor);
+
+    return (
+        createMat4Vec4(
+            &col0,
+            &col1,
+            &col2,
+            &col3
+        )
+    );
+}
+
 /** 
  *  Returns a Mat4, result of matrix multiplication between operands given.
  *  (ie. mat1 * mat2, in that order).
@@ -243,5 +267,68 @@ Vec4 mulVec4Mat4(const Vec4 *const row, const Mat4 *const matrix) {
  *  @param  matrix  const pointer to const Mat4, matrix to find the inverse of.
  *  @return         Mat4, inverse of given Mat4.
  */
-// Mat4 inverseMat4(const Mat4 *const matrix);
+Mat4 inverseMat4(const Mat4 *const matrix) {
+    // Uses Laplace expansion to find determinant and inverse of matrix
+    // Find sub-factors (col, row).
+    /* Sub-factor is determinant of 2x2 matrix left when:
+     *  -you eliminate row and col of 4x4 co-factor 
+     *  -you eliminate row and col of 3x3 co-factor
+     */
+    float sub00 = matrix->data[2].z*matrix->data[3].w - matrix->data[3].z*matrix->data[2].w;
+    float sub01 = matrix->data[1].z*matrix->data[3].w - matrix->data[3].z*matrix->data[1].w;
+    float sub02 = matrix->data[1].z*matrix->data[2].w - matrix->data[2].z*matrix->data[1].w;
+    float sub03 = matrix->data[0].z*matrix->data[3].w - matrix->data[3].z*matrix->data[0].w;
+    float sub04 = matrix->data[0].z*matrix->data[2].w - matrix->data[2].z*matrix->data[0].w;
+    float sub05 = matrix->data[0].z*matrix->data[1].w - matrix->data[1].z*matrix->data[0].w;
+    float sub06 = matrix->data[1].y*matrix->data[2].w - matrix->data[2].y*matrix->data[1].w;
+    float sub07 = matrix->data[0].y*matrix->data[3].w - matrix->data[3].y*matrix->data[0].w;
+    float sub08 = matrix->data[0].y*matrix->data[1].w - matrix->data[1].y*matrix->data[0].w;
+    float sub10 = matrix->data[0].y*matrix->data[1].z - matrix->data[1].y*matrix->data[0].z;
+    float sub11 = matrix->data[0].y*matrix->data[2].z - matrix->data[2].y*matrix->data[0].z;
+    float sub12 = matrix->data[2].y*matrix->data[3].w - matrix->data[3].y*matrix->data[2].w;
+    float sub13 = matrix->data[1].y*matrix->data[3].w - matrix->data[3].y*matrix->data[1].w;
+    float sub14 = matrix->data[1].y*matrix->data[2].w - matrix->data[2].y*matrix->data[1].w;
+    float sub15 = matrix->data[0].y*matrix->data[2].w - matrix->data[2].y*matrix->data[0].w;
+    float sub16 = matrix->data[2].y*matrix->data[3].z - matrix->data[3].y*matrix->data[2].z;
+    float sub17 = matrix->data[1].y*matrix->data[3].z - matrix->data[3].y*matrix->data[1].z;
+    float sub18 = matrix->data[1].y*matrix->data[2].z - matrix->data[2].y*matrix->data[1].z;
+    float sub19 = matrix->data[0].y*matrix->data[3].z - matrix->data[3].y*matrix->data[0].z;
+
+    // Find co-factor matrix (col, row)
+    float cof00 =     matrix->data[1].y*(sub00) - matrix->data[2].y*(sub01) + matrix->data[3].y*(sub02);
+    float cof10 =   -(matrix->data[0].y*(sub00) - matrix->data[2].y*(sub03) + matrix->data[3].y*(sub04));
+    float cof20 =     matrix->data[0].y*(sub01) - matrix->data[1].y*(sub03) + matrix->data[3].y*(sub05);
+    float cof30 =   -(matrix->data[0].y*(sub02) - matrix->data[1].y*(sub04) + matrix->data[2].y*(sub05));
+
+    float cof01 =   -(matrix->data[1].x*(sub00) - matrix->data[2].x*(sub01) + matrix->data[3].x*(sub02));
+    float cof11 =     matrix->data[0].x*(sub00) - matrix->data[2].x*(sub03) + matrix->data[3].x*(sub04);
+    float cof21 =   -(matrix->data[0].x*(sub01) - matrix->data[1].x*(sub03) + matrix->data[3].x*(sub05));
+    float cof31 =     matrix->data[0].x*(sub02) - matrix->data[1].x*(sub04) + matrix->data[2].x*(sub05);
+
+    float cof02 =     matrix->data[1].x*(sub12) - matrix->data[2].x*(sub13) + matrix->data[3].x*(sub14);
+    float cof12 =   -(matrix->data[0].x*(sub12) - matrix->data[2].x*(sub07) + matrix->data[3].x*(sub15));
+    float cof22 =     matrix->data[0].x*(sub13) - matrix->data[1].x*(sub07) + matrix->data[3].x*(sub08);
+    float cof32 =   -(matrix->data[0].x*(sub06) - matrix->data[1].x*(sub15) + matrix->data[2].x*(sub08));
+
+    float cof03 =   -(matrix->data[1].x*(sub16) - matrix->data[2].x*(sub17) + matrix->data[3].x*(sub18));
+    float cof13 =     matrix->data[0].x*(sub16) - matrix->data[2].x*(sub19) + matrix->data[3].x*(sub11);
+
+    float cof23 =   -(matrix->data[0].x*(sub17) - matrix->data[1].x*(sub19) + matrix->data[3].x*(sub10));
+    float cof33 =     matrix->data[0].x*(sub18) - matrix->data[1].x*(sub11) + matrix->data[2].x*(sub10);
+
+    // Transpose co-factor matrix to get adjoint matrix (note row-major order of constructor)
+    Mat4 adj = createMat4(    
+                    cof00, cof01, cof02, cof03,
+                    cof10, cof11, cof12, cof13,
+                    cof20, cof21, cof22, cof23,
+                    cof30, cof31, cof32, cof33
+    );
+
+    // Multiply adjoint matrix by inverse of determinant to get inverse matrix
+    float det = matrix->data[0].x*cof00 + matrix->data[1].x*cof10 + matrix->data[2].x*cof20 + matrix->data[3].x*cof30;
+
+    Mat4 inv = mulMat4Scalar(&adj, (1/det));
+
+    return (inv);
+}
 

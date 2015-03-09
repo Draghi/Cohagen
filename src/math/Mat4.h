@@ -17,6 +17,7 @@ Mat4 createMat4Mat4(const Mat4 *const matrix);
 
 Mat4 sumMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2);
 Mat4 subMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2);
+Mat4 mulMat4Scalar(const Mat4 *const matrix, scalar factor);
 Mat4 mulMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2);
 Vec4 mulMat4Vec4(const Mat4 *const matrix, const Vec4 *const row);
 Vec4 mulVec4Mat4(const Vec4 *const col, const Mat4 *const matrix);
