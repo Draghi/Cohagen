@@ -41,6 +41,12 @@ static GlutMainCallbacks const* mainCallbacks = NULL;
 /** The callbacks for the resizing etc. */
 static GlutWindowCallbacks const* windowCallbacks = NULL;
 
+/** Used for calculating the FPS */
+static int32_t frame=0, time=0, timebase=0;
+
+/** The last calculated FPS */
+static int32_t fps;
+
 //Just a note on the callback struts, the purpose of them is to allow us to add extra callbacks too them,
 //  without having to rewrite function params and everywhere we call said functions.
 
@@ -85,6 +91,17 @@ static void onRender() {
 	if (mainCallbacks!=NULL)
 		if ((*mainCallbacks).onRender!=NULL)
 			(*mainCallbacks).onRender();
+
+	glFlush();
+	glutSwapBuffers();
+
+	frame++;
+	time=glutGet(GLUT_ELAPSED_TIME);
+	if (time-timebase>=1000) {
+		fps = frame*1000.0/(time-timebase);
+		timebase = time;
+		frame = 0;
+	}
 }
 
 /**
@@ -353,6 +370,14 @@ static int32_t getScreenHeight() {
 	return glutGet(GLUT_SCREEN_HEIGHT);
 }
 
+/**
+ * Returns the FPS.
+ * @return The FPS.
+ */
+static int32_t getFPS() {
+	return fps;
+}
+
 ///////////////////
 // Singleton Def //
 ///////////////////
@@ -361,5 +386,5 @@ static int32_t getScreenHeight() {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const Display display = {createWindow, doCenterWindow, setOGLVersion, setDisplayMode, setWindowPos, setWindowX, setWindowY, setWindowSize, setWindowWidth, setWindowHeight, setWindowTitle, setMainCallbacks, setWindowCallbacks, getOGLMajorVer, getOGLMinorVer, getWindowHeight, getWindowWidth, getWindowX, getWindowY, getWindowTitle, getScreenWidth, getScreenHeight};
+const Display display = {createWindow, doCenterWindow, setOGLVersion, setDisplayMode, setWindowPos, setWindowX, setWindowY, setWindowSize, setWindowWidth, setWindowHeight, setWindowTitle, setMainCallbacks, setWindowCallbacks, getOGLMajorVer, getOGLMinorVer, getWindowHeight, getWindowWidth, getWindowX, getWindowY, getWindowTitle, getScreenWidth, getScreenHeight, getFPS};
 

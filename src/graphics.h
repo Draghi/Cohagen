@@ -1,11 +1,29 @@
 #ifndef SRC_OGL_H_
 #define SRC_OGL_H_
 
-#if defined(_WIN32)
-#  define GLEW_STATIC
-#endif
+#define GLEW_STATIC
 
-#include "glew/glew.h"
+/////////////////////////
+// 3rd Party Libraries //
+/////////////////////////
+#include "lib/glew/glew.h"
 #include <GL/freeglut.h>
+
+////////////////////
+// Debugging Tools //
+////////////////////
+#include "debug/GLDebugUtil.h"
+
+//////////////////
+// Helper Utils //
+//////////////////
+#include "glut/Display.h"
+#include "gl/GLUtil.h"
+
+///////////////////
+// Graphics Libs //
+///////////////////
+#include "gl/Textures.h"
+#include "gl/VBO.h"
 
 #endif /* SRC_OGL_H_ */

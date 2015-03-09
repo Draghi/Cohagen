@@ -160,6 +160,12 @@ struct Display_s {
 	 * @return The screen's height.
 	 */
 	int32_t(* getScreenHeight)();
+
+	/**
+	 * Returns the FPS.
+	 * @return The FPS.
+	 */
+	int32_t(* getFPS)();
 };
 
 /**
