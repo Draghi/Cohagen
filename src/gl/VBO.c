@@ -83,6 +83,15 @@ static bool subData(VBO* self, GLvoid* data, GLsizeiptr size, GLintptr offset) {
 	}
 }
 
+/**
+ * Frees the buffer from both the Computer's and the GPU's memory.
+ * @param self The pointer to the instance of the vbo.
+ */
+static void delete(VBO* self) {
+	glDeleteBuffers(1, &(self->id));
+	free(self);
+}
+
 ///////////////////////
 // VBO Manager Class //
 ///////////////////////
@@ -98,6 +107,7 @@ static VBO* createVBO(){
 	vbo->unbind = unbind;
 	vbo->subData = subData;
 	vbo->setData = setData;
+	vbo->delete = delete;
 
 	return vbo;
 }

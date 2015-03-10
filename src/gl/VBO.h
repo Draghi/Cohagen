@@ -50,6 +50,12 @@ struct VBO_s {
 	 * @return Whether the data was substituted or not.
 	 */
 	bool(* subData)(struct VBO_s*, void*, GLsizeiptr, GLintptr);
+
+	/**
+	 * Frees the buffer from both the Computer's and the GPU's memory.
+	 * @par
+	 */
+	void(* delete)(struct VBO_s* self);
 };
 
 /**
