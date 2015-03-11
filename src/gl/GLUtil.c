@@ -1,4 +1,3 @@
-#include "GLUtil.h"
 #include "../graphics.h"
 
 /**
