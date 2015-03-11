@@ -20,9 +20,9 @@
 #include "glut/Display.h"
 #include "gl/GLUtil.h"
 
-///////////////////
-// Graphics Libs //
-///////////////////
+//////////////////////
+// Graphics Classes //
+//////////////////////
 #include "gl/Textures.h"
 #include "gl/VBO.h"
 
