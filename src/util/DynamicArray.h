@@ -4,7 +4,6 @@
 /**
  *  A DynamicArray (ie. vector) pseudo-class.
  *
- *  
  *  All interaction with this class should happen via the supplied functions.
  *  Do not attempt to modify member variables directly, although they can be assumed
  *  to be correct (for the purposes of retrieving information, eg. size of array).
@@ -58,6 +57,6 @@ typedef struct DynamicArray_s {
 } DynamicArray;
 
 void newDynamicArray(DynamicArray *array, unsigned int initialCapacity, unsigned int elementSize);
-void clearDynamicArray(DynamicArray *array);
+void deleteDynamicArray(DynamicArray *array);
 
 #endif

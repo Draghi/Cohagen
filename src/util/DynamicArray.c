@@ -32,7 +32,7 @@ void newDynamicArray(DynamicArray *const array, unsigned int initialCapacity, un
  *
  *  @param  array   pointer to DynamicArray to clear.
  */
-void clearDynamicArray(DynamicArray *const array) {
+void deleteDynamicArray(DynamicArray *const array) {
     // Free array of elements
     free(array->contents);
 
@@ -68,7 +68,7 @@ static void appendDynamicArrayElement(DynamicArray *array, void *const element) 
     if (array->size + 1 > array->capacity) {
         array->capacity += array->capacityExpansionRate;
 
-        array->contents = realloc(array->contents, array->capacity);
+        array->contents = realloc(array->contents, array->capacity*sizeof(void *));
     }
 
     array->contents[array->size] = element;
