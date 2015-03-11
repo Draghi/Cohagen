@@ -1,5 +1,4 @@
 
-#include "glut/Display.h"
 #include "graphics.h"
 #include "test/Tests.h"
 

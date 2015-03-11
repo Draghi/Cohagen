@@ -40,12 +40,12 @@ static void setCamera() {
 static void prepareCubeVBOs() {
 	//Setup the vertex VBO
 	glEnableClientState(GL_VERTEX_ARRAY);
-	vbo->bind(vbo);
+	vboManager.bind(vbo);
 	glVertexPointer(3, GL_FLOAT, 0, 0);
 
 	//Setup the colour vbo
 	glEnableClientState(GL_COLOR_ARRAY);
-	vboc->bind(vboc);
+	vboManager.bind(vboc);
 	glColorPointer(3, GL_FLOAT, 0, 0);
 }
 
@@ -60,7 +60,7 @@ static void renderTexturedTeapot(int size) {
 
 	glPushMatrix();
 		//set the texture to use the first texture unit
-		texture->bind(texture, 0);
+		textureManager.bind(texture, 0);
 
 	 	//Move it above the cubes
 		glTranslatef(0, 5.0, 0);
@@ -71,7 +71,7 @@ static void renderTexturedTeapot(int size) {
 		glutSolidTeapot(size);
 
 		//reset the texture unit
-		texture->unbind(texture);
+		textureManager.unbind(texture);
 	glPopMatrix();
 
 	//Re-enable backface culling and enable texturing
@@ -203,7 +203,7 @@ static void setupCallbacks() {
 /** Prepares textures fot the example */
 static void setupTextures() {
 	//Create a texture full of random rgba values for our solid teapot.
-    texture = textureManager.createNoiseRGBATexture(128, 96, GL_NEAREST, GL_NEAREST);
+    texture = textureManager.newNoiseRGBATexture(128, 96, GL_NEAREST, GL_NEAREST);
 }
 
 /** Prepares VBOs for the example */
@@ -230,7 +230,7 @@ static void setupVBOs() {
 					0.5f, 0.5f, 0.5f,   0.5f,-0.5f, 0.5f,   0.5f,-0.5f,-0.5f};
 
     //Upload the data to the gpu
-    vbo->setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
+    vboManager.setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
 
 
     vboc = vboManager.createVBO();
@@ -241,7 +241,7 @@ static void setupVBOs() {
     }
 
     //Upload the data to the GPU
-    vboc->setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
+    vboManager.setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
 }
 
 /** Called to run the teapot/cube example, must be called after display init */

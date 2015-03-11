@@ -16,6 +16,44 @@ struct Texture_s {
 	uint32_t height;
 
 	int8_t slotID;
+};
+
+
+/**
+ * Typedef so we don't have too use "struct" everytime.
+ */
+typedef struct Texture_s Texture;
+
+/**
+ * Fake texture manager object.
+ * Provides methods to create texture objects with various different initial textures.
+ */
+struct TextureManager_s {
+	/**
+	 * Creates a new Texture object that represents an OpenGL texture.
+	 * @return A working Texture object.
+	 */
+	Texture*(* newTexture)();
+
+	/**
+	 * Creates a blank RGBA texture (all bytes set to 0)
+	 * @param width The width of the new texture.
+	 * @param height The height of the new texture.
+	 * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
+	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
+	 * @return A new texture object describing the created Blank OpenGL texture.
+	 */
+	Texture*(* newBlankRGBATexture)(const uint32_t, const uint32_t, const GLint, const GLint);
+
+	/**
+	 * Creates a noisy RGBA texture (all bytes set to random values)
+	 * @param width The width of the new texture.
+	 * @param height The height of the new texture.
+	 * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
+	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
+	 * @return A new texture object describing the created Blank OpenGL texture.
+	 */
+	Texture*(* newNoiseRGBATexture)(const uint32_t, uint32_t, const GLint, const GLint);
 
 	/**
 	 * Attempts to bind the texture to the given texture unit slot.
@@ -44,45 +82,9 @@ struct Texture_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
 	 */
-	bool(* setTextureData)(struct Texture_s* const, const GLubyte*const , const GLint, const GLint, const uint32_t, const uint32_t, const GLint, const GLint);
-};
+	bool(* setData)(Texture* const, const GLubyte*const , const GLint, const GLint, const uint32_t, const uint32_t, const GLint, const GLint);
 
-
-/**
- * Typedef so we don't have too use "struct" everytime.
- */
-typedef struct Texture_s Texture;
-
-/**
- * Fake texture manager object.
- * Provides methods to create texture objects with various different initial textures.
- */
-struct TextureManager_s {
-	/**
-	 * Creates a new Texture object that represents an OpenGL texture.
-	 * @return A working Texture object.
-	 */
-	Texture*(* createTexture)();
-
-	/**
-	 * Creates a blank RGBA texture (all bytes set to 0)
-	 * @param width The width of the new texture.
-	 * @param height The height of the new texture.
-	 * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
-	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
-	 * @return A new texture object describing the created Blank OpenGL texture.
-	 */
-	Texture*(* createBlankRGBATexture)(const uint32_t, const uint32_t, const GLint, const GLint);
-
-	/**
-	 * Creates a noisy RGBA texture (all bytes set to random values)
-	 * @param width The width of the new texture.
-	 * @param height The height of the new texture.
-	 * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
-	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
-	 * @return A new texture object describing the created Blank OpenGL texture.
-	 */
-	Texture*(* createNoiseRGBATexture)(const uint32_t, uint32_t, const GLint, const GLint);
+	void(* delete)(Texture* const);
 };
 
 

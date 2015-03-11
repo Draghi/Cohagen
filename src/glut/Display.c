@@ -4,10 +4,8 @@
  * It also provides an intermediate callback that is used to ensure certain calls or provide extra features.
  */
 
-#include"Display.h"
 #include"GlutCallbacks.h"
-#include"Mouse.h"
-#include"Keyboard.h"
+#include"../input.h"
 #include"../graphics.h"
 
 #include <stdbool.h>

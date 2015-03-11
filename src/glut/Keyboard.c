@@ -4,8 +4,8 @@
 
 #define MAX_KEYBOARD_KEYS 256
 
-#include "Keyboard.h"
 #include <stdbool.h>
+#include "../input.h"
 #include"../graphics.h"
 
 

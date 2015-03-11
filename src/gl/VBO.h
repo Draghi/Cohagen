@@ -1,8 +1,8 @@
 #ifndef SRC_GL_VBO_H_
 #define SRC_GL_VBO_H_
 
-#include"../graphics.h"
 #include <stdbool.h>
+#include"../graphics.h"
 
 /**
  * A fake object struct that represents an OpenGL vertex buffer object.
@@ -12,6 +12,22 @@ struct VBO_s {
 	 * The OpenGL id of the VBO.
 	 */
 	GLenum id;
+};
+
+/**
+ * Typedef so we don't have too use "struct" everytime.
+ */
+typedef struct VBO_s VBO;
+
+/**
+ * A fake object struct that provides various helper methods for the VBO object.
+ */
+struct VBOManager_s {
+	/**
+	 * Creates a new VBO.
+	 * @return A pointer to the new VBO.
+	 */
+	VBO*(* createVBO)();
 
 	/**
 	 * Binds the vbo to the array buffer.
@@ -56,22 +72,6 @@ struct VBO_s {
 	 * @par
 	 */
 	void(* delete)(struct VBO_s* self);
-};
-
-/**
- * Typedef so we don't have too use "struct" everytime.
- */
-typedef struct VBO_s VBO;
-
-/**
- * A fake object struct that provides various helper methods for the VBO object.
- */
-struct VBOManager_s {
-	/**
-	 * Creates a new VBO.
-	 * @return A pointer to the new VBO.
-	 */
-	VBO*(* createVBO)();
 };
 
 /**

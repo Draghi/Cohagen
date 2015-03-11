@@ -30,6 +30,16 @@ static int32_t findOpenSlot() {
 ///////////////////
 // Texture Class //
 ///////////////////
+
+
+
+
+///////////////////////////////
+//   Texture Manager Class   //
+/**@todo Add texture loading */
+///////////////////////////////
+
+
 /**
  * Attempts to bind the texture to the given texture unit slot.
  * @param tex The texture to bind too the texture unit.
@@ -72,7 +82,6 @@ static bool unbind(Texture * const tex) {
 		return true;
 	}
 }
-
 /**
  * Attempts to set the given textures data
  * @param tex The texture to change the data of.
@@ -85,7 +94,7 @@ static bool unbind(Texture * const tex) {
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
  */
-static bool setTextureData(Texture *const tex, const GLubyte *const data, const GLint internalFormat, const GLint format, const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
+static bool setData(Texture *const tex, const GLubyte *const data, const GLint internalFormat, const GLint format, const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
 	int32_t slot = findOpenSlot();
 
 	if (slot>=0) {
@@ -106,13 +115,6 @@ static bool setTextureData(Texture *const tex, const GLubyte *const data, const 
 	}
 }
 
-
-
-///////////////////////////////
-//   Texture Manager Class   //
-/**@todo Add texture loading */
-///////////////////////////////
-
 /**
  * Creates a new Texture object that represents an OpenGL texture.
  * @return A working Texture object.
@@ -124,9 +126,6 @@ static Texture* createTexture() {
 	tex->width = 0;
 	tex->height = 0;
 	tex->slotID = -1;
-	tex->bind = bind;
-	tex->unbind = unbind;
-	tex->setTextureData = setTextureData;
 
 	return tex;
 }
@@ -149,7 +148,7 @@ static Texture* createBlankRGBATexture(const uint32_t width, const uint32_t heig
 		data[i] = 0;
 	}
 
-	if (setTextureData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
+	if (setData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
 		return tex;
 	} else {
 		free(tex);
@@ -175,12 +174,17 @@ static Texture* createNoiseRGBATexture(const uint32_t width, const uint32_t heig
 		data[i] = rand() % 256;
 	}
 
-	if (setTextureData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
+	if (setData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
 		return tex;
 	} else {
 		free(tex);
 		return NULL;
 	}
+}
+
+static void delete(Texture* const tex) {
+	glDeleteTextures(1, &(tex->id));
+	free(tex);
 }
 
 ////////////////////////
@@ -191,5 +195,5 @@ static Texture* createNoiseRGBATexture(const uint32_t width, const uint32_t heig
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const TextureManager textureManager = {createTexture, createBlankRGBATexture, createNoiseRGBATexture};
+const TextureManager textureManager = {createTexture, createBlankRGBATexture, createNoiseRGBATexture, bind, unbind, setData, delete};
 

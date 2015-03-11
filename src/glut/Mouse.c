@@ -6,7 +6,7 @@
 
 #include <stdbool.h>
 #include"../graphics.h"
-#include "Mouse.h"
+#include "../input.h"
 
 static int32_t xPos;
 static int32_t yPos;

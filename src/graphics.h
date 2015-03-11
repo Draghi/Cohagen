@@ -25,5 +25,7 @@
 //////////////////////
 #include "gl/Textures.h"
 #include "gl/VBO.h"
+#include "gl/VAO.h"
+//#include "gl/Shader.h"
 
 #endif /* SRC_OGL_H_ */
