@@ -13,7 +13,6 @@ static void setupDisplay() {
 	display.setWindowSize(800, 600); //800x600 window
 	display.doCenterWindow(); //Make sure the window pops up in the center
 	display.setOGLVersion(3, 0); //Set the context to OGL 3.0 (set to 3.3 when we move to shader only)
-	//display.setWindowTitle("Window"); //Unnecessary to be honest
 
 	//Tell glut to create our window
 	display.createWindow();
