@@ -1,6 +1,6 @@
 
-#ifndef SRC_GLUT_GLUTCALLBACKS_H_
-#define SRC_GLUT_GLUTCALLBACKS_H_
+#ifndef COH_GLUTCALLBACKS_H
+#define COH_GLUTCALLBACKS_H
 
 /**
  * Contains the pointers to the main glut callbacks.

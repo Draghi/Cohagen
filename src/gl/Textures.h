@@ -1,5 +1,5 @@
-#ifndef SRC_GL_TEXTURES_H_
-#define SRC_GL_TEXTURES_H_
+#ifndef COH_TEXTURES_H
+#define COH_TEXTURES_H
 
 #include<stdint.h>
 #include<stdbool.h>

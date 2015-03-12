@@ -1,5 +1,5 @@
-#ifndef GLUT_DISPLAY_H
-#define GLUT_DISPLAY_H
+#ifndef COH_DISPLAY_H
+#define COH_DISPLAY_H
 
 #include <stdbool.h>
 #include <stdint.h>

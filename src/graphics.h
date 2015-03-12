@@ -1,5 +1,5 @@
-#ifndef SRC_OGL_H_
-#define SRC_OGL_H_
+#ifndef COH_GRAPHICS_H
+#define COH_GRAPHICS_H
 
 #define GLEW_STATIC
 

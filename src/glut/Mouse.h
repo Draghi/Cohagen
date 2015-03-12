@@ -1,5 +1,5 @@
-#ifndef SRC_GLUT_MOUSE_H_
-#define SRC_GLUT_MOUSE_H_
+#ifndef COH_MOUSE_H
+#define COH_MOUSE_H
 
 #include <stdbool.h>
 #include <stdint.h>

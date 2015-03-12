@@ -5,8 +5,8 @@
  *      Author: draghi
  */
 
-#ifndef TEST_TESTS_H_
-#define TEST_TESTS_H_
+#ifndef COH_TESTS_H
+#define COH_TESTS_H
 
 void runTeapotCubes();
 

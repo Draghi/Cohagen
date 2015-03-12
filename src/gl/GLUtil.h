@@ -5,8 +5,8 @@
  *      Author: draghi
  */
 
-#ifndef GL_GLUTIL_H_
-#define GL_GLUTIL_H_
+#ifndef COH_GLUTIL_H
+#define COH_GLUTIL_H
 
 #include "../graphics.h"
 
