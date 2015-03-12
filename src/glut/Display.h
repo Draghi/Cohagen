@@ -18,7 +18,7 @@ struct Display_s {
 	 * @param argv a pointer to the argv main() variable.
 	 * @return Whether or not the window creation was attempted (Can't create twice)
 	 */
-	bool(* createWindow)(int*, char**);
+	bool(* createWindow)();
 
 	/**
 	 * Attempts to center the window on the screen.
