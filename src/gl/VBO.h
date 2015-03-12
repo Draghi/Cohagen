@@ -27,7 +27,7 @@ struct VBOManager_s {
 	 * Creates a new VBO.
 	 * @return A pointer to the new VBO.
 	 */
-	VBO*(* createVBO)();
+	VBO*(* newVBO)();
 
 	/**
 	 * Binds the vbo to the array buffer.
