@@ -90,7 +90,7 @@ static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType, uint32_t countPerV
  * @return The index of the VBO in the VAO
  */
 static int32_t attachNewVBO(VAO* vao, void* data, GLsizeiptr size, GLenum usageType,  GLenum dataType, uint32_t countPerVertex) {
-	VBO* vbo = vboManager.createVBO();
+	VBO* vbo = vboManager.newVBO();
 	vboManager.setData(vbo, data, size, usageType);
 
 	int32_t res = attachVBO(vao, vbo, dataType, countPerVertex);
