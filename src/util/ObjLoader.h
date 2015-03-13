@@ -4,14 +4,21 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <GL/glew.h>
+
 #include "DynamicFloatArray.h"
 #include "DynamicIntArray.h"
+#include "../gl/VAO.h"
+#include "../gl/VBO.h"
 
+/**
+ *  Singleton used for loading .obj files.
+ */
 typedef struct ObjLoader_s {
     /**
-     *  Loads an obj file.
+     *  Loads an obj file. NULL can be passed to parameters not needed.
      *
-     *  @param  filename        pointer to char, path to file.
+     *  @param  filename        const pointer to const char, path to file.
      *  @param  vertices        pointer to DynamicFloatArray, array will hold all vertex data after function completes.
      *  @param  normals         pointer to DynamicFloatArray, array will hold all normal data after function completes.
      *  @param  texCoords       pointer to DynamicFloatArray, array will hold all texture co-ordinate data after function completes.
@@ -31,11 +38,30 @@ typedef struct ObjLoader_s {
                         DynamicIntArray *vIndices, DynamicIntArray *nIndices, DynamicIntArray *tIndices,
                         int *vertexStride, int *normalStride, int *texCoordStride,
                         int *vIndexStride, int *nIndexStride, int *tIndexStride);
+    /**
+     *  Loads an obj file, sets up the appropriate VBOs and returns a 'ready-to-go' VAO.
+     *
+     *  @param  filename            const pointer to const char, path to file.
+     *  @param  numIndicesToDraw    const pointer to int, when function returns, will contain the number
+     *                              of indices that must be drawn to draw the object.
+     */
+    GLuint (*genVAOFromFile)(const char *const filename, int *const numIndicesToDraw);
+
 } ObjLoader;
 
 /**
  * Expose singleton.
  */
 extern const ObjLoader objLoader;
+
+/**
+ *  Internal representation of a vertex in OpenGL.
+ */
+typedef struct Vertex_s {
+    GLfloat     x, y, z;
+    GLfloat     nx, ny, nz;
+    GLfloat     u, v;
+    GLfloat     padding[4];
+} GLVertex;
 
 #endif
