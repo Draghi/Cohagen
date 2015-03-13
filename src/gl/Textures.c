@@ -144,7 +144,7 @@ static Texture* createBlankRGBATexture(const uint32_t width, const uint32_t heig
 	uint32_t size = width * height * sizeof(GLubyte) * 4;
 	GLubyte data[size];
 
-	for(int i = 0; i < size; i++) {
+	for(uint32_t i = 0; i < size; i++) {
 		data[i] = 0;
 	}
 
@@ -170,7 +170,7 @@ static Texture* createNoiseRGBATexture(const uint32_t width, const uint32_t heig
 	uint32_t size = width * height * sizeof(GLubyte) * 4;
 	GLubyte data[size];
 
-	for(int i = 0; i < size; i++) {
+	for(uint32_t i = 0; i < size; i++) {
 		data[i] = rand() % 256;
 	}
 

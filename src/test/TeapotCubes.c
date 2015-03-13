@@ -208,7 +208,7 @@ static void setupTextures() {
 
 /** Prepares VBOs for the example */
 static void setupVBOs() {
-    vbo = vboManager.createVBO();
+    vbo = vboManager.newVBO();
 
     //The data for a cube with side lengths of 1 unit and the origin at it's center
     float dat[] = { 0.5f, 0.5f,-0.5f,   0.5f,-0.5f,-0.5f,  -0.5f,-0.5f,-0.5f,
@@ -233,7 +233,7 @@ static void setupVBOs() {
     vboManager.setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
 
 
-    vboc = vboManager.createVBO();
+    vboc = vboManager.newVBO();
     //Just add 0.5 to all values in dat and we'l get a nice smooth gradient on our cube.
     float dat2[108];
     for(int i = 0; i<108; i++) {

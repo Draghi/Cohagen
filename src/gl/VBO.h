@@ -1,5 +1,5 @@
-#ifndef SRC_GL_VBO_H_
-#define SRC_GL_VBO_H_
+#ifndef COH_VBO_H
+#define COH_VBO_H
 
 #include <stdbool.h>
 #include"../graphics.h"
@@ -27,7 +27,7 @@ struct VBOManager_s {
 	 * Creates a new VBO.
 	 * @return A pointer to the new VBO.
 	 */
-	VBO*(* createVBO)();
+	VBO*(* newVBO)();
 
 	/**
 	 * Binds the vbo to the array buffer.

@@ -1,5 +1,5 @@
-#ifndef GLUT_DISPLAY_H
-#define GLUT_DISPLAY_H
+#ifndef COH_DISPLAY_H
+#define COH_DISPLAY_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -18,7 +18,7 @@ struct Display_s {
 	 * @param argv a pointer to the argv main() variable.
 	 * @return Whether or not the window creation was attempted (Can't create twice)
 	 */
-	bool(* createWindow)(int*, char**);
+	bool(* createWindow)();
 
 	/**
 	 * Attempts to center the window on the screen.

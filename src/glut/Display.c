@@ -128,7 +128,7 @@ static void onReshape(const int width, const int height) {
  * @param argv a pointer to the argv main() variable.
  * @return Whether or not the window creation was attempted (Can't create twice)
  */
-static bool createWindow(int* pargc, char** argv) {
+static bool createWindow() {
 	if (!isCreated) {
 		//Setup and create our window
 		glutInitContextVersion(glMajor, glMinor);

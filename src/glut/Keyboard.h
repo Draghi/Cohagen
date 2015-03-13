@@ -1,5 +1,5 @@
-#ifndef SRC_GLUT_KEYBOARD_H_
-#define SRC_GLUT_KEYBOARD_H_
+#ifndef COH_KEYBOARD_H
+#define COH_KEYBOARD_H
 
 #include <stdbool.h>
 

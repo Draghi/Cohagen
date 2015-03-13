@@ -1,5 +1,5 @@
-#ifndef SRC_GL_VAO_H_
-#define SRC_GL_VAO_H_
+#ifndef COH_VAO_H
+#define COH_VAO_H
 
 #include <stdbool.h>
 #include "../graphics.h"
