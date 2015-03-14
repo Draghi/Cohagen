@@ -56,7 +56,32 @@ typedef struct DynamicArray_s {
     void **contents;
 } DynamicArray;
 
-void newDynamicArray(DynamicArray *array, unsigned int initialCapacity, unsigned int elementSize);
-void deleteDynamicArray(DynamicArray *array);
+/**
+ *  Creates a new dynamic array with the DynamicArray provided and
+ *  the given initial capacity.
+ *
+ *  @param  array               pointer to DynamicArray, address of new array.
+ *  @param  initialCapacity     unsigned int, initial size of array in memory.
+ *  @param  elementSize         unsigned int, size of each element in the array.
+ */
+ void newDynamicArray(DynamicArray *array, unsigned int initialCapacity, unsigned int elementSize);
+
+/**
+ *  Reset the structure and free the memory associated with it.
+ *  Note that this does not mean pointers passed to the array will be freed,
+ *  they will not. Only the memory used by this struct will be freed.
+ *
+ *  @param  array   pointer to DynamicArray to clear.
+ */
+ void deleteDynamicArray(DynamicArray *array);
+
+/**
+ *  Cycle through the contents of the array and frees each element, also sets size of array to 0.
+ *  This function will crash the program if two elements of the array point to the
+ *  same location in memory.
+ *
+ *  @params     array   const pointer to Dynamic Array, array to free contents of.
+ */
+void freeDynamicArrayContents(DynamicArray *const array);
 
 #endif
