@@ -29,19 +29,19 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
 
 		switch(clientState) {
 			case GL_VERTEX_ARRAY:
-				glVertexPointer(vbo->countPerVert, GL_FLOAT, 0, 0);
+				glVertexPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
 				break;
 
 			case GL_NORMAL_ARRAY:
-				glNormalPointer(GL_FLOAT, 0, 0);
+				glNormalPointer(GL_FLOAT, vbo->stride, vbo->pointer);
 				break;
 
 			case GL_COLOR_ARRAY:
-				glColorPointer(vbo->countPerVert, GL_FLOAT, 0, 0);
+				glColorPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
 				break;
 
 			case GL_TEXTURE_COORD_ARRAY:
-				glTexCoordPointer(vbo->countPerVert, GL_FLOAT, 0, 0);
+				glTexCoordPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
 				break;
 		}
 
