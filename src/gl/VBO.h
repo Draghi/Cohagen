@@ -12,6 +12,8 @@ struct VBO_s {
 	 * The OpenGL id of the VBO.
 	 */
 	GLenum id;
+	uint32_t vertCount;
+	uint32_t countPerVert;
 };
 
 /**
@@ -32,46 +34,70 @@ struct VBOManager_s {
 	/**
 	 * Binds the vbo to the array buffer.
 	 *
-	 * @param self The pointer to the instance of the vbo.
+	 * @param vbo The VBO to bind
 	 * @return If the bind was successful, or not.
 	 */
-	bool(* bind)(struct VBO_s*);
+	bool(* bind)(const VBO* const);
 
 	/**
 	 * Unbinds the vbo from the array buffer.
 	 *
-	 * @param self The pointer to the instance of the vbo.
+	 * @param vbo The VBO to unbind
 	 * @return If the unbind was successful, or not. Normally, false means it wasn't bound.
 	 */
-	bool(* unbind)(struct VBO_s*);
+	bool(* unbind)(const VBO* const);
 
 	/**
 	 * Creates or changes the data that the VBO references.
 	 *
-	 * @param self The pointer to the instance of the vbo.
+	 * @param vbo The VBO to alter.
 	 * @param data A pointer to the data to bind.
 	 * @param size The size in bytes of the data.
 	 * @param usage The OpenGL usage hint (GL_STATIC_DRAW eg.)
 	 * @return Whether the data was set or not.
 	 */
-	bool(* setData)(struct VBO_s*, void*, GLsizeiptr, GLenum);
+	bool(* setData)(const VBO* const, void*, GLsizeiptr, GLenum);
 
 	/**
 	 * Substitutes part of the data that the VBO references with the given data/
 	 *
-	 * @param self The pointer to the instance of the vbo.
+	 * @param vbo The VBO to alter.
 	 * @param data A pointer to the data to bind.
 	 * @param size The size in bytes to add from the data.
 	 * @param offset The offset into the VBO's data to start writing at, in bytes.
 	 * @return Whether the data was substituted or not.
 	 */
-	bool(* subData)(struct VBO_s*, void*, GLsizeiptr, GLintptr);
+	bool(* subData)(const VBO* const, void*, GLsizeiptr, GLintptr);
+
+
+	/**
+	 * Sets the number of vertices and the number of elements per vertex for the VBO.
+	 *
+	 * @param vbo The VBO to alter.
+	 * @param vertCount The number of vertices the VBO represents.
+	 * @param countPerVert The number of elements that represents a vertex.
+	 */
+	void(* setRenderInfo)(VBO* const, uint32_t, uint32_t);
+
+
+	/**
+	 * Renders the given set of VBOs using the fixed function pipeline.
+	 * Any VBO can be nulled and excluded, though it wouldn't make much sense to exclude the verticies.
+	 *
+	 * @param verts The vertices to render.
+	 * @param norms The normals of each vertex.
+	 * @param colours The colour of each vertex.
+	 * @param texCoords The texture coords of each vertex.
+	 *
+	 * @return Whether any of the bindings failed and caused the object not to be rendered.
+	 */
+	bool(* draw)(const VBO* const, const VBO* const, const VBO* const, const VBO* const);
 
 	/**
 	 * Frees the buffer from both the Computer's and the GPU's memory.
 	 * @par
 	 */
-	void(* delete)(struct VBO_s* self);
+	void(* delete)(VBO* const);
 };
 
 /**
