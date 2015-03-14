@@ -46,6 +46,32 @@ static GLuint shaderFromFile(GLenum type, const char *const filename) {
     return shaderObject;
 }
 
+static GLuint linkProgram(int numShaders, const DynamicArray *const shaderList) {
+    GLuint      programObject = glCreateProgram();
+
+
+    // Attach shaders 
+    for (int i = 0; i < shaderList->size; ++i)
+    {
+        GLuint *shader = (GLuint *) shaderList->get(shaderList, i);
+        glAttachShader(programObject, *shader);
+    }
+
+    // Link
+    glLinkProgram(programObject);
+
+    // Clean up
+    for (int i = 0; i < shaderList->size; ++i)
+    {
+        GLuint *shader = (GLuint *) shaderList->get(shaderList, i);
+
+        glDetachShader(programObject, *shader);
+        glDeleteShader(*shader);
+    }
+
+    return programObject;
+}
+
 static GLuint compileShader(GLenum shaderType, GLubyte **shaderData) {
     GLuint shader = 0;
     
@@ -57,4 +83,4 @@ static GLuint compileShader(GLenum shaderType, GLubyte **shaderData) {
     return shader;
 }
 
-const ShaderLoader shaderLoader = {shaderFromFile};
+const ShaderLoader shaderLoader = {shaderFromFile, linkProgram};
