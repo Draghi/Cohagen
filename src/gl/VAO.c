@@ -7,19 +7,25 @@ static VAO* boundBuffer = NULL;
 /////////////////
 // VAO Manager //
 /////////////////
+/**
+ * Creates a new VAO.
+ * @return A new VAO
+ */
 static VAO* newVAO() {
 	VAO* vao = malloc(sizeof(VAO));
 
 	glGenVertexArrays(1, &(vao->id));
 	vao->numVbo=0;
+	vao->primaryVBO = -1;
 	newDynamicArray((vao->vbos), 0, sizeof(void*));
 
 	return vao;
 }
+
 /**
  * Binds the vao.
  *
- * @param self The pointer to the instance of the vao.
+ * @param vao The vao to bind.
  * @return If the bind was successful, or not.
  */
 static bool bind(VAO* vao) {
@@ -36,7 +42,7 @@ static bool bind(VAO* vao) {
 /**
  * Unbinds the vao.
  *
- * @param self The pointer to the instance of the cao.
+ * @param self The vao to bind.
  * @return If the unbind was successful, or not. Normally, false means it wasn't bound in the first place.
  */
 static bool unbind(VAO* vao) {
@@ -59,10 +65,10 @@ static bool unbind(VAO* vao) {
  * @param countPerVertex The number of elements in the VBO per vertex.
  * @return The index of the VBO in the VAO
  */
-static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType, uint32_t countPerVertex) {
+static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 	if (vbo!=NULL) {
 		if ((bind(vao)) && (vboManager.bind(vbo))) {
-			glVertexAttribPointer(vbo->id, countPerVertex, dataType, false, 0, 0);
+			glVertexAttribPointer(vbo->id, vbo->countPerVert, dataType, GL_FALSE, vbo->stride, vbo->pointer);
 
 			vao->vbos->append(vao->vbos, vbo);
 	        (vao->numVbo)++;
@@ -78,26 +84,40 @@ static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType, uint32_t countPerV
 }
 
 /**
- * Creates and attaches a VBO to the given vao and returns the index of the VBO in the VAO.
- *
- * @param vao The VAO to attach to.
- * @param vbo The VBO to attach to the VAO.
- * @param data The data to fill the VBO with
- * @param size The number of bytes of data to fill the VBO with.
- * @param usageType The OpenGL usage type hint.
- * @param dataType The type of data that's in the VBO.
- * @param countPerVertex The number of elements in the VBO per vertex.
- * @return The index of the VBO in the VAO
+ * Sets the primary vbo that the vao uses for render information.
+ * AKA the number of vertices to draw.
+ * @param vao The vao to modify.
+ * @param id The id of the vbo to use.
  */
-static int32_t attachNewVBO(VAO* vao, void* data, GLsizeiptr size, GLenum usageType,  GLenum dataType, uint32_t countPerVertex) {
-	VBO* vbo = vboManager.newVBO();
-	vboManager.setData(vbo, data, size, usageType);
+static void setPrimaryVBO(VAO* vao, int32_t id) {
+	vao->primaryVBO = id;
+}
 
-	int32_t res = attachVBO(vao, vbo, dataType, countPerVertex);
-	if (res<0)
-		vboManager.delete(vbo);
+/**
+ * Returns the VBO at the given ID from the VAO.
+ * @param vao The vao to fetch the vbo from.
+ * @param id The id of the VBO to return.
+ * @return The VBO at the given ID.
+ */
+static VBO* getVBO(VAO* vao, int32_t id) {
+	return (VBO*) vao->vbos->get(vao->vbos, id);
+}
 
-	return res;
+/**
+ * Renders the given vao.
+ * @param vao
+ * @return Whether or not it was rendered.
+ */
+static bool draw(VAO* vao) {
+	if (bind(vao)) {
+		if (vao->primaryVBO>=0) {
+			VBO* renderInfo = (VBO*) vao->vbos->get(vao->vbos, vao->primaryVBO);
+			glDrawArrays(GL_TRIANGLES, 0, renderInfo->vertCount);
+			return true;
+		}
+	}
+	unbind(vao);
+	return false;
 }
 
 /**
@@ -115,4 +135,4 @@ static void delete(VAO* vao) {
 	free(vao->vbos);
 }
 
-const VAOManager vaoManager = {newVAO, bind, unbind, attachVBO, attachNewVBO, delete};
+const VAOManager vaoManager = {newVAO, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};

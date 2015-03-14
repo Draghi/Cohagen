@@ -230,7 +230,7 @@ static void setupVBOs() {
 
     //Upload the data to the gpu
     vboManager.setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
-    vboManager.setRenderInfo(vbo, sizeof(dat)/(sizeof(float)*3), 3);
+    vboManager.setRenderInfo(vbo, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
 
     vboc = vboManager.newVBO();
     //Just add 0.5 to all values in dat and we'l get a nice smooth gradient on our cube.
@@ -241,7 +241,7 @@ static void setupVBOs() {
 
     //Upload the data to the GPU
     vboManager.setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
-    vboManager.setRenderInfo(vboc, sizeof(dat)/(sizeof(float)*3), 3);
+    vboManager.setRenderInfo(vboc, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
 }
 
 /** Called to run the teapot/cube example, must be called after display init */

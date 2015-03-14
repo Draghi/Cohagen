@@ -12,8 +12,10 @@ struct VBO_s {
 	 * The OpenGL id of the VBO.
 	 */
 	GLenum id;
-	uint32_t vertCount;
-	uint32_t countPerVert;
+	GLint vertCount;
+	GLint countPerVert;
+	GLint stride;
+	GLvoid *pointer;
 };
 
 /**
@@ -77,7 +79,7 @@ struct VBOManager_s {
 	 * @param vertCount The number of vertices the VBO represents.
 	 * @param countPerVert The number of elements that represents a vertex.
 	 */
-	void(* setRenderInfo)(VBO* const, uint32_t, uint32_t);
+	void(* setRenderInfo)(VBO* const, GLint, GLint, GLint, GLvoid*);
 
 
 	/**

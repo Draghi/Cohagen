@@ -61,6 +61,10 @@ static VBO* newVBO(){
 	VBO* vbo = malloc(sizeof(VBO));
 
 	glGenBuffers(1, (&vbo->id));
+	vbo->countPerVert = 0;
+	vbo->pointer = NULL;
+	vbo->stride = 0;
+	vbo->vertCount = 0;
 
 	return vbo;
 }
@@ -145,9 +149,11 @@ static bool subData(const VBO* const vbo, GLvoid* data, GLsizeiptr size, GLintpt
  * @param vertCount The number of vertices the VBO represents.
  * @param countPerVert The number of elements that represents a vertex.
  */
-static void setRenderInfo(VBO* const vbo, uint32_t vertCount, uint32_t countPerVert) {
+static void setRenderInfo(VBO* const vbo, GLint vertCount, GLint countPerVert, GLint stride, GLvoid *pointer) {
 	vbo->vertCount=vertCount;
 	vbo->countPerVert=countPerVert;
+	vbo->stride = stride;
+	vbo->pointer = pointer;
 }
 
 /**
