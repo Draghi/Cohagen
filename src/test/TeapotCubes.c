@@ -36,19 +36,6 @@ static void setCamera() {
  	glTranslatef(0.0, -2.0, 0.0);
 }
 
-/** Binds the vbos for rendering */
-static void prepareCubeVBOs() {
-	/*//Setup the vertex VBO
-	glEnableClientState(GL_VERTEX_ARRAY);
-	vboManager.bind(vbo);
-	glVertexPointer(3, GL_FLOAT, 0, 0);
-
-	//Setup the colour vbo
-	glEnableClientState(GL_COLOR_ARRAY);
-	vboManager.bind(vboc);
-	glColorPointer(3, GL_FLOAT, 0, 0);*/
-}
-
 /**
  * Renders a spinning textured teapot of the given size.
  * @param size The size of the teapot to render.
@@ -128,14 +115,13 @@ static void render() {
 	glPushMatrix();
 		//Set the rotations for the scene camera
 		setCamera();
-		//Prepare the cube VBOs for rendering
-		prepareCubeVBOs();
 
 		//Render an 80 by 80 cube grid
 		renderCubeGrid(80);
 		//Render a textured teapot and wire teapot at the same place.
 		renderTexturedTeapot(5);
 		renderWireTeapot(5);
+
     glPopMatrix();
 }
 
