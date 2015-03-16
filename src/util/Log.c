@@ -3,7 +3,7 @@
 
 #include "Log.h"
 
-int logGLRestart() {
+static int logGLRestart() {
     FILE    *file = fopen(GL_LOG_FILE, "w");
     int    couldOpen = 0;
 
@@ -22,7 +22,7 @@ int logGLRestart() {
     return couldOpen;
 }
 
-int logGL(const char *message, ...) {
+static int logGL(const char *message, ...) {
     va_list     argptr;
     FILE        *file = fopen(GL_LOG_FILE, "a");
     int         couldOpen = 0;
@@ -42,7 +42,7 @@ int logGL(const char *message, ...) {
     return couldOpen;
 }
 
-int logGLError(const char* message, ...) {
+static int logGLError(const char* message, ...) {
     va_list     argptr;
     FILE*       file = fopen(GL_LOG_FILE, "a");
     int         couldOpen = 0;  
