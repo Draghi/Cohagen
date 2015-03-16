@@ -10,7 +10,7 @@
 
 #include <stdbool.h>
 
-bool checkGLError();
+bool glCheckError();
 
 
 #endif /* GL_GLDEBUGUTIL_H_ */
