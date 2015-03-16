@@ -9,9 +9,10 @@
 #include "lib/glew/glew.h"
 #include <GL/freeglut.h>
 
-////////////////////
+/////////////////////
 // Debugging Tools //
-////////////////////
+/////////////////////
+#include "util/Log.h"
 #include "debug/GLDebugUtil.h"
 
 //////////////////
@@ -26,6 +27,6 @@
 #include "gl/Textures.h"
 #include "gl/VBO.h"
 #include "gl/VAO.h"
-//#include "gl/Shader.h"
+#include "util/Shader.h"
 
 #endif /* SRC_OGL_H_ */
