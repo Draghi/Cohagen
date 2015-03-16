@@ -22,7 +22,7 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
 		glDisableClientState(clientState);
 	} else {
 		glEnableClientState(clientState);
-		bool flag = vboManager.bind(vbo);
+		bool flag = glVBO.bind(vbo);
 
 		if (!flag)
 			return false;
@@ -45,7 +45,7 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
 				break;
 		}
 
-		vboManager.unbind(vbo);
+		glVBO.unbind(vbo);
 	}
 	return true;
 }
@@ -57,7 +57,7 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
  * Creates a new VBO.
  * @return A pointer to the new VBO.
  */
-static VBO* newVBO(){
+static VBO* new(){
 	VBO* vbo = malloc(sizeof(VBO));
 
 	glGenBuffers(1, (&vbo->id));
@@ -215,4 +215,4 @@ static void delete(VBO* const vbo) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const VBOManager vboManager = {newVBO, bind, unbind, setData, subData, setRenderInfo, draw, delete};
+const VBOManager glVBO = {new, bind, unbind, setData, subData, setRenderInfo, draw, delete};

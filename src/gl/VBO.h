@@ -31,7 +31,7 @@ struct VBOManager_s {
 	 * Creates a new VBO.
 	 * @return A pointer to the new VBO.
 	 */
-	VBO*(* newVBO)();
+	VBO*(* new)();
 
 	/**
 	 * Binds the vbo to the array buffer.
@@ -110,6 +110,6 @@ typedef struct VBOManager_s VBOManager;
 /**
  * Expose the Vbo.c's VBOManager object.
  */
-extern const VBOManager vboManager;
+extern const VBOManager glVBO;
 
 #endif /* SRC_GL_VBO_H_ */

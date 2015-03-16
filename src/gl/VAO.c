@@ -11,7 +11,7 @@ static VAO* boundBuffer = NULL;
  * Creates a new VAO.
  * @return A new VAO
  */
-static VAO* newVAO() {
+static VAO* new() {
 	VAO* vao = malloc(sizeof(VAO));
 
 	glGenVertexArrays(1, &(vao->id));
@@ -67,7 +67,7 @@ static bool unbind(VAO* vao) {
  */
 static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 	if (vbo!=NULL) {
-		if ((bind(vao)) && (vboManager.bind(vbo))) {
+		if ((bind(vao)) && (glVBO.bind(vbo))) {
 			glVertexAttribPointer(vbo->id, vbo->countPerVert, dataType, GL_FALSE, vbo->stride, vbo->pointer);
 
 			vao->vbos->append(vao->vbos, vbo);
@@ -77,7 +77,7 @@ static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 		}
 
 		unbind(vao);
-		vboManager.unbind(vbo);
+		glVBO.unbind(vbo);
 	}
 
 	return -1;
@@ -128,11 +128,11 @@ static void delete(VAO* vao) {
 	glDeleteVertexArrays(1, &(vao->id));
 
 	for(int i = 0; i<vao->numVbo; i++) {
-		vboManager.delete((VBO *)vao->vbos->get(vao->vbos, i));
+		glVBO.delete((VBO *)vao->vbos->get(vao->vbos, i));
 	}
 
 	deleteDynamicArray(vao->vbos);
 	free(vao->vbos);
 }
 
-const VAOManager vaoManager = {newVAO, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};
+const VAOManager glVAO = {new, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};

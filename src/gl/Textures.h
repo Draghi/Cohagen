@@ -1,6 +1,9 @@
 #ifndef COH_TEXTURES_H
 #define COH_TEXTURES_H
 
+#define TEX_GEN_BLANK 0x0001
+#define TEX_GEN_NOISE 0x0002
+
 #include<stdint.h>
 #include<stdbool.h>
 
@@ -33,7 +36,7 @@ struct TextureManager_s {
 	 * Creates a new Texture object that represents an OpenGL texture.
 	 * @return A working Texture object.
 	 */
-	Texture*(* newTexture)();
+	Texture*(* new)();
 
 	/**
 	 * Creates a blank RGBA texture (all bytes set to 0)
@@ -43,17 +46,7 @@ struct TextureManager_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return A new texture object describing the created Blank OpenGL texture.
 	 */
-	Texture*(* newBlankRGBATexture)(const uint32_t, const uint32_t, const GLint, const GLint);
-
-	/**
-	 * Creates a noisy RGBA texture (all bytes set to random values)
-	 * @param width The width of the new texture.
-	 * @param height The height of the new texture.
-	 * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
-	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
-	 * @return A new texture object describing the created Blank OpenGL texture.
-	 */
-	Texture*(* newNoiseRGBATexture)(const uint32_t, uint32_t, const GLint, const GLint);
+	bool(* genData)(Texture *const, const uint32_t, const uint32_t, const uint32_t, const GLenum, const GLint, const GLint, const GLint);
 
 	/**
 	 * Attempts to bind the texture to the given texture unit slot.
@@ -96,6 +89,6 @@ typedef struct TextureManager_s TextureManager;
 /**
  * Expose the Textures.c's textureManager object.
  */
-extern const TextureManager textureManager;
+extern const TextureManager glTex;
 
 #endif /* SRC_GL_TEXTURES_H_ */

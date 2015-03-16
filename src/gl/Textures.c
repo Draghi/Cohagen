@@ -4,6 +4,7 @@
 
 #include<stdlib.h>
 #include<stdbool.h>
+#include<math.h>
 
 #define MAX_TEXTURE_SLOTS 16
 
@@ -115,11 +116,16 @@ static bool setData(Texture *const tex, const GLubyte *const data, const GLint i
 	}
 }
 
+static void delete(Texture* const tex) {
+	glDeleteTextures(1, &(tex->id));
+	free(tex);
+}
+
 /**
  * Creates a new Texture object that represents an OpenGL texture.
  * @return A working Texture object.
  */
-static Texture* createTexture() {
+static Texture* new() {
 	Texture* tex = malloc(sizeof(Texture));
 
 	glGenTextures(1, &(tex->id));
@@ -138,53 +144,18 @@ static Texture* createTexture() {
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return A new texture object describing the created Blank OpenGL texture.
  */
-static Texture* createBlankRGBATexture(const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
-	Texture* tex = createTexture();
-
-	uint32_t size = width * height * sizeof(GLubyte) * 4;
+static bool genData(Texture *const tex, const uint32_t genType, const uint32_t width, const uint32_t height, const GLenum internalFormat, const GLint format, const GLint minFilter, const GLint magFilter) {
+	uint32_t size = width * height * glGetPixelSize(internalFormat);
 	GLubyte data[size];
 
 	for(uint32_t i = 0; i < size; i++) {
-		data[i] = 0;
+		if (genType==TEX_GEN_BLANK)
+			data[i] = 0;
+		else if (genType==TEX_GEN_NOISE)
+			data[i] = rand() % 256;
 	}
 
-	if (setData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
-		return tex;
-	} else {
-		free(tex);
-		return NULL;
-	}
-}
-
-/**
- * Creates a noisy RGBA texture (all bytes set to random values)
- * @param width The width of the new texture.
- * @param height The height of the new texture.
- * @param minFilter The OpenGL minification filter to use (GL_NEAREST eg.)
- * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
- * @return A new texture object describing the created Blank OpenGL texture.
- */
-static Texture* createNoiseRGBATexture(const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
-	Texture* tex = createTexture();
-
-	uint32_t size = width * height * sizeof(GLubyte) * 4;
-	GLubyte data[size];
-
-	for(uint32_t i = 0; i < size; i++) {
-		data[i] = rand() % 256;
-	}
-
-	if (setData(tex, data, GL_RGBA8, GL_RGBA, width, height, minFilter, magFilter)) {
-		return tex;
-	} else {
-		free(tex);
-		return NULL;
-	}
-}
-
-static void delete(Texture* const tex) {
-	glDeleteTextures(1, &(tex->id));
-	free(tex);
+	return setData(tex, data, internalFormat, format, width, height, minFilter, magFilter);
 }
 
 ////////////////////////
@@ -195,5 +166,5 @@ static void delete(Texture* const tex) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const TextureManager textureManager = {createTexture, createBlankRGBATexture, createNoiseRGBATexture, bind, unbind, setData, delete};
+const TextureManager glTex = {new, genData, bind, unbind, setData, delete};
 

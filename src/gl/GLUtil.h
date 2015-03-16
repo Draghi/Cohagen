@@ -15,6 +15,7 @@
  *
  * @param windingDir The direction that the polygon winds in (GL_CW/ GL_CCE)
  */
-void glSetBackfaceCulling(GLenum windingDir);
+void glSetBackfaceCulling(const GLenum windingDir);
+uint32_t glGetPixelSize(const GLenum type);
 
 #endif /* GL_GLUTIL_H_ */

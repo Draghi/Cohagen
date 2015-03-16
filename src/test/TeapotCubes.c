@@ -60,7 +60,7 @@ static void renderTexturedTeapot(int size) {
 
 	glPushMatrix();
 		//set the texture to use the first texture unit
-		textureManager.bind(texture, 0);
+		glTex.bind(texture, 0);
 
 	 	//Move it above the cubes
 		glTranslatef(0, 5.0, 0);
@@ -71,7 +71,7 @@ static void renderTexturedTeapot(int size) {
 		glutSolidTeapot(size);
 
 		//reset the texture unit
-		textureManager.unbind(texture);
+		glTex.unbind(texture);
 	glPopMatrix();
 
 	//Re-enable backface culling and enable texturing
@@ -98,7 +98,7 @@ static void renderCubeGrid(int size) {
 				 glRotatef(-rot, 1.0, 0.0, 0.0);
 				 glRotatef(rot/10, 0.0, 0.0, 1.0);
 
-				 vboManager.draw(vbo, NULL, vboc, NULL);
+				 glVBO.draw(vbo, NULL, vboc, NULL);
 			 glPopMatrix();
 		 }
 	 }
@@ -202,12 +202,13 @@ static void setupCallbacks() {
 /** Prepares textures fot the example */
 static void setupTextures() {
 	//Create a texture full of random rgba values for our solid teapot.
-    texture = textureManager.newNoiseRGBATexture(128, 96, GL_NEAREST, GL_NEAREST);
+	texture = glTex.new();
+	glTex.genData(texture, TEX_GEN_NOISE, 128, 96, GL_RGBA8, GL_RGBA, GL_NEAREST, GL_NEAREST);
 }
 
 /** Prepares VBOs for the example */
 static void setupVBOs() {
-    vbo = vboManager.newVBO();
+    vbo = glVBO.new();
 
     //The data for a cube with side lengths of 1 unit and the origin at it's center
     float dat[] = { 0.5f, 0.5f,-0.5f,   0.5f,-0.5f,-0.5f,  -0.5f,-0.5f,-0.5f,
@@ -229,10 +230,10 @@ static void setupVBOs() {
 					0.5f, 0.5f, 0.5f,   0.5f,-0.5f, 0.5f,   0.5f,-0.5f,-0.5f};
 
     //Upload the data to the gpu
-    vboManager.setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
-    vboManager.setRenderInfo(vbo, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
+    glVBO.setData(vbo, dat, sizeof(dat), GL_STATIC_DRAW);
+    glVBO.setRenderInfo(vbo, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
 
-    vboc = vboManager.newVBO();
+    vboc = glVBO.new();
     //Just add 0.5 to all values in dat and we'l get a nice smooth gradient on our cube.
     float dat2[108];
     for(int i = 0; i<108; i++) {
@@ -240,8 +241,8 @@ static void setupVBOs() {
     }
 
     //Upload the data to the GPU
-    vboManager.setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
-    vboManager.setRenderInfo(vboc, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
+    glVBO.setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
+    glVBO.setRenderInfo(vboc, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
 }
 
 /** Called to run the teapot/cube example, must be called after display init */
