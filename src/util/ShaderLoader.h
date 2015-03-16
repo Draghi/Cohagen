@@ -6,6 +6,7 @@
 #include <GL/glew.h>
 
 #include "DynamicArray.h"
+#include "Shader.h"
 
 /**
  *  Singleton for loading shader source code.
@@ -28,6 +29,13 @@ typedef struct ShaderLoader_s {
      *  @returns            GLuint, linked shader program. 0 in case of error.
      */
     GLuint (*linkProgram)(int, const DynamicArray *const);
+
+    /**
+     *  Write detailed information about a shader to the log.
+     *
+     *  @param  shader  const pointer to const Shader to log information about.
+     */
+    void (*logShaderInformation)(const Shader *const shader);
 } ShaderLoader;
 
 extern const ShaderLoader shaderLoader;
