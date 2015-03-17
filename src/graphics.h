@@ -13,7 +13,6 @@
 // Debugging Tools //
 /////////////////////
 #include "util/Log.h"
-#include "debug/GLDebugUtil.h"
 
 //////////////////
 // Helper Utils //

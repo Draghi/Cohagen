@@ -133,6 +133,7 @@ static void delete(VAO* vao) {
 
 	deleteDynamicArray(vao->vbos);
 	free(vao->vbos);
+	free(vao);
 }
 
 const VAOManager glVAO = {new, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};
