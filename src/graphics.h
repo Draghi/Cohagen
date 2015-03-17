@@ -1,12 +1,10 @@
 #ifndef COH_GRAPHICS_H
 #define COH_GRAPHICS_H
 
-#define GLEW_STATIC
-
 /////////////////////////
 // 3rd Party Libraries //
 /////////////////////////
-#include "lib/glew/glew.h"
+#include "lib/opengl/gl_compat_3_0.h"
 #include <GL/freeglut.h>
 
 /////////////////////
@@ -17,8 +15,8 @@
 //////////////////
 // Helper Utils //
 //////////////////
+#include "util/OGLUtil.h"
 #include "glut/Display.h"
-#include "gl/GLUtil.h"
 
 //////////////////////
 // Graphics Classes //

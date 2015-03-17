@@ -1,4 +1,3 @@
-#include"Textures.h"
 #include"../graphics.h"
 
 #include<stdlib.h>
@@ -136,7 +135,7 @@ static bool setData(Texture *const tex, const GLubyte *const data, const GLint i
  * @return A new texture object describing the created Blank OpenGL texture.
  */
 static bool genData(Texture *const tex, const uint32_t genType, const uint32_t width, const uint32_t height, const GLenum internalFormat, const GLint format, const GLint minFilter, const GLint magFilter) {
-	uint32_t size = width * height * glGetPixelSize(internalFormat);
+	uint32_t size = width * height * manOGLUtil.getPixelSize(internalFormat);
 	GLubyte data[size];
 
 	for(uint32_t i = 0; i < size; i++) {
@@ -173,5 +172,5 @@ static void delete(Texture* const tex) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const TextureManager glTex = {new, bind, unbind, genData, setData, delete};
+const TextureManager manTex = {new, bind, unbind, genData, setData, delete};
 

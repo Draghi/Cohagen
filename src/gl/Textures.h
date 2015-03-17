@@ -98,6 +98,6 @@ typedef struct TextureManager_s TextureManager;
 /**
  * Fake object to manage the creation, removal and use of textures.
  */
-extern const TextureManager glTex;
+extern const TextureManager manTex;
 
 #endif /* SRC_GL_TEXTURES_H_ */

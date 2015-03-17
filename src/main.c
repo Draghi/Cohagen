@@ -21,7 +21,7 @@ static void setupDisplay() {
 static void setupOpenGL(){
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_MULTISAMPLE);
-    glSetBackfaceCulling(GL_CCW);
+    manOGLUtil.setBackfaceCulling(GL_CCW);
 }
 
 int main(int argc, char **argv) {
@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 	setupDisplay();
 	setupOpenGL();
 
-	runTeapotCubes();
+	runRenderToTexture();
 
 	return 0;
 }

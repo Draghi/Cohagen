@@ -1,11 +1,12 @@
-#include "Tests.h"
+#include"Tests.h"
+#include"../graphics.h"
+#include"../input.h"
+#include"../gl/FBO.h"
+#include"../gl/RBO.h"
 
-#include "../input.h"
-#include "../graphics.h"
+#include<math.h>
+#include<stdio.h>
 
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
 
 /**The rotation angle of the cubes*/
 static float rot = 0;
@@ -16,12 +17,17 @@ static float camRotY = 0;
 /**The camera's distance from the origin*/
 static float dist = 15.0;
 
-/** The teapot's texture */
-static Texture *texture;
+static Texture* texture;
+
 /** The vbo containing the vertex's for the cubes */
 static VBO* vbo;
 /** The vbo containing the colours for the cubes */
 static VBO* vboc;
+/** The vbo containing the texcoords for the cubes */
+static VBO* vbot;
+
+static RBO* rbo;
+static FBO* fbo;
 
 /** Sets the camera for the scene */
 static void setCamera() {
@@ -32,97 +38,97 @@ static void setCamera() {
 	//rotate the camera about the origin
  	glRotatef(camRotX, 0.0, 0.0, -1.0);
  	glRotatef(camRotY, 0.0, 1.0, 0.0);
- 	//Moves up two more so things look a little nicer.
- 	glTranslatef(0.0, -2.0, 0.0);
-}
-
-/**
- * Renders a spinning textured teapot of the given size.
- * @param size The size of the teapot to render.
- */
-static void renderTexturedTeapot(int size) {
-	//Enable texturing and disable backface culling
-	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_CULL_FACE);
-
-	glPushMatrix();
-		//set the texture to use the first texture unit
-		manTex.bind(texture, 0);
-
-	 	//Move it above the cubes
-		glTranslatef(0, 5.0, 0);
-		//Roate the teapot at a 10th the speed of the cubes
-	 	glRotatef(-rot/10, 0.0, 1.0, 0.0);
-
-		//draw the teapot
-		glutSolidTeapot(size);
-
-		//reset the texture unit
-		manTex.unbind(texture);
-	glPopMatrix();
-
-	//Re-enable backface culling and enable texturing
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_TEXTURE_2D);
 }
 
 /**
  * Renders an x by x grid of spinning cubes, where x is the given size.
  * @param size The size fo the grid to render.
  */
-static void renderCubeGrid(int size) {
+static void renderCubeGrid(int size, VBO* vert, VBO* ind, VBO* colour, VBO* texcoord) {
 	 int i = 0;
 	 int j = 0;
 	 for(i=0; i<size; i++) {
 		 for(j=0; j<size; j++) {
-			 glPushMatrix();
-			 	 //Set the position of the cube
-				 glTranslatef(i*4-(size/2*4-0.5), -2.0, -(j*4-(size/2*4-0.5)));
-				 //Scale it to be size 2
-				 glScalef(2.0f, 2.0f, 2.0f);
-				 //Rotate it around
-				 glRotatef(rot, 0.0, 1.0, 0.0);
-				 glRotatef(-rot, 1.0, 0.0, 0.0);
-				 glRotatef(rot/10, 0.0, 0.0, 1.0);
+				 glPushMatrix();
+					 //Set the position of the cube
+					 glTranslatef(i*4-(size/2*4-0.5), -2.0, -(j*4-(size/2*4-0.5)));
+					 //Scale it to be size 2
+					 glScalef(2.0f, 2.0f, 2.0f);
+					 //Rotate it around
+					 glRotatef(rot, 0.0, 1.0, 0.0);
+					 glRotatef(-rot, 1.0, 0.0, 0.0);
+					 glRotatef(rot/10, 0.0, 0.0, 1.0);
 
-				 manVBO.draw(vbo, NULL, vboc, NULL);
-			 glPopMatrix();
+					 manVBO.draw(vert, NULL, colour, texcoord);
+				 glPopMatrix();
 		 }
 	 }
 }
-/**
- * Renders a spinning wire teapot of the given size.
- * @param size The size of the teapot to render.
- */
-static void renderWireTeapot(int size) {
-	glPushMatrix();
-		//Move the teapot above the cubes
-	 	glTranslatef(0, 5.0, 0);
-	 	//Rotate it at about 1/10th the speed of the cubes
-		glRotatef(-rot/10, 0.0, 1.0, 0.0);
-		//Render the wireframe
-		glutWireTeapot(size);
-	glPopMatrix();
+
+static void renderTeapotGrid(int size) {
+	 int i = 0;
+	 int j = 0;
+	 for(i=0; i<size; i++) {
+		 for(j=0; j<size; j++) {
+				 glPushMatrix();
+					 //Set the position of the cube
+					 glTranslatef(i*4-(size/2*4-0.5), 0.0, -(j*4-(size/2*4-0.5)));
+					 //Scale it to be size 2
+					 glScalef(-1.0f, -1.0f, -1.0f);
+					 //Rotate it around
+					 glRotatef(rot, 0.0, 1.0, 0.0);
+					 glRotatef(-rot, 1.0, 0.0, 0.0);
+					 glRotatef(rot/10, 0.0, 0.0, 1.0);
+
+					 glutSolidTeapot(1.5);
+				 glPopMatrix();
+		 }
+	 }
 }
 
 /** The render loop */
 static void render() {
 	//Clear the screen and reset the draw colour, just incase.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
- 	glColor4f(1.0, 1.0, 1.0, 1.0);
 
+    glViewport(0, 0, texture->width, texture->height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60,texture->width/(float)texture->height,0.1,500);
+    glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	manFBO.bind(fbo);
+		glClearColor(1.0,1.0,1.0,1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glPushMatrix();
+			glRotatef(90, 1.0, 0.0, 0.0);
+ 			glTranslatef(0.0, -10.0, 0.0);
+			//glRotatef(rot, 1.0, 0.0, 0.0);
+ 			glRotatef(rot, 0.0, 1.0, 0.0);
+ 			//glRotatef(rot, 0.0, 0.0, 1.0);
+			renderCubeGrid(20, vbo, NULL, vboc, NULL);
+		glPopMatrix();
+	manFBO.unbind(fbo);
+
+    glViewport(0, 0, display.getWindowWidth(), display.getWindowHeight());
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60,display.getWindowWidth()/(float)display.getWindowHeight(),0.1,500);
+    glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glClearColor(0.0,0.0,0.0,1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glPushMatrix();
-		//Set the rotations for the scene camera
 		setCamera();
 
-		//Render an 80 by 80 cube grid
-		renderCubeGrid(80);
-		//Render a textured teapot and wire teapot at the same place.
-		renderTexturedTeapot(5);
-		renderWireTeapot(5);
-
-    glPopMatrix();
+		glEnable(GL_TEXTURE_2D);
+			manTex.bind(texture, 0);
+			renderTeapotGrid(3);
+			glTranslatef(0.0, 6.0, 0.0);
+			glScalef(5.0, 5.0, 5.0);
+			manVBO.draw(vbo, NULL, NULL, vbot);
+			manTex.unbind(texture);
+		glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
 }
 
 /** The main update loop */
@@ -165,13 +171,8 @@ static void update() {
 /** Called when the window is resized to re-create the matrix/viewport */
 static void onResize(int32_t w, int32_t h) {
 	//set the viewport to occupy the window screen
-    glViewport(0, 0, w, h);
 
 	//Rebuild our fixed function pipline matrix
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60,w/(float)h,0.1,500);
-    glMatrixMode(GL_MODELVIEW);
 }
 
 //Need to be defined here, or we could malloc them in the function bellow.
@@ -189,7 +190,7 @@ static void setupCallbacks() {
 static void setupTextures() {
 	//Create a texture full of random rgba values for our solid teapot.
 	texture = manTex.new();
-	manTex.genData(texture, TEX_GEN_NOISE, 128, 96, GL_RGBA8, GL_RGBA, GL_NEAREST, GL_NEAREST);
+	manTex.genData(texture, TEX_GEN_BLACK, 512, 512, GL_RGBA8, GL_RGBA, GL_NEAREST, GL_NEAREST);
 }
 
 /** Prepares VBOs for the example */
@@ -228,15 +229,52 @@ static void setupVBOs() {
 
     //Upload the data to the GPU
     manVBO.setData(vboc, dat2, sizeof(dat2), GL_STATIC_DRAW);
-    manVBO.setRenderInfo(vboc, sizeof(dat)/(sizeof(float)*3), 3, 0, NULL);
+    manVBO.setRenderInfo(vboc, sizeof(dat2)/(sizeof(float)*3), 3, 0, NULL);
+
+    vbot = manVBO.new();
+
+    float dat3[72] = {0.0f, 0.0f,     0.0f, 1.0f,     1.0f, 1.0f,
+    				  1.0f, 1.0f,     1.0f, 0.0f,     0.0f, 0.0f,
+
+					  0.0f, 1.0f,     1.0f, 1.0f,     1.0f, 0.0f,
+					  1.0f, 0.0f,     0.0f, 0.0f,     0.0f, 1.0f,
+
+					  0.0f, 0.0f,     0.0f, 1.0f,     1.0f, 1.0f,
+					  1.0f, 1.0f,     1.0f, 0.0f,     0.0f, 0.0f,
+
+					  1.0f, 0.0f,     0.0f, 0.0f,     0.0f, 1.0f,
+					  0.0f, 1.0f,     1.0f, 1.0f,     1.0f, 0.0f,
+
+					  1.0f, 0.0f,     0.0f, 0.0f,     0.0f, 1.0f,
+					  0.0f, 1.0f,     1.0f, 1.0f,     1.0f, 0.0f,
+
+					  1.0f, 1.0f,     1.0f, 0.0f,     0.0f, 0.0f,
+					  0.0f, 0.0f,     0.0f, 1.0f,     1.0f, 1.0f};
+
+    //Upload the data to the gpu
+    manVBO.setData(vbot, dat3, sizeof(dat3), GL_STATIC_DRAW);
+    manVBO.setRenderInfo(vbot, sizeof(dat3)/(sizeof(float)*2), 2, 0, NULL);
 }
 
-/** Called to run the teapot/cube example, must be called after display init */
-void runTeapotCubes() {
+static void setupRBOs() {
+	rbo = manRBO.new();
+	manRBO.setStorage(rbo, GL_DEPTH_COMPONENT32, texture->width, texture->height);
+}
+
+static void setupFBOs() {
+	fbo = manFBO.new();
+	manFBO.attachRBO(fbo, rbo, GL_DEPTH_ATTACHMENT);
+	manFBO.attachTexture(fbo, texture, GL_COLOR_ATTACHMENT0);
+}
+
+void runRenderToTexture() {
 	setupCallbacks();
 	setupTextures();
 	setupVBOs();
+	setupRBOs();
+	setupFBOs();
 
 	//Fire up glut!
     glutMainLoop();
 }
+

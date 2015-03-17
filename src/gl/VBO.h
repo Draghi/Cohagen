@@ -110,6 +110,6 @@ typedef struct VBOManager_s VBOManager;
 /**
  * Expose the Vbo.c's VBOManager object.
  */
-extern const VBOManager glVBO;
+extern const VBOManager manVBO;
 
 #endif /* SRC_GL_VBO_H_ */

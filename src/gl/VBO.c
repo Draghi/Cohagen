@@ -22,7 +22,7 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
 		glDisableClientState(clientState);
 	} else {
 		glEnableClientState(clientState);
-		bool flag = glVBO.bind(vbo);
+		bool flag = manVBO.bind(vbo);
 
 		if (!flag)
 			return false;
@@ -45,7 +45,7 @@ static bool prepare(const VBO* const vbo, GLenum clientState) {
 				break;
 		}
 
-		glVBO.unbind(vbo);
+		manVBO.unbind(vbo);
 	}
 	return true;
 }
@@ -215,4 +215,4 @@ static void delete(VBO* const vbo) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const VBOManager glVBO = {new, bind, unbind, setData, subData, setRenderInfo, draw, delete};
+const VBOManager manVBO = {new, bind, unbind, setData, subData, setRenderInfo, draw, delete};

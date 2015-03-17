@@ -80,6 +80,6 @@ struct VAOManager_s {
 
 typedef struct VAOManager_s VAOManager;
 
-extern const VAOManager glVAO;
+extern const VAOManager manVAO;
 
 #endif /* SRC_GL_VAO_H_ */

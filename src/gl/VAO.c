@@ -17,7 +17,7 @@ static VAO* new() {
 	glGenVertexArrays(1, &(vao->id));
 	vao->numVbo=0;
 	vao->primaryVBO = -1;
-	newDynamicArray((vao->vbos), 0, sizeof(void*));
+	newDynamicArray((vao->vbos), 1, sizeof(void*));
 
 	return vao;
 }
@@ -67,7 +67,7 @@ static bool unbind(VAO* vao) {
  */
 static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 	if (vbo!=NULL) {
-		if ((bind(vao)) && (glVBO.bind(vbo))) {
+		if ((bind(vao)) && (manVBO.bind(vbo))) {
 			glVertexAttribPointer(vbo->id, vbo->countPerVert, dataType, GL_FALSE, vbo->stride, vbo->pointer);
 
 			vao->vbos->append(vao->vbos, vbo);
@@ -77,7 +77,7 @@ static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 		}
 
 		unbind(vao);
-		glVBO.unbind(vbo);
+		manVBO.unbind(vbo);
 	}
 
 	return -1;
@@ -128,7 +128,7 @@ static void delete(VAO* vao) {
 	glDeleteVertexArrays(1, &(vao->id));
 
 	for(int i = 0; i<vao->numVbo; i++) {
-		glVBO.delete((VBO *)vao->vbos->get(vao->vbos, i));
+		manVBO.delete((VBO *)vao->vbos->get(vao->vbos, i));
 	}
 
 	deleteDynamicArray(vao->vbos);
@@ -136,4 +136,4 @@ static void delete(VAO* vao) {
 	free(vao);
 }
 
-const VAOManager glVAO = {new, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};
+const VAOManager manVAO = {new, bind, unbind, attachVBO, setPrimaryVBO, getVBO, draw, delete};
