@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <GL/glew.h>
+#include "../lib/opengl/gl_compat_3_0.h"
 
 #include "DynamicFloatArray.h"
 #include "DynamicIntArray.h"
