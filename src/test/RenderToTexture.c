@@ -168,29 +168,20 @@ static void update() {
 	display.setWindowTitle(title);
 }
 
-/** Called when the window is resized to re-create the matrix/viewport */
-static void onResize(int32_t w, int32_t h) {
-	//set the viewport to occupy the window screen
-
-	//Rebuild our fixed function pipline matrix
-}
-
 //Need to be defined here, or we could malloc them in the function bellow.
 static GlutMainCallbacks mcb = {update, render};
-static GlutWindowCallbacks wcb = {onResize};
 
 /**Prepares display/glut callbacks */
 static void setupCallbacks() {
 	//Setup the callbacks for the unit test
 	display.setMainCallbacks(&mcb);
-	display.setWindowCallbacks(&wcb);
 }
 
 /** Prepares textures fot the example */
 static void setupTextures() {
 	//Create a texture full of random rgba values for our solid teapot.
 	texture = manTex.new();
-	manTex.genData(texture, TEX_GEN_BLACK, 512, 512, GL_RGBA8, GL_RGBA, GL_NEAREST, GL_NEAREST);
+	manTex.genData(texture, TEX_GEN_BLACK, 256, 256, GL_RGB8, GL_RGB, GL_NEAREST, GL_NEAREST);
 }
 
 /** Prepares VBOs for the example */
