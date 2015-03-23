@@ -5,16 +5,18 @@
 #include "Vec3.h"
 
 typedef struct Vec4_s {
+    scalar x, y, z, w;
+} Vec4;
+
+typedef struct Vec4Manager_s {
     /**
      *  Returns the magnitude of the given Vec4.
      *
      *  @param vec  const pointer to const Vec4, given vector.
      *  @return     scalar representing the magnitude of the Vec4.
      */
-    scalar (*magnitude)(const struct Vec4_s *const);
-
-    scalar x, y, z, w;
-} Vec4;
+     scalar (*magnitude)(const struct Vec4_s *const);
+} Vec4Manager;
 
 Vec4    createVec4(scalar x, scalar y, scalar z, scalar w);
 Vec4    createVec4Vec3(const Vec3 *const vec3, scalar w);
@@ -29,3 +31,4 @@ scalar  dotVec4(const Vec4 *const v1, const Vec4 *const v2);
 Vec4    normalizeVec4(const Vec4 *const vec);
 
 #endif
+

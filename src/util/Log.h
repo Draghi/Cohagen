@@ -3,6 +3,8 @@
 
 #include <stdarg.h>
 
+#include "Shader.h"
+
 #define GL_LOG_FILE "./gl.log"
 
 typedef struct Log_s {
@@ -31,8 +33,27 @@ typedef struct Log_s {
      *  @returns            int, 0 if write is unsuccessfult, 1 if it is successful.
      */
     int (*logGLError)(const char *message, ...);
+
+    /**
+     *  Log any compilation errors with the given shader.
+     *
+     *  @param  shader  GLuint, GL handle to shader to check.
+     */
+    void (*logCompilationErrors)(GLuint shader);
+
+    /**
+     *  Log any linker errors with the given program.
+     *
+     *  @param  program     GLuint, GL handle to program to check.
+     */
+    void (*logLinkerErrors)(GLuint program);
+
+    /**
+     *  Log detailed information about the given shader object.
+     */
+    void (*logShaderInformation)(const Shader *const shader);
 } Log;
 
-extern const Log glLog;
+extern const Log cohLog;
 
 #endif

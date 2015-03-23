@@ -1,26 +1,15 @@
 #ifndef COH_SHADER_H
 #define COH_SHADER_H
 
-#include <stdarg.h>
-
 #include "../lib/ogl.h"
 
+#include <stdarg.h>
+
+
 /**
- *  Class to manage the use of shader programs.
+ *  Shader object.
  */
 typedef struct Shader_s {
-    /**
-     *  Bind the shader program.
-     *
-     *  @params     shader  pointer to Shader object to bind.
-     */
-    void (*bind)(const struct Shader_s *const);
-
-    /**
-     *  Unbind the shader program.
-     */
-    void (*unbind)();
-
     /**
      *  GL linked program object.
      */
@@ -28,12 +17,32 @@ typedef struct Shader_s {
 } Shader;
 
 /**
- *  Link given GL shaders and use them to fill out the given Shader object.
- *
- *  @params     shader      Shader object to fill out.
- *  @params     numShaders  Number of shaders to compile into Shader object.
- *  @params     ...         Variable number of GLuint, compiled shader objects to be linked.
+ *  Class to manage the use of Shader objects.
  */
-void createShader(Shader *const shader, int numShaders, ...);
+typedef struct ShaderManager_s {
+    /**
+     *  Bind the shader program.
+     *
+     *  @params     shader  pointer to Shader object to bind.
+     */
+    void (*bind)(const Shader *const);
+
+    /**
+     *  Unbind the shader program.
+     */
+    void (*unbind)();
+
+    /**
+     *  Returns a pointer to a Shader object, constructed from all shaders
+     *  matching the given baseFileName at the given path.
+     *
+     *  @param  path            const pointer to const char, path to shaders.
+     *  @param  baseFileName    const pointer to const char, base file name of shaders.
+     *  @returns                pointer to Shader object.
+     */
+    Shader *(*newFromGroup)(const char *const path, const char *const baseFileName);
+} ShaderManager;
+
+extern const ShaderManager shaderManager;
 
 #endif
