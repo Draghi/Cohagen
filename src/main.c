@@ -1,4 +1,5 @@
 
+#include "render/MatrixManager.h"
 #include "lib/ogl.h"
 #include "glut/Display.h"
 #include "util/OGLUtil.h"
@@ -8,6 +9,7 @@
 #include <GL/freeglut.h>
 
 static void setupLibraries(int argc, char **argv) {
+	manMat.init();
 	glutInit(&argc, argv);
 }
 
