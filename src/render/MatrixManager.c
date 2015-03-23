@@ -92,10 +92,12 @@ static Mat4* peekStack(uint32_t mode) {
  * @param mat The matrix to push onto the current stack.
  */
 static void pushMat4(Mat4* mat) {
-	Stack* stack = stacks[matMode];
-	Mat4* matClone = malloc(sizeof(Mat4));
-	*matClone = createMat4Mat4(peek());
-	manStack.push(stack, matClone);
+	if (mat!=NULL) {
+		Stack* stack = stacks[matMode];
+		Mat4* matClone = malloc(sizeof(Mat4));
+		*matClone = createMat4Mat4(peek());
+		manStack.push(stack, matClone);
+	}
 }
 
 /**
@@ -256,8 +258,10 @@ static void scale(Vec3 scale) {
  * @param matrix The matrix to multiply with.
  */
 static void mult(Mat4* matrix) {
-	//Apply the matrix transformation to the matrix
-	(*peek()) = mulMat4Mat4(peek(), matrix);
+	if (matrix!=NULL) {
+		//Apply the matrix transformation to the matrix
+		(*peek()) = mulMat4Mat4(peek(), matrix);
+	}
 }
 
 const MatrixManager manMat = {init, setMode, peek, peekStack, push, pushMat4, pushIdentity, pushPerspective, pop, rotate, translate, scale, mult};
