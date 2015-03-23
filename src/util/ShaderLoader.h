@@ -3,10 +3,7 @@
 
 #include <stdarg.h>
 
-#include "../lib/opengl/gl_compat_3_0.h"
-
-#include "DynamicArray.h"
-#include "Shader.h"
+#include "graphics.h"
 
 /**
  *  Singleton for loading shader source code.
@@ -19,23 +16,7 @@ typedef struct ShaderLoader_s {
      *  @param  loadedShaderString  pointer to pointer to GLubyte, will contain shader string after function is called.
      *  @returns                    GLuint, handle to GL shader object.
      */
-    void loadShaderString(const char *const filename, GLubyte **loadedShaderString);
-
-    /**
-     *  Link a list of shaders into a program.
-     *
-     *  @param  numShaders  int, number of shaders to link.
-     *  @param  shaderList  const pointer to const Dynamic array containing a list of compiled shader objects (GLuints).
-     *  @returns            GLuint, linked shader program. 0 in case of error.
-     */
-    GLuint (*linkProgram)(int, const DynamicArray *const);
-
-    /**
-     *  Write detailed information about a shader to the log.
-     *
-     *  @param  shader  const pointer to const Shader to log information about.
-     */
-    void (*logShaderInformation)(const Shader *const shader);
+    void (*loadShaderString)(const char *const filename, GLubyte **loadedShaderString);
 } ShaderLoader;
 
 extern const ShaderLoader shaderLoader;
