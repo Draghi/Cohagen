@@ -69,4 +69,4 @@ static int logGLError(const char* message, ...) {
     return couldOpen;
 }
 
-const Log glLog = {logGLRestart, logGL, logGLError};
+const Log cohLog = {logGLRestart, logGL, logGLError};

@@ -13,13 +13,13 @@
  */
 typedef struct ShaderLoader_s {
     /**
-     *  Load a shader from a file.
+     *  Load a shader from a file, storing it in a GLubyte array passed in by the user.
      *
-     *  @param  type        GLenum, type of shader (eg. GL_VERTEX_SHADER, GL_FRAGMENT_SHADER)
-     *  @param  filename    const pointer to const char, path to shader source file.
-     *  @returns            GLuint, handle to GL shader object.
+     *  @param  filename            const pointer to const char, path to shader source file.
+     *  @param  loadedShaderString  pointer to pointer to GLubyte, will contain shader string after function is called.
+     *  @returns                    GLuint, handle to GL shader object.
      */
-    GLuint (*shaderFromFile)(GLenum, const char *const);
+    void loadShaderString(const char *const filename, GLubyte **loadedShaderString);
 
     /**
      *  Link a list of shaders into a program.

@@ -33,6 +33,6 @@ typedef struct Log_s {
     int (*logGLError)(const char *message, ...);
 } Log;
 
-extern const Log glLog;
+extern const Log cohLog;
 
 #endif

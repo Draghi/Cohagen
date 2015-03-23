@@ -21,7 +21,7 @@ Vec4 createVec4(scalar x, scalar y, scalar z, scalar w) {
     result.z = z;
     result.w = w;
 
-    result.magnitude = magnitudeVec4;
+    //result.magnitude = magnitudeVec4;
 
     return (result);
 }
@@ -179,8 +179,9 @@ scalar dotVec4(const Vec4 *const v1, const Vec4 *const v2) {
  *  @return         Vec4, normalized version of given Vec4.
  */
 Vec4 normalizeVec4(const Vec4 *const vec) {
-    scalar magnitude = vec->magnitude((const struct Vec4_s *const) vec);
-
+    //scalar magnitude = vec->magnitude((const struct Vec4_s *const) vec);
+    scalar magnitude = 1;
+    
     return (
         createVec4(
             vec->x / magnitude,

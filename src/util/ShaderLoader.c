@@ -13,10 +13,49 @@ static void logProgramInfoLog(GLuint program, int (*logFunc)(const char* message
 static void logShaderInformation(const Shader *const shader);
 static const char  *toStringGLType(GLenum type);
 
-static GLuint shaderFromFile(GLenum type, const char *const filename) {
+// static GLuint shaderFromFile(GLenum type, const char *const filename) {
+//     GLuint      shaderObject = 0;
+//     GLubyte     *shaderSource;
+
+//     FILE    *fp;
+//     long    fileSize;
+
+//     fp = fopen(filename, "r");
+
+//     if (fp != NULL) {
+//         // Navigate to end of file
+//         fseek(fp, 0, SEEK_END);
+//         // Get position indicator at end of file (ie. length)
+//         fileSize = ftell(fp);
+//         // Navigate to start of file
+//         fseek(fp, 0, SEEK_SET);
+
+//         // Allocate enough memory to hold file
+//         shaderSource = (GLubyte *) calloc(1, fileSize + 1);
+//         memset(shaderSource, 0, fileSize + 1);
+
+//         // Read stream into array
+//         fread(shaderSource, fileSize + 1, 1, fp);
+
+//         // Compile shader
+//         shaderObject = compileShader(type, &shaderSource);
+//     } else {
+//         cohLog.logGLError("ERROR: Could not open SHADER_FILE \"%s\" for reading", filename);
+//     }
+
+//     // Clean up
+//     fclose(fp);
+
+//     if (shaderSource != NULL) {
+//         free(shaderSource);
+//     }
+
+//     return shaderObject;
+// }
+
+static void loadShaderString(const char *const filename, GLubyte **loadedShaderString) {
     GLuint      shaderObject = 0;
     GLubyte     *shaderSource;
-    GLubyte     **shaderSourceHandle  = &shaderSource;
 
     FILE    *fp;
     long    fileSize;
@@ -32,27 +71,17 @@ static GLuint shaderFromFile(GLenum type, const char *const filename) {
         fseek(fp, 0, SEEK_SET);
 
         // Allocate enough memory to hold file
-        shaderSource = (GLubyte *) calloc(1, fileSize + 1);
-        *shaderSourceHandle = shaderSource;
-        memset(*shaderSourceHandle, 0, fileSize + 1);
+        *loadedShaderString = (GLubyte *) calloc(1, fileSize + 1);
+        memset(*loadedShaderString, 0, fileSize + 1);
 
         // Read stream into array
-        fread(*shaderSourceHandle, fileSize + 1, 1, fp);
-
-        // Compile shader
-        shaderObject = compileShader(type, shaderSourceHandle);
+        fread(*loadedShaderString, fileSize + 1, 1, fp);
     } else {
-        glLog.logGLError("ERROR: Could not open SHADER_FILE \"%s\" for reading", filename);
+        cohLog.logGLError("ERROR: Could not open SHADER_FILE \"%s\" for reading", filename);
     }
 
     // Clean up
     fclose(fp);
-
-    if (shaderSource != NULL) {
-        free(shaderSource);
-    }
-
-    return shaderObject;
 }
 
 static GLuint linkProgram(int numShaders, const DynamicArray *const shaderList) {
@@ -102,7 +131,7 @@ static void logCompilationErrors(GLuint shader) {
     glGetShaderiv(shader, GL_COMPILE_STATUS, &params);
     
     if (params != GL_TRUE) {
-        glLog.logGLError("ERROR: GL shader index %i did not compile\n", shader);
+        cohLog.logGLError("ERROR: GL shader index %i did not compile\n", shader);
         
         // Log additional info
         logShaderInfoLog(shader);
@@ -115,7 +144,7 @@ static void logShaderInfoLog(GLuint shader) {
     char        log[maxLength];
     
     glGetShaderInfoLog(shader, maxLength, &actualLength, log);
-    glLog.logGLError("SHADER INFO LOG: Shader index %u:\n%s\n", shader, log);
+    cohLog.logGLError("SHADER INFO LOG: Shader index %u:\n%s\n", shader, log);
 }
 
 static void logLinkerErrors(GLuint program) {
@@ -123,10 +152,10 @@ static void logLinkerErrors(GLuint program) {
     glGetProgramiv(program, GL_LINK_STATUS, &params);
     
     if (params != GL_TRUE) {
-        glLog.logGLError("ERROR: GL shader program index %u could not be linked\n", program);
+        cohLog.logGLError("ERROR: GL shader program index %u could not be linked\n", program);
             
         // Log additionalInfo
-        logProgramInfoLog(program, glLog.logGLError);
+        logProgramInfoLog(program, cohLog.logGLError);
     }   
 }
 
@@ -140,19 +169,19 @@ static void logProgramInfoLog(GLuint program, int (*logFunc)(const char* message
 }
 
 static void logShaderInformation(const Shader *const shader) {
-    glLog.logGL("\n----------------------------------------\n");
-    glLog.logGL("PROGRAM INFO: Program index %i:\n", shader->program);
+    cohLog.logGL("\n----------------------------------------\n");
+    cohLog.logGL("PROGRAM INFO: Program index %i:\n", shader->program);
     
     int params = -1;
     glGetProgramiv(shader->program, GL_LINK_STATUS, &params);
-    glLog.logGL(" GL_LINK_STATUS = %i\n", params);
+    cohLog.logGL(" GL_LINK_STATUS = %i\n", params);
     
     glGetProgramiv(shader->program, GL_ATTACHED_SHADERS, &params);
-    glLog.logGL(" GL_ATTACHED_SHADERS = %i\n", params);
+    cohLog.logGL(" GL_ATTACHED_SHADERS = %i\n", params);
     
     // Log active attributes
     glGetProgramiv(shader->program, GL_ACTIVE_ATTRIBUTES, &params);
-    glLog.logGL(" GL_ACTIVE_ATTRIBUTES = %i\n", params);
+    cohLog.logGL(" GL_ACTIVE_ATTRIBUTES = %i\n", params);
     for (GLuint i = 0; i < (GLuint)params; ++i) {
         const int   maxLength = 64;
         char        name[maxLength];
@@ -166,17 +195,17 @@ static void logShaderInformation(const Shader *const shader) {
                 char    longName[maxLength];
                 sprintf(longName, "%s[%i]", name, j);
                 int location = glGetAttribLocation(shader->program, longName);
-                glLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), longName, location);
+                cohLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), longName, location);
             }
         } else {
             int location = glGetAttribLocation(shader->program, name);
-            glLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), name, location);
+            cohLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), name, location);
         }
     }
     
     // Log active uniforms
     glGetProgramiv(shader->program, GL_ACTIVE_UNIFORMS, &params);
-    glLog.logGL(" GL_ACTIVE_UNIFORMS = %i\n", params);
+    cohLog.logGL(" GL_ACTIVE_UNIFORMS = %i\n", params);
     for (GLuint i = 0; i < (GLuint) params; ++i) {
         const int   maxLength = 64;
         char        name[maxLength];
@@ -190,15 +219,15 @@ static void logShaderInformation(const Shader *const shader) {
                 char    longName[maxLength];
                 sprintf(longName, "%s[%i]", name, j);
                 int location = glGetUniformLocation(shader->program, longName);
-                glLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), longName, location);
+                cohLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), longName, location);
             }
         } else {
             int location = glGetUniformLocation(shader->program, name);
-            glLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), name, location);
+            cohLog.logGL("  %i) type:%s name:%s location:%i\n", i, toStringGLType(type), name, location);
         }
     }
     
-    logProgramInfoLog(shader->program, glLog.logGL);
+    logProgramInfoLog(shader->program, cohLog.logGL);
 }
 
 static const char  *toStringGLType(GLenum type) {
@@ -220,4 +249,4 @@ static const char  *toStringGLType(GLenum type) {
     return "other";
 }
 
-const ShaderLoader shaderLoader = {shaderFromFile, linkProgram, logShaderInformation};
+const ShaderLoader shaderLoader = {loadShaderString, linkProgram, logShaderInformation};
