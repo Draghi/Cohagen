@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 
-#include <GL/glew.h>
+#include "../lib/opengl/gl_compat_3_0.h"
 
 /**
  *  Class to manage the use of shader programs.

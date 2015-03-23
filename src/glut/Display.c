@@ -132,12 +132,14 @@ static bool createWindow() {
 	if (!isCreated) {
 		//Setup and create our window
 		glutInitContextVersion(glMajor, glMinor);
+		glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
 		glutInitDisplayMode(dispMode);
 		glutInitWindowPosition(winX, winY);
 	    glutInitWindowSize(winWidth, winHeight);
 	    glutCreateWindow(winTitle);
 
-	    glewInit();
+	    //glewInit();
+	    ogl_LoadFunctions();
 	    mouse.init();
 	    keyboard.init();
 

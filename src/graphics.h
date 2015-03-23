@@ -1,24 +1,22 @@
 #ifndef COH_GRAPHICS_H
 #define COH_GRAPHICS_H
 
-#define GLEW_STATIC
-
 /////////////////////////
 // 3rd Party Libraries //
 /////////////////////////
-#include "lib/glew/glew.h"
+#include "lib/opengl/gl_compat_3_0.h"
 #include <GL/freeglut.h>
 
-////////////////////
+/////////////////////
 // Debugging Tools //
-////////////////////
-#include "debug/GLDebugUtil.h"
+/////////////////////
+#include "util/Log.h"
 
 //////////////////
 // Helper Utils //
 //////////////////
+#include "util/OGLUtil.h"
 #include "glut/Display.h"
-#include "gl/GLUtil.h"
 
 //////////////////////
 // Graphics Classes //
@@ -26,6 +24,6 @@
 #include "gl/Textures.h"
 #include "gl/VBO.h"
 #include "gl/VAO.h"
-//#include "gl/Shader.h"
+#include "util/Shader.h"
 
 #endif /* SRC_OGL_H_ */
