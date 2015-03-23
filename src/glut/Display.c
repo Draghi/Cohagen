@@ -4,11 +4,15 @@
  * It also provides an intermediate callback that is used to ensure certain calls or provide extra features.
  */
 
-#include"GlutCallbacks.h"
-#include"../input.h"
-#include"../graphics.h"
+#include "Display.h"
+
+#include"../lib/ogl.h"
+#include "GlutCallbacks.h"
+#include "Keyboard.h"
+#include "Mouse.h"
 
 #include <stdbool.h>
+#include <GL/freeglut.h>
 
 /** Whether or not the main window has been created or not. **/
 static bool isCreated = false;

@@ -2,7 +2,9 @@
 #ifndef COH_RBO_H
 #define COH_RBO_H
 
-#include"../graphics.h"
+#include "../lib/ogl.h"
+
+#include <stdbool.h>
 
 struct RBO_s {
 	GLuint id;

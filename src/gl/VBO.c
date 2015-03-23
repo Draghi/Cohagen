@@ -1,54 +1,11 @@
-//#define GL_GLEXT_PROTOTYPES
+#include "VBO.h"
 
-#include "../graphics.h"
+#include "../lib/ogl.h"
+
 #include <stdlib.h>
 #include <stdbool.h>
 
 static const VBO* boundBuffer;
-
-////////////////////////
-// Internal Functions //
-////////////////////////
-
-/**
- * Prepares a given VBO for fixed function pipeline rendering
- *
- * @param vbo The vbo to prepare, if null it will disable the given clientState.
- * @param clientState The type of VBO
- * @return Whether the VBO was bound successfully.
- */
-static bool prepare(const VBO* const vbo, GLenum clientState) {
-	if (vbo==NULL) {
-		glDisableClientState(clientState);
-	} else {
-		glEnableClientState(clientState);
-		bool flag = manVBO.bind(vbo);
-
-		if (!flag)
-			return false;
-
-		switch(clientState) {
-			case GL_VERTEX_ARRAY:
-				glVertexPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
-				break;
-
-			case GL_NORMAL_ARRAY:
-				glNormalPointer(GL_FLOAT, vbo->stride, vbo->pointer);
-				break;
-
-			case GL_COLOR_ARRAY:
-				glColorPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
-				break;
-
-			case GL_TEXTURE_COORD_ARRAY:
-				glTexCoordPointer(vbo->countPerVert, GL_FLOAT, vbo->stride, vbo->pointer);
-				break;
-		}
-
-		manVBO.unbind(vbo);
-	}
-	return true;
-}
 
 ///////////////////////
 // VBO Manager Class //
@@ -157,48 +114,6 @@ static void setRenderInfo(VBO* const vbo, GLint vertCount, GLint countPerVert, G
 }
 
 /**
- * Renders the given set of VBOs using the fixed function pipeline.
- * Any VBO can be nulled and excluded, though it wouldn't make much sense to exclude the verticies.
- *
- * @param verts The vertices to render.
- * @param norms The normals of each vertex.
- * @param colours The colour of each vertex.
- * @param texCoords The texture coords of each vertex.
- *
- * @return Whether any of the bindings failed and caused the object not to be rendered.
- */
-static bool draw(const VBO* const verts, const VBO* const norms, const VBO* const colours, const VBO* const texCoords) {
-	bool flag = false;
-
-	if (verts!=NULL)
-		flag |= !prepare(verts, GL_VERTEX_ARRAY);
-	else
-		prepare(NULL, GL_VERTEX_ARRAY);
-
-	if (norms!=NULL)
-		flag |= !prepare(norms, GL_NORMAL_ARRAY);
-	else
-		prepare(NULL, GL_NORMAL_ARRAY);
-
-	if (colours!=NULL)
-		flag |= !prepare(colours, GL_COLOR_ARRAY);
-	else
-		prepare(NULL, GL_COLOR_ARRAY);
-
-	if (texCoords!=NULL)
-		flag |= !prepare(texCoords, GL_TEXTURE_COORD_ARRAY);
-	else
-		prepare(NULL, GL_TEXTURE_COORD_ARRAY);
-
-	if (!flag) {
-		glDrawArrays(GL_TRIANGLES, 0, verts->vertCount);
-		return true;
-	} else {
-		return false;
-	}
-}
-
-/**
  * Frees the buffer from both the Computer's and the GPU's memory.
  * @param self The pointer to the instance of the vbo.
  */
@@ -215,4 +130,4 @@ static void delete(VBO* const vbo) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const VBOManager manVBO = {new, bind, unbind, setData, subData, setRenderInfo, draw, delete};
+const VBOManager manVBO = {new, bind, unbind, setData, subData, setRenderInfo, delete};

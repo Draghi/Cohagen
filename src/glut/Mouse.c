@@ -4,9 +4,11 @@
 
 #define MAX_MOUSE_BUTTONS 3
 
+#include "Mouse.h"
+#include "../lib/ogl.h"
+
 #include <stdbool.h>
-#include"../graphics.h"
-#include "../input.h"
+#include <GL/freeglut.h>
 
 static int32_t xPos;
 static int32_t yPos;

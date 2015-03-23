@@ -1,5 +1,8 @@
-#include "../graphics.h"
+#include "VAO.h"
+
+#include "../lib/ogl.h"
 #include "../util/DynamicArray.h"
+
 #include <stdbool.h>
 
 static VAO* boundBuffer = NULL;

@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 
-#include "../lib/opengl/gl_compat_3_0.h"
+#include "../lib/ogl.h"
 
 /**
  *  Class to manage the use of shader programs.

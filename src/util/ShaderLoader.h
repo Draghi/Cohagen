@@ -3,7 +3,7 @@
 
 #include <stdarg.h>
 
-#include "../lib/opengl/gl_compat_3_0.h"
+#include "../lib/ogl.h"
 
 #include "DynamicArray.h"
 #include "Shader.h"

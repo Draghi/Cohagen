@@ -1,8 +1,11 @@
 
-#include "graphics.h"
+#include "lib/ogl.h"
+#include "glut/Display.h"
+#include "util/OGLUtil.h"
 #include "test/Tests.h"
 
 #include <time.h>
+#include <GL/freeglut.h>
 
 static void setupLibraries(int argc, char **argv) {
 	glutInit(&argc, argv);
@@ -31,7 +34,7 @@ int main(int argc, char **argv) {
 	setupDisplay();
 	setupOpenGL();
 
-	runRenderToTexture();
+
 
 	return 0;
 }

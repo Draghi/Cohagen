@@ -1,6 +1,7 @@
 #include"FBO.h"
+
+#include"../lib/ogl.h"
 #include"RBO.h"
-#include"../graphics.h"
 #include"../util/DynamicArray.h"
 
 #include<stdlib.h>

@@ -1,6 +1,10 @@
-#include "../graphics.h"
+#include "OGLUtil.h"
+
+#include "../lib/ogl.h"
+#include "../util/Log.h"
 
 #include <math.h>
+#include <stdbool.h>
 #include <limits.h>
 
 /**
@@ -160,16 +164,6 @@ static bool checkError() {
 
 			case GL_INVALID_OPERATION:
 				glLog.logGLError("GLError(%d) Invalid Operation\n", glErr);
-				flag = true;
-				break;
-
-			case GL_STACK_OVERFLOW:
-				glLog.logGLError("GLError(%d) Stack Overflow\n", glErr);
-				flag = true;
-				break;
-
-			case GL_STACK_UNDERFLOW:
-				glLog.logGLError("GLError(%d) Stack Underflow\n", glErr);
 				flag = true;
 				break;
 
