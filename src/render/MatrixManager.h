@@ -33,6 +33,13 @@ struct MatrixManager_s {
 	Mat4*(* peek)();
 
 	/**
+	 * Returns the next element in the given stack, without removing it.
+	 * @param mode The stack to peek at.
+	 * @return The next element in the given stack, without removing it. NULL if the stack is empty or an invalid mode is given.
+	 */
+	Mat4*(* peekStack)(uint32_t);
+
+	/**
 	 * Copies the next matrix in the stack and pushes it onto the stack.
 	 */
 	void (* push)();

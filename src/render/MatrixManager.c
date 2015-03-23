@@ -73,6 +73,20 @@ static Mat4* peek() {
 }
 
 /**
+ * Returns the next element in the given stack, without removing it.
+ * @param mode The stack to peek at.
+ * @return The next element in the given stack, without removing it. NULL if the stack is empty or an invalid mode is given.
+ */
+static Mat4* peekStack(uint32_t mode) {
+	if (mode<MATRIX_MODE_COUNT) {
+		Stack* stack = stacks[mode];
+		if (stack->elementSize>0)
+			return (Mat4*) manStack.peek(stack);
+	}
+	return NULL;
+}
+
+/**
  * Pushes the given matrix onto the current stack.
  * The matrix can be on either the heap or stack and it will be copied to the stack.
  * @param mat The matrix to push onto the current stack.
@@ -246,4 +260,4 @@ static void mult(Mat4* matrix) {
 	(*peek()) = mulMat4Mat4(peek(), matrix);
 }
 
-const MatrixManager manMat = {init, setMode, peek, push, pushMat4, pushIdentity, pushPerspective, pop, rotate, translate, scale, mult};
+const MatrixManager manMat = {init, setMode, peek, peekStack, push, pushMat4, pushIdentity, pushPerspective, pop, rotate, translate, scale, mult};
