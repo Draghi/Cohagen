@@ -8,7 +8,4 @@
 #ifndef COH_TESTS_H
 #define COH_TESTS_H
 
-void runTeapotCubes();
-void runRenderToTexture();
-
 #endif /* TEST_TESTS_H_ */

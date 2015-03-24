@@ -3,8 +3,6 @@
 
 #include <stdarg.h>
 
-#include "graphics.h"
-
 #include "Shader.h"
 
 #define GL_LOG_FILE "./gl.log"

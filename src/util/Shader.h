@@ -1,9 +1,10 @@
 #ifndef COH_SHADER_H
 #define COH_SHADER_H
 
+#include "../lib/ogl.h"
+
 #include <stdarg.h>
 
-#include "graphics.h"
 
 /**
  *  Shader object.

@@ -10,7 +10,7 @@
 #include<stdint.h>
 #include<stdbool.h>
 
-#include"../graphics.h"
+#include"../lib/ogl.h"
 
 /**
  * Struct to store information about an OpenGL texture.

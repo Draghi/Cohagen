@@ -4,10 +4,11 @@
 
 #define MAX_KEYBOARD_KEYS 256
 
-#include <stdbool.h>
-#include "../input.h"
-#include"../graphics.h"
+#include "Keyboard.h"
 
+#include"../lib/ogl.h"
+
+#include <stdbool.h>
 
 bool keyStates[MAX_KEYBOARD_KEYS];
 bool oldKeyStates[MAX_KEYBOARD_KEYS];

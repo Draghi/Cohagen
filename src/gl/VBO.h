@@ -1,8 +1,9 @@
 #ifndef COH_VBO_H
 #define COH_VBO_H
 
+#include"../lib/ogl.h"
+
 #include <stdbool.h>
-#include"../graphics.h"
 
 /**
  * A fake object struct that represents an OpenGL vertex buffer object.
@@ -80,20 +81,6 @@ struct VBOManager_s {
 	 * @param countPerVert The number of elements that represents a vertex.
 	 */
 	void(* setRenderInfo)(VBO* const, GLint, GLint, GLint, GLvoid*);
-
-
-	/**
-	 * Renders the given set of VBOs using the fixed function pipeline.
-	 * Any VBO can be nulled and excluded, though it wouldn't make much sense to exclude the verticies.
-	 *
-	 * @param verts The vertices to render.
-	 * @param norms The normals of each vertex.
-	 * @param colours The colour of each vertex.
-	 * @param texCoords The texture coords of each vertex.
-	 *
-	 * @return Whether any of the bindings failed and caused the object not to be rendered.
-	 */
-	bool(* draw)(const VBO* const, const VBO* const, const VBO* const, const VBO* const);
 
 	/**
 	 * Frees the buffer from both the Computer's and the GPU's memory.

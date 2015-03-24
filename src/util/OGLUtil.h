@@ -1,7 +1,7 @@
 #ifndef COH_GLUTIL_H
 #define COH_GLUTIL_H
 
-#include "../graphics.h"
+#include "../lib/ogl.h"
 
 #include <stdbool.h>
 

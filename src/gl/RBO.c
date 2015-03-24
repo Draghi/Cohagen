@@ -1,5 +1,6 @@
 #include"RBO.h"
-#include"../graphics.h"
+
+#include"../lib/ogl.h"
 
 #include<stdlib.h>
 #include<stdbool.h>

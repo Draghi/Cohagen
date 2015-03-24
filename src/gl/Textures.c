@@ -1,4 +1,7 @@
-#include"../graphics.h"
+#include"../gl/Textures.h"
+
+#include"../lib/ogl.h"
+#include"../util/OGLUtil.h"
 
 #include<stdlib.h>
 #include<stdbool.h>
