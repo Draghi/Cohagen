@@ -1,70 +1,46 @@
 #include "Mat4.h"
 
-/**
- *  Returns a Mat4 object constructed from the given elements.
- *  Elements are indexed in the following way: el<col, row>.
- *  Note column-major order.
- *
- *  @param  el00    scalar, col 0, row 0.
- *  @param  el01    scalar, col 0, row 1.
- *  @param  el02    scalar, col 0, row 2.
- *  @param  el03    scalar, col 0, row 3.
- *  @param  el10    scalar, col 1, row 0.
- *  @param  el11    scalar, col 1, row 1.
- *  @param  el12    scalar, col 1, row 2.
- *  @param  el13    scalar, col 1, row 3.
- *  @param  el20    scalar, col 2, row 0.
- *  @param  el21    scalar, col 2, row 1.
- *  @param  el22    scalar, col 2, row 2.
- *  @param  el23    scalar, col 2, row 3.
- *  @param  el30    scalar, col 3, row 0.
- *  @param  el31    scalar, col 3, row 1.
- *  @param  el32    scalar, col 3, row 2.
- *  @param  el33    scalar, col 3, row 3.
- *  @return         Mat4 constructed from given elements.
- */
-Mat4 createMat4(        scalar el00, scalar el10, scalar el20, scalar el30, 
-                        scalar el01, scalar el11, scalar el21, scalar el31,
-                        scalar el02, scalar el12, scalar el22, scalar el32,
-                        scalar el03, scalar el13, scalar el23, scalar el33) {
+static Mat4 create(Mat4 *const mat,
+            scalar el00, scalar el10, scalar el20, scalar el30, 
+            scalar el01, scalar el11, scalar el21, scalar el31,
+            scalar el02, scalar el12, scalar el22, scalar el32,
+            scalar el03, scalar el13, scalar el23, scalar el33) {
     Mat4 matrix;
 
-    matrix.data[0] = createVec4(el00, el01, el02, el03);
-    matrix.data[1] = createVec4(el10, el11, el12, el13);
-    matrix.data[2] = createVec4(el20, el21, el22, el23);
-    matrix.data[3] = createVec4(el30, el31, el32, el33);
+    matrix.data[0] = manVec4.create(NULL, el00, el01, el02, el03);
+    matrix.data[1] = manVec4.create(NULL, el10, el11, el12, el13);
+    matrix.data[2] = manVec4.create(NULL, el20, el21, el22, el23);
+    matrix.data[3] = manVec4.create(NULL, el30, el31, el32, el33);
+
+    if (mat != NULL) {
+        mat->data[0] = manVec4.create(NULL, el00, el01, el02, el03);
+        mat->data[1] = manVec4.create(NULL, el10, el11, el12, el13);
+        mat->data[2] = manVec4.create(NULL, el20, el21, el22, el23);
+        mat->data[3] = manVec4.create(NULL, el30, el31, el32, el33);
+    }
 
     return matrix;
 }
 
-/**
- *  Returns a Mat4 with the "leading" value along the main diagonal
- *  and 0 everywhere else.
- *
- *  @param  leading     scalar, value to place along main diagnoal.
- *  @return             Mat4 with given value along leading diagonal and zero elsewhere.
- */
-Mat4 createMat4Leading(scalar leading) {
+static Mat4 createLeading(Mat4 *const mat, scalar leading) {
     Mat4 matrix;
 
-    matrix.data[0] = createVec4(leading, 0.0f, 0.0f, 0.0f);
-    matrix.data[1] = createVec4(0.0f, leading, 0.0f, 0.0f);
-    matrix.data[2] = createVec4(0.0f, 0.0f, leading, 0.0f);
-    matrix.data[3] = createVec4(0.0f, 0.0f, 0.0f, leading);
+    matrix.data[0] = manVec4.create(NULL, leading, 0.0f, 0.0f, 0.0f);
+    matrix.data[1] = manVec4.create(NULL, 0.0f, leading, 0.0f, 0.0f);
+    matrix.data[2] = manVec4.create(NULL, 0.0f, 0.0f, leading, 0.0f);
+    matrix.data[3] = manVec4.create(NULL, 0.0f, 0.0f, 0.0f, leading);
+
+    if (mat != NULL) {
+        mat->data[0] = manVec4.create(NULL, leading, 0.0f, 0.0f, 0.0f);
+        mat->data[1] = manVec4.create(NULL, 0.0f, leading, 0.0f, 0.0f);
+        mat->data[2] = manVec4.create(NULL, 0.0f, 0.0f, leading, 0.0f);
+        mat->data[3] = manVec4.create(NULL, 0.0f, 0.0f, 0.0f, leading);
+    }
 
     return matrix;
 }
 
-/**
- *  Returns a Mat4 constructed with a series of column vectors.
- *
- *  @param  v0  const pointer to const Vec4, column 0.
- *  @param  v1  const pointer to const Vec4, column 1.
- *  @param  v2  const pointer to const Vec4, column 2.
- *  @param  v3  const pointer to const Vec4, column 3.
- *  @return     Mat4 constructed from given column-vectors.
- */
-Mat4 createMat4Vec4(const Vec4 *const v0, const Vec4 *const v1, const Vec4 *const v2, const Vec4 *const v3) {
+static Mat4 createFromVec4(Mat4 *const mat, const Vec4 *const v0, const Vec4 *const v1, const Vec4 *const v2, const Vec4 *const v3) {
     Mat4 matrix;
 
     matrix.data[0] = *v0;
@@ -72,18 +48,20 @@ Mat4 createMat4Vec4(const Vec4 *const v0, const Vec4 *const v1, const Vec4 *cons
     matrix.data[2] = *v2;
     matrix.data[3] = *v3;
 
+    if (mat != NULL) {
+        mat->data[0] = *v0;
+        mat->data[1] = *v1;
+        mat->data[2] = *v2;
+        mat->data[3] = *v3;
+    }
+
     return matrix;
 }
 
-/**
- *  Returns a Mat4 constructed from another Mat4 (copy constructor).
- *
- *  @param  matrix  const pointer to const Mat4 to clone.
- *  @return         Mat4 constructed from given Mat4.
- */
-Mat4 createMat4Mat4(const Mat4 *const matrix) {
+static Mat4 createFromMat4(Mat4 *const mat, const Mat4 *const matrix) {
     return (
-        createMat4Vec4(
+        manMat4.createFromVec4(
+            mat,
             &(matrix->data[0]),
             &(matrix->data[1]),
             &(matrix->data[2]),
@@ -92,21 +70,15 @@ Mat4 createMat4Mat4(const Mat4 *const matrix) {
     );
 }
 
-/**
- *  Returns a Mat4, the result of the component-wise sum of mat1 + mat2.
- *
- *  @param  mat1    const pointer to const Mat4, operand 1.
- *  @param  mat2    const pointer to const Mat4, operand 2.
- *  @return         Mat4, result of component-wise sum of mat1 + mat2.
- */
-Mat4 sumMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
-    Vec4 v0 = sumVec4Vec4(&(mat1->data[0]), &(mat2->data[0]));
-    Vec4 v1 = sumVec4Vec4(&(mat1->data[1]), &(mat2->data[1]));
-    Vec4 v2 = sumVec4Vec4(&(mat1->data[2]), &(mat2->data[2]));
-    Vec4 v3 = sumVec4Vec4(&(mat1->data[3]), &(mat2->data[3]));
+static Mat4 sum(const Mat4 *const mat1, const Mat4 *const mat2) {
+    Vec4 v0 = manVec4.sum(&(mat1->data[0]), &(mat2->data[0]));
+    Vec4 v1 = manVec4.sum(&(mat1->data[1]), &(mat2->data[1]));
+    Vec4 v2 = manVec4.sum(&(mat1->data[2]), &(mat2->data[2]));
+    Vec4 v3 = manVec4.sum(&(mat1->data[3]), &(mat2->data[3]));
 
     return (
-        createMat4Vec4(
+        manMat4.createFromVec4(
+            NULL,
             &v0,
             &v1,
             &v2,
@@ -115,21 +87,15 @@ Mat4 sumMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
     );
 }
 
-/**
- *  Returns a Mat4, the result of the component-wise subtraction of mat1 - mat2.
- *
- *  @param  mat1    const pointer to const Mat4, operand 1.
- *  @param  mat2    const pointer to const Mat4, operand 2.
- *  @return         Mat4, result of component-wise subtraction of mat1 - mat2.
- */
-Mat4 subMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
-    Vec4 v0 = subVec4Vec4(&(mat1->data[0]), &(mat2->data[0]));
-    Vec4 v1 = subVec4Vec4(&(mat1->data[1]), &(mat2->data[1]));
-    Vec4 v2 = subVec4Vec4(&(mat1->data[2]), &(mat2->data[2]));
-    Vec4 v3 = subVec4Vec4(&(mat1->data[3]), &(mat2->data[3]));
+static Mat4 sub(const Mat4 *const mat1, const Mat4 *const mat2) {
+    Vec4 v0 = manVec4.sum(&(mat1->data[0]), &(mat2->data[0]));
+    Vec4 v1 = manVec4.sum(&(mat1->data[1]), &(mat2->data[1]));
+    Vec4 v2 = manVec4.sum(&(mat1->data[2]), &(mat2->data[2]));
+    Vec4 v3 = manVec4.sum(&(mat1->data[3]), &(mat2->data[3]));
 
     return (
-        createMat4Vec4(
+        manMat4.createFromVec4(
+            NULL,
             &v0,
             &v1,
             &v2,
@@ -138,22 +104,15 @@ Mat4 subMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
     );
 }
 
-/**
- *  Multiply every element of the given Mat4 by a constant factor
- *  and return the result.
- *
- *  @param  matrix  const pointer to const Mat4, matrix to multiply.
- *  @param  factor  scalar, factor to multiply each element by.
- *  @return         Mat4, given Mat4 with each element multiplied by given factor.
- */
-Mat4 mulMat4Scalar(const Mat4 *const matrix, scalar factor) {
-    Vec4 col0 = mulVec4Scalar(&(matrix->data[0]), factor);
-    Vec4 col1 = mulVec4Scalar(&(matrix->data[1]), factor);
-    Vec4 col2 = mulVec4Scalar(&(matrix->data[2]), factor);
-    Vec4 col3 = mulVec4Scalar(&(matrix->data[3]), factor);
+static Mat4 postMulScalar(const Mat4 *const matrix, scalar factor) {
+    Vec4 col0 = manVec4.postMulScalar(&(matrix->data[0]), factor);
+    Vec4 col1 = manVec4.postMulScalar(&(matrix->data[1]), factor);
+    Vec4 col2 = manVec4.postMulScalar(&(matrix->data[2]), factor);
+    Vec4 col3 = manVec4.postMulScalar(&(matrix->data[3]), factor);
 
     return (
-        createMat4Vec4(
+        manMat4.createFromVec4(
+            NULL,
             &col0,
             &col1,
             &col2,
@@ -162,49 +121,59 @@ Mat4 mulMat4Scalar(const Mat4 *const matrix, scalar factor) {
     );
 }
 
-/** 
- *  Returns a Mat4, result of matrix multiplication between operands given.
- *  (ie. mat1 * mat2, in that order).
- *
- *  @param  mat1    const pointer to const Mat4, operand 1.
- *  @param  mat2    const pointer to const Mat4, operand 2.
- *  @return         Mat4, result of matrix multiplication (mat1 * mat2).
- */
-Mat4 mulMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
-    Vec4 row0 = createVec4(mat1->data[0].x, mat1->data[1].x, mat1->data[2].x, mat1->data[3].x);
-    Vec4 row1 = createVec4(mat1->data[0].y, mat1->data[1].y, mat1->data[2].y, mat1->data[3].y);
-    Vec4 row2 = createVec4(mat1->data[0].z, mat1->data[1].z, mat1->data[2].z, mat1->data[3].z);
-    Vec4 row3 = createVec4(mat1->data[0].w, mat1->data[1].w, mat1->data[2].w, mat1->data[3].w);
+static Mat4 preMulScalar(scalar factor, const Mat4 *const matrix) {
+    Vec4 col0 = manVec4.preMulScalar(factor, &(matrix->data[0]));
+    Vec4 col1 = manVec4.preMulScalar(factor, &(matrix->data[1]));
+    Vec4 col2 = manVec4.preMulScalar(factor, &(matrix->data[2]));
+    Vec4 col3 = manVec4.preMulScalar(factor, &(matrix->data[3]));
+
+    return (
+        manMat4.createFromVec4(
+            NULL,
+            &col0,
+            &col1,
+            &col2,
+            &col3
+        )
+    );
+}
+
+static Mat4 mul(const Mat4 *const mat1, const Mat4 *const mat2) {
+    Vec4 row0 = manVec4.create(NULL, mat1->data[0].x, mat1->data[1].x, mat1->data[2].x, mat1->data[3].x);
+    Vec4 row1 = manVec4.create(NULL, mat1->data[0].y, mat1->data[1].y, mat1->data[2].y, mat1->data[3].y);
+    Vec4 row2 = manVec4.create(NULL, mat1->data[0].z, mat1->data[1].z, mat1->data[2].z, mat1->data[3].z);
+    Vec4 row3 = manVec4.create(NULL, mat1->data[0].w, mat1->data[1].w, mat1->data[2].w, mat1->data[3].w);
 
     Vec4 col0 = mat2->data[0];
     Vec4 col1 = mat2->data[1];
     Vec4 col2 = mat2->data[2];
     Vec4 col3 = mat2->data[3];
 
-    scalar x0 = dotVec4(&row0, &col0);
-    scalar y0 = dotVec4(&row1, &col0);
-    scalar z0 = dotVec4(&row2, &col0);
-    scalar w0 = dotVec4(&row3, &col0);
-    scalar x1 = dotVec4(&row0, &col1);
-    scalar y1 = dotVec4(&row1, &col1);
-    scalar z1 = dotVec4(&row2, &col1);
-    scalar w1 = dotVec4(&row3, &col1);
-    scalar x2 = dotVec4(&row0, &col2);
-    scalar y2 = dotVec4(&row1, &col2);
-    scalar z2 = dotVec4(&row2, &col2);
-    scalar w2 = dotVec4(&row3, &col2);
-    scalar x3 = dotVec4(&row0, &col3);
-    scalar y3 = dotVec4(&row1, &col3);
-    scalar z3 = dotVec4(&row2, &col3);
-    scalar w3 = dotVec4(&row3, &col3);
+    scalar x0 = manVec4.dot(&row0, &col0);
+    scalar y0 = manVec4.dot(&row1, &col0);
+    scalar z0 = manVec4.dot(&row2, &col0);
+    scalar w0 = manVec4.dot(&row3, &col0);
+    scalar x1 = manVec4.dot(&row0, &col1);
+    scalar y1 = manVec4.dot(&row1, &col1);
+    scalar z1 = manVec4.dot(&row2, &col1);
+    scalar w1 = manVec4.dot(&row3, &col1);
+    scalar x2 = manVec4.dot(&row0, &col2);
+    scalar y2 = manVec4.dot(&row1, &col2);
+    scalar z2 = manVec4.dot(&row2, &col2);
+    scalar w2 = manVec4.dot(&row3, &col2);
+    scalar x3 = manVec4.dot(&row0, &col3);
+    scalar y3 = manVec4.dot(&row1, &col3);
+    scalar z3 = manVec4.dot(&row2, &col3);
+    scalar w3 = manVec4.dot(&row3, &col3);
 
-    Vec4 v0 = createVec4(x0, y0, z0, w0);
-    Vec4 v1 = createVec4(x1, y1, z1, w1);
-    Vec4 v2 = createVec4(x2, y2, z2, w2);
-    Vec4 v3 = createVec4(x3, y3, z3, w3);
+    Vec4 v0 = manVec4.create(NULL, x0, y0, z0, w0);
+    Vec4 v1 = manVec4.create(NULL, x1, y1, z1, w1);
+    Vec4 v2 = manVec4.create(NULL, x2, y2, z2, w2);
+    Vec4 v3 = manVec4.create(NULL, x3, y3, z3, w3);
 
     return (
-        createMat4Vec4(
+        manMat4.createFromVec4(
+            NULL,
             &v0,
             &v1,
             &v2,
@@ -213,61 +182,41 @@ Mat4 mulMat4Mat4(const Mat4 *const mat1, const Mat4 *const mat2) {
     );
 }
 
-/**
- *  Returns a Vec4, result of multiplication between a Mat4 and Vec4 column.
- *  (ie. matrix * col)
- *
- *  @param  col     const pointer to const Vec4, column vector.
- *  @param  matrix  const pointer to const Mat4, matrix.
- *  @return         Vec4, resulting column vector.
- */
-Vec4 mulMat4Vec4(const Mat4 *const matrix, const Vec4 *const col) {
-    Vec4 row0 = createVec4(matrix->data[0].x, matrix->data[1].x, matrix->data[2].x, matrix->data[3].x);
-    Vec4 row1 = createVec4(matrix->data[0].y, matrix->data[1].y, matrix->data[2].y, matrix->data[3].y);
-    Vec4 row2 = createVec4(matrix->data[0].z, matrix->data[1].z, matrix->data[2].z, matrix->data[3].z);
-    Vec4 row3 = createVec4(matrix->data[0].w, matrix->data[1].w, matrix->data[2].w, matrix->data[3].w);
+static Vec4 postMulVec4(const Mat4 *const matrix, const Vec4 *const col) {
+    Vec4 row0 = manVec4.create(NULL, matrix->data[0].x, matrix->data[1].x, matrix->data[2].x, matrix->data[3].x);
+    Vec4 row1 = manVec4.create(NULL, matrix->data[0].y, matrix->data[1].y, matrix->data[2].y, matrix->data[3].y);
+    Vec4 row2 = manVec4.create(NULL, matrix->data[0].z, matrix->data[1].z, matrix->data[2].z, matrix->data[3].z);
+    Vec4 row3 = manVec4.create(NULL, matrix->data[0].w, matrix->data[1].w, matrix->data[2].w, matrix->data[3].w);
 
     return (
-        createVec4(
-            dotVec4(&row0, col),
-            dotVec4(&row1, col),
-            dotVec4(&row2, col),
-            dotVec4(&row3, col)
+        manVec4.create(
+            NULL, 
+            manVec4.dot(&row0, col),
+            manVec4.dot(&row1, col),
+            manVec4.dot(&row2, col),
+            manVec4.dot(&row3, col)
         )
     );
 }
 
-/**
- *  Returns a Vec4, result of multiplication between a Mat4 and Vec4 row.
- *  (ie. row * matrix)
- *
- *  @param  row     const pointer to const Vec4, row vector.
- *  @param  matrix  const pointer to const Mat4, matrix.
- *  @return         Vec4, resulting column vector.
- */
-Vec4 mulVec4Mat4(const Vec4 *const row, const Mat4 *const matrix) {
-    Vec4 col0 = createVec4(matrix->data[0].x, matrix->data[0].y, matrix->data[0].z, matrix->data[0].w);
-    Vec4 col1 = createVec4(matrix->data[1].x, matrix->data[1].y, matrix->data[1].z, matrix->data[1].w);
-    Vec4 col2 = createVec4(matrix->data[2].x, matrix->data[2].y, matrix->data[2].z, matrix->data[2].w);
-    Vec4 col3 = createVec4(matrix->data[3].x, matrix->data[3].y, matrix->data[3].z, matrix->data[3].w);
+static Vec4 preMulVec4(const Vec4 *const row, const Mat4 *const matrix) {
+    Vec4 col0 = manVec4.create(NULL, matrix->data[0].x, matrix->data[0].y, matrix->data[0].z, matrix->data[0].w);
+    Vec4 col1 = manVec4.create(NULL, matrix->data[1].x, matrix->data[1].y, matrix->data[1].z, matrix->data[1].w);
+    Vec4 col2 = manVec4.create(NULL, matrix->data[2].x, matrix->data[2].y, matrix->data[2].z, matrix->data[2].w);
+    Vec4 col3 = manVec4.create(NULL, matrix->data[3].x, matrix->data[3].y, matrix->data[3].z, matrix->data[3].w);
 
     return (
-        createVec4(
-            dotVec4(row, &col0),
-            dotVec4(row, &col1),
-            dotVec4(row, &col2),
-            dotVec4(row, &col3)
+        manVec4.create(
+            NULL, 
+            manVec4.dot(row, &col0),
+            manVec4.dot(row, &col1),
+            manVec4.dot(row, &col2),
+            manVec4.dot(row, &col3)
         )
     );
 }
 
-/**
- *  Returns the inverse of the given Mat4.
- *
- *  @param  matrix  const pointer to const Mat4, matrix to find the inverse of.
- *  @return         Mat4, inverse of given Mat4.
- */
-Mat4 inverseMat4(const Mat4 *const matrix) {
+static Mat4 inverse(const Mat4 *const matrix) {
     // Uses Laplace expansion to find determinant and inverse of matrix
     // Find sub-factors (col, row).
     /* Sub-factor is determinant of 2x2 matrix left when:
@@ -317,7 +266,8 @@ Mat4 inverseMat4(const Mat4 *const matrix) {
     float cof33 =     matrix->data[0].x*(sub18) - matrix->data[1].x*(sub11) + matrix->data[2].x*(sub10);
 
     // Transpose co-factor matrix to get adjoint matrix (note row-major order of constructor)
-    Mat4 adj = createMat4(    
+    Mat4 adj = manMat4.create(   
+                    NULL,
                     cof00, cof01, cof02, cof03,
                     cof10, cof11, cof12, cof13,
                     cof20, cof21, cof22, cof23,
@@ -327,8 +277,9 @@ Mat4 inverseMat4(const Mat4 *const matrix) {
     // Multiply adjoint matrix by inverse of determinant to get inverse matrix
     float det = matrix->data[0].x*cof00 + matrix->data[1].x*cof10 + matrix->data[2].x*cof20 + matrix->data[3].x*cof30;
 
-    Mat4 inv = mulMat4Scalar(&adj, (1/det));
+    Mat4 inv = manMat4.postMulScalar(&adj, (1/det));
 
     return (inv);
 }
 
+const Mat4Manager manMat4 = {create, createLeading, createFromVec4, createFromMat4, sum, sub, postMulScalar, preMulScalar, mul, postMulVec4, preMulVec4, inverse};
