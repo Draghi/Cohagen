@@ -205,4 +205,4 @@ static const char  *toStringGLType(GLenum type) {
     return "other";
 }
 
-const Log cohLog = {logGLRestart, logGL, logGLError, logCompilationErrors, logLinkerErrors, logShaderInformation};
+const Log cohLog = {logGLRestart, logGL, logGLError, logCompilationErrors, logLinkerErrors};

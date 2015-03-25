@@ -51,7 +51,7 @@ typedef struct Log_s {
     /**
      *  Log detailed information about the given shader object.
      */
-    void (*logShaderInformation)(const Shader *const shader);
+    // void (*logShaderInformation)(const Shader *const shader);
 } Log;
 
 extern const Log cohLog;
