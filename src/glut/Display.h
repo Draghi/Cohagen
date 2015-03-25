@@ -93,14 +93,14 @@ struct Display_s {
 	void(*setWindowTitle)(const char[]);
 
 	/**
-	 * Sets the main callback functions (Such as Update or Render)
+	 * Sets the render callback. Called when the screen should be updated.
 	 *
 	 * @param callbacks The GlutMainCallbacks containing the callbacks.
 	 */
 	void(*setRenderCallback)(void(* callback)());
 
 	/**
-	 * Sets the window callback functions (Such as onResize)
+	 * Sets the update callback. Called when the game's state should be updated.
 	 *
 	 * @param callbacks The GlutWindowCallbacks
 	 */
