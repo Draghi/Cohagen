@@ -37,9 +37,9 @@ static int32_t winHeight = 0;
 /** The title of the window. */
 static const char const* winTitle;
 
-/** The callbacks for the update loop and the render loop etc.. */
+/** The callback for the render loop. */
 static void(* renderCallback)() = NULL;
-/** The callbacks for the resizing etc. */
+/** The callback for the update loop. */
 static void(* updateCallback)() = NULL;
 
 /** Used for calculating the FPS */
