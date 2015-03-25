@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include"GlutCallbacks.h"
 
 /**
  * The fake object struct for the display.
@@ -98,14 +97,14 @@ struct Display_s {
 	 *
 	 * @param callbacks The GlutMainCallbacks containing the callbacks.
 	 */
-	void(*setMainCallbacks)(const GlutMainCallbacks  *const);
+	void(*setRenderCallback)(void(* callback)());
 
 	/**
 	 * Sets the window callback functions (Such as onResize)
 	 *
 	 * @param callbacks The GlutWindowCallbacks
 	 */
-	void(*setWindowCallbacks)(const GlutWindowCallbacks  *const);
+	void(*setUpdateCallback)(void(* callback)());
 
 	/**
 	 * Returns the OpenGL major version (OpenGL x.3 eg.)

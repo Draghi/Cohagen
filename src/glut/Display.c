@@ -7,7 +7,6 @@
 #include "Display.h"
 
 #include"../lib/ogl.h"
-#include "GlutCallbacks.h"
 #include "Keyboard.h"
 #include "Mouse.h"
 
@@ -39,9 +38,9 @@ static int32_t winHeight = 0;
 static const char const* winTitle;
 
 /** The callbacks for the update loop and the render loop etc.. */
-static GlutMainCallbacks const* mainCallbacks = NULL;
+static void(* renderCallback)() = NULL;
 /** The callbacks for the resizing etc. */
-static GlutWindowCallbacks const* windowCallbacks = NULL;
+static void(* updateCallback)() = NULL;
 
 /** Used for calculating the FPS */
 static int32_t frame=0, time=0, timebase=0;
@@ -75,9 +74,8 @@ static void repositionWindow() {
  * @todo Add TPS/FPS managing capabilities. (120 updates, 60 renders a second eg)
  */
 static void onUpdate() {
-	if (mainCallbacks!=NULL)
-		if ((*mainCallbacks).onUpdate!=NULL)
-			(*mainCallbacks).onUpdate();
+	if (updateCallback!=NULL)
+		updateCallback();
 
 	glutPostRedisplay();
 
@@ -90,9 +88,8 @@ static void onUpdate() {
  * Used to ensure that certain calls are made.
  */
 static void onRender() {
-	if (mainCallbacks!=NULL)
-		if ((*mainCallbacks).onRender!=NULL)
-			(*mainCallbacks).onRender();
+	if (renderCallback!=NULL)
+		renderCallback();
 
 	glFlush();
 	glutSwapBuffers();
@@ -116,10 +113,6 @@ static void onRender() {
 static void onReshape(const int width, const int height) {
 	winWidth = width;
 	winHeight = height;
-
-	if (windowCallbacks!=NULL)
-		if ((*windowCallbacks).onResize!=NULL)
-			(*windowCallbacks).onResize(width, height);
 }
 
 ///////////////////////
@@ -286,8 +279,8 @@ static void setWindowTitle(const char const title[]) {
  *
  * @param callbacks The GlutMainCallbacks containing the callbacks.
  */
-static void setMainCallbacks(const GlutMainCallbacks *const callbacks) {
-	mainCallbacks = callbacks;
+static void setRenderCallback(void(* callback)()) {
+	renderCallback = callback;
 }
 
 /**
@@ -295,8 +288,8 @@ static void setMainCallbacks(const GlutMainCallbacks *const callbacks) {
  *
  * @param callbacks The GlutWindowCallbacks
  */
-static void setWindowCallbacks(const GlutWindowCallbacks *const callbacks) {
-	windowCallbacks = callbacks;
+static void setUpdateCallback(void(* callback)()) {
+	updateCallback = callback;
 }
 
 /////////////
@@ -390,5 +383,5 @@ static int32_t getFPS() {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const Display display = {createWindow, doCenterWindow, setOGLVersion, setDisplayMode, setWindowPos, setWindowX, setWindowY, setWindowSize, setWindowWidth, setWindowHeight, setWindowTitle, setMainCallbacks, setWindowCallbacks, getOGLMajorVer, getOGLMinorVer, getWindowHeight, getWindowWidth, getWindowX, getWindowY, getWindowTitle, getScreenWidth, getScreenHeight, getFPS};
+const Display display = {createWindow, doCenterWindow, setOGLVersion, setDisplayMode, setWindowPos, setWindowX, setWindowY, setWindowSize, setWindowWidth, setWindowHeight, setWindowTitle, setUpdateCallback, setRenderCallback, getOGLMajorVer, getOGLMinorVer, getWindowHeight, getWindowWidth, getWindowX, getWindowY, getWindowTitle, getScreenWidth, getScreenHeight, getFPS};
 
