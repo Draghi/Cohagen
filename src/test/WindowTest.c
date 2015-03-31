@@ -5,6 +5,7 @@
 #include "../util/OGLUtil.h"
 
 #include <GL/glut.h>
+#include <stdio.h>
 
 void update(uint32_t delta) {
 	char buf[64];
