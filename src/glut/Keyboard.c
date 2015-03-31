@@ -8,6 +8,8 @@
 
 #include"../lib/ogl.h"
 
+#include <GL/freeglut.h>
+
 #include <stdbool.h>
 
 bool keyStates[MAX_KEYBOARD_KEYS];
