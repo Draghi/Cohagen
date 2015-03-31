@@ -107,7 +107,7 @@ typedef struct Mat3Manager_s {
 	 *  @param  col     const pointer to const Vec3, column-vector.
 	 *  @return         Vec3 equal to result of matrix * col.
 	 */
-	Mat3 (*postMulVec3)(const Mat3 *const matrix, const Vec3 *const col);
+	Vec3 (*postMulVec3)(const Mat3 *const matrix, const Vec3 *const col);
 
 	/**
 	 *  Return a Vec3 equal to the result of multiplying the given Mat3 and the given Vec3 row vector.
@@ -117,7 +117,7 @@ typedef struct Mat3Manager_s {
 	 *  @param  matrix  const pointer to const Mat3.
 	 *  @return         Vec3 equal to result of row * matrix.
 	 */
-	Mat3 (*preMulVec3)(const Vec3 *const row, const Mat3 *const matrix);
+	Vec3 (*preMulVec3)(const Vec3 *const row, const Mat3 *const matrix);
 
     /**
      *  Multiply every element of the given Mat3 by a constant factor
@@ -154,5 +154,7 @@ Mat3 mulMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2);
 Vec3 mulMat3Vec3(const Mat3 *const matrix, const Vec3 *const col);
 Vec3 mulVec3Mat3(const Vec3 *const row, const Mat3 *const matrix);
 Mat3 inverseMat3(const Mat3 *const matrix);
+
+extern const Mat3Manager manMat3;
 
 #endif
