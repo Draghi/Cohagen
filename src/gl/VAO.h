@@ -1,12 +1,14 @@
 #ifndef COH_VAO_H
 #define COH_VAO_H
 
+#include <stdlib.h>
+#include <stdbool.h>
+
 #include "../gl/VBO.h"
 
 #include "../lib/ogl.h"
 #include "../util/DynamicArray.h"
 
-#include <stdbool.h>
 
 struct VAO_s {
 	GLuint id;
