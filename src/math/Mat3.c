@@ -1,24 +1,5 @@
 #include "Mat3.h"
 
-/**
- *  Return a Mat3 made up of the given scalars.
- *
- *  Note column-major construction:
- *      colRow colRow colRow
- *      colRow colRow colRow
- *      colRow colRow colRow
- *
- *  @param  el00    scalar, col 0 row 0
- *  @param  el01    scalar, col 0 row 1
- *  @param  el02    scalar, col 0 row 2
- *  @param  el10    scalar, col 1 row 0
- *  @param  el11    scalar, col 1 row 1
- *  @param  el12    scalar, col 1 row 2
- *  @param  el20    scalar, col 2 row 0
- *  @param  el21    scalar, col 2 row 1
- *  @param  el22    scalar, col 2 row 2
- *  @return         Mat3 made up of the given scalars.
- */
 Mat3 createMat3(    scalar el00, scalar el10, scalar el20,
                     scalar el01, scalar el11, scalar el21,
                     scalar el02, scalar el12, scalar el22) {
@@ -31,13 +12,6 @@ Mat3 createMat3(    scalar el00, scalar el10, scalar el20,
     return matrix;
 }
 
-/**
- *  Return a Mat3 with the given value along the leading diagonal
- *  and 0 everywhere else.
- *
- *  @param leading  scalar, the leading value to use.
- *  @return         Mat3 with "leading" value along main diagonal and 0 everywhere else.
- */
 Mat3 createMat3Leading(scalar leading) {
     Mat3 matrix;
 
@@ -48,14 +22,6 @@ Mat3 createMat3Leading(scalar leading) {
     return matrix;
 }
 
-/**
- *  Return a Mat3 constructed from the given Vec3s.
- *
- *  @param v0   const pointer to const Vec3, column 0.
- *  @param v1   const pointer to const Vec3, column 1.
- *  @param v2   const pointer to const Vec3, column 2.
- *  @return     Mat3 made up of given Vec3s.
- */
 Mat3 createMat3Vec3(const Vec3 *const v0, const Vec3 *const v1, const Vec3 *const v2) {
     Mat3 matrix;
 
@@ -66,12 +32,6 @@ Mat3 createMat3Vec3(const Vec3 *const v0, const Vec3 *const v1, const Vec3 *cons
     return matrix;
 }
 
-/**
- *  Return a Mat3 that is a clone of the given Mat3.
- *
- *  @param matrix   const pointer to const Mat3 to clone.
- *  @return         Mat3 clone.
- */
 Mat3 createMat3Mat3(const Mat3 *const matrix) {
     return (
         createMat3Vec3(
@@ -82,14 +42,6 @@ Mat3 createMat3Mat3(const Mat3 *const matrix) {
     );
 }
 
-/**
- *  Return a Mat3 that is the result of the component-wise sum of
- *  mat1 and mat2. (ie. mat1 + mat2).
- *
- *  @param mat1     const pointer to const matrix 1.
- *  @param mat2     const pointer to const matrix 2.
- *  @return         Mat3 equal to mat1 + mat2 (component-wise sum).
- */
 Mat3 sumMat3Mat3(const Mat3 *const mat1, const Mat3 *const mat2) {
     Vec3 v0 = manVec3.sum(&(mat1->data[0]), &(mat2->data[0]));
     Vec3 v1 = manVec3.sum(&(mat1->data[1]), &(mat2->data[1]));
