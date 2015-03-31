@@ -4,8 +4,8 @@
 
 #include "ShaderBuilder.h"
 #include "ShaderLoader.h"
-#include "DynamicArray.h"
-#include "Log.h"
+#include "../util/DynamicArray.h"
+#include "../util/Log.h"
 
 static GLuint   compileShader(GLenum shaderType, GLubyte **shaderData);
 static void     getFileName(char **filename, const char *const path, const char *const baseFileName, const char *const extension);

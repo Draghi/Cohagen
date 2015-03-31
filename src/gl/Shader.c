@@ -2,7 +2,7 @@
 
 #include "Shader.h"
 #include "ShaderBuilder.h"
-#include "DynamicArray.h"
+#include "../util/DynamicArray.h"
 
 static void bind(const Shader *const shader);
 static void unbind();
