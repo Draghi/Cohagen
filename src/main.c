@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <time.h>
 
 #include "render/MatrixManager.h"
 #include "lib/ogl.h"
@@ -5,7 +7,7 @@
 #include "util/OGLUtil.h"
 #include "test/Tests.h"
 
-#include <time.h>
+// DON'T MOVE THE LOCATION OF THIS INCLUDE
 #include <GL/freeglut.h>
 
 static void setupLibraries(int argc, char **argv) {
@@ -36,7 +38,9 @@ int main(int argc, char **argv) {
 	setupDisplay();
 	setupOpenGL();
 
+	dragonTest();
 
+	glutMainLoop();
 
 	return 0;
 }
