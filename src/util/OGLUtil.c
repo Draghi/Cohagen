@@ -10,7 +10,7 @@
 /**
  * Helper function to enable backface culling
  *
- * @param windingDir The direction that the polygon winds in (GL_CW/ GL_CCE)
+ * @param windingDir The direction that the polygon winds in (GL_CW/ GL_CCW)
  */
 static void setBackfaceCulling(const GLenum windingDir) {
     glEnable(GL_CULL_FACE);
