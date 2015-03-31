@@ -8,4 +8,6 @@
 #ifndef COH_TESTS_H
 #define COH_TESTS_H
 
+#include "DragonTest.h"
+
 #endif /* TEST_TESTS_H_ */
