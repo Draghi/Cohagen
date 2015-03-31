@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "ShaderLoader.h"
-#include "Log.h"
+#include "../util/Log.h"
 
 static void loadShaderString(const char *const filename, GLubyte **loadedShaderString) {
     FILE    *fp;

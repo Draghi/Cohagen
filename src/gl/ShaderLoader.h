@@ -5,7 +5,7 @@
 
 #include "../lib/ogl.h"
 
-#include "DynamicArray.h"
+#include "../util/DynamicArray.h"
 #include "Shader.h"
 
 /**
