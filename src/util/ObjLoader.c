@@ -248,7 +248,7 @@ static void loadObj(    const char *const filename,
 /*
  *  Fill vertex buffer object and index buffer object with data from file.
  */
-static void setupBuffers(GLuint vbo, GLuint ibo, const char *const filename, int *const numIndicesToDraw) {
+static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *const numIndicesToDraw) {
     // Setup data structures for receiving information
     DynamicFloatArray   vertices;
     DynamicFloatArray   normals;
@@ -339,13 +339,14 @@ static void setupBuffers(GLuint vbo, GLuint ibo, const char *const filename, int
         }
     }
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vIndices.size*sizeof(struct Vertex_s), vp, GL_STATIC_DRAW);
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    // glBufferData(GL_ARRAY_BUFFER, vIndices.size*sizeof(struct Vertex_s), vp, GL_STATIC_DRAW);
     
+    manVBO.setData(vbo, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndices.size*sizeof(unsigned int), ip, GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     free(vp);
@@ -373,21 +374,24 @@ static GLuint genVAOFromFile(const char *const filename, int *const numIndicesTo
     // vaoManager.bind(vao);
     // vboManager.bind(vbo);
 
-    GLuint vao, vbo, ibo;
+    // GLuint vao, vbo, ibo;
+    GLuint vao, ibo;
 
     // Generate vbo and ibo buffers
-    glGenBuffers(1, &vbo);
+    // glGenBuffers(1, &vbo);
     glGenBuffers(1, &ibo);
 
     // Fill them with data
+    VBO *vbo = manVBO.new();
     setupBuffers(vbo, ibo, filename, numIndicesToDraw);
 
     glGenVertexArrays(1, &vao);
 
     glBindVertexArray(vao);
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    
+    //glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    manVBO.bind(vbo);
+
     // Let VAO know where data is in vbo
     // position    
     glEnableVertexAttribArray(0);
