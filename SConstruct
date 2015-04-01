@@ -4,7 +4,10 @@ env.Append(CPPPATH = ['/usr/include/', 'include/', './src/debug/', './src/gl/', 
 env.Append(LIBPATH = ['/usr/lib/', 'lib/'])
 env.Append(LIBS = ['GL', 'GLEW', 'm', 'glut', 'GLU'])
 env.Append(CFLAGS = ['-Wall', '-Werror', '-pedantic', '-std=c99'])
-sources = [Glob("src/*.c"), Glob("src/*/*.c")]
+
+#Set scons to output object files to the "build" directory.
+env.VariantDir('build', 'src', duplicate=0)
+sources = [Glob("build/*.c"), Glob("build/*/*.c")]
 
 object_list = env.Object(source = sources)
 env.Program(target="bin/coh", source=object_list)
