@@ -1,7 +1,7 @@
+#include "DynamicIntArray.h"
+
 #include <stdlib.h>
 #include <assert.h>
-
-#include "DynamicIntArray.h"
 
 static int    getDynamicIntArrayElement(const DynamicIntArray *const array, unsigned int index);
 static void     appendDynamicIntArrayElement(DynamicIntArray *array, int element);

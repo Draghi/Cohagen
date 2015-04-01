@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "DynamicFloatArray.h"
-#include "DynamicIntArray.h"
-#include "../gl/VAO.h"
-#include "../gl/VBO.h"
-#include "../lib/ogl.h"
+#include "util/DynamicFloatArray.h"
+#include "util/DynamicIntArray.h"
+#include "gl/VAO.h"
+#include "gl/VBO.h"
+#include "lib/ogl.h"
 
 /**
  *  Singleton used for loading .obj files.

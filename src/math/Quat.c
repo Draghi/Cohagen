@@ -1,6 +1,6 @@
-#include <math.h>
-
 #include "Quat.h"
+
+#include <math.h>
 
 static void offsetAxis(Quat *const quat, const Vec3 *const axis, float angleRad);
 static void offsetAxisXYZ(Quat *const quat, scalar x, scalar y, scalar z, float angleRad);

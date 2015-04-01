@@ -2,6 +2,8 @@
 
 #include "DragonTest.h"
 
+#include <math.h>
+
 #include "lib/ogl.h"
 #include "glut/Display.h"
 #include "math/Mat4.h"
@@ -10,7 +12,6 @@
 #include "gl/Shader.h"
 
 #include <GL/glut.h>
-#include <math.h>
 
 static void setupDragonDisplay();
 static void setupDragonOpenGL();

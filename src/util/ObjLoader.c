@@ -1,6 +1,6 @@
 #include "ObjLoader.h"
 
-#include "DynamicArray.h"
+#include "util/DynamicArray.h"
 
 /*
  *  Number of characters we expect to read from any single line in an .obj file.

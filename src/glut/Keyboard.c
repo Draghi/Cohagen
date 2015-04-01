@@ -2,15 +2,15 @@
  * The Keyboard unit monitors the glut keyboard events and provides various methods to check the state of the keyboard.
  */
 
-#define MAX_KEYBOARD_KEYS 256
-
 #include "Keyboard.h"
 
-#include"../lib/ogl.h"
+#include <stdbool.h>
+
+#include"lib/ogl.h"
 
 #include <GL/freeglut.h>
 
-#include <stdbool.h>
+#define MAX_KEYBOARD_KEYS 256
 
 bool keyStates[MAX_KEYBOARD_KEYS];
 bool oldKeyStates[MAX_KEYBOARD_KEYS];

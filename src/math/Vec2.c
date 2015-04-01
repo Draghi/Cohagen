@@ -1,6 +1,6 @@
-#include <math.h>
-
 #include "Vec2.h"
+
+#include <math.h>
 
 static scalar magnitude(const Vec2 *const vec);
 

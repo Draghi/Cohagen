@@ -1,11 +1,11 @@
 #include"FBO.h"
 
-#include"../lib/ogl.h"
-#include"RBO.h"
-#include"../util/DynamicArray.h"
+#include <stdlib.h>
+#include <stdbool.h>
 
-#include<stdlib.h>
-#include<stdbool.h>
+#include "lib/ogl.h"
+#include "gl/RBO.h"
+#include "util/DynamicArray.h"
 
 static FBO* boundFBO =  NULL;
 

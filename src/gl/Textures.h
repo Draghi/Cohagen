@@ -1,16 +1,14 @@
 #ifndef COH_TEXTURES_H
 #define COH_TEXTURES_H
 
-#define TEX_MAX_SLOTS 16
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "lib/ogl.h"
 
 #define TEX_GEN_BLACK 0x0000
 #define TEX_GEN_WHITE 0x0001
 #define TEX_GEN_NOISE 0x0002
-
-#include<stdint.h>
-#include<stdbool.h>
-
-#include"../lib/ogl.h"
 
 /**
  * Struct to store information about an OpenGL texture.

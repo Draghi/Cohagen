@@ -1,7 +1,8 @@
+#include "DynamicFloatArray.h"
+
 #include <stdlib.h>
 #include <assert.h>
 
-#include "DynamicFloatArray.h"
 
 static float    getDynamicFloatArrayElement(const DynamicFloatArray *const array, unsigned int index);
 static void     appendDynamicFloatArrayElement(DynamicFloatArray *array, float element);

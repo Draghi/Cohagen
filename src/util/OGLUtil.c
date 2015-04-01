@@ -1,11 +1,11 @@
 #include "OGLUtil.h"
 
-#include "../lib/ogl.h"
-#include "../util/Log.h"
-
 #include <math.h>
 #include <stdbool.h>
 #include <limits.h>
+
+#include "lib/ogl.h"
+#include "util/Log.h"
 
 /**
  * Helper function to enable backface culling

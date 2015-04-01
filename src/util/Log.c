@@ -1,7 +1,7 @@
+#include "Log.h"
+
 #include <time.h>
 #include <stdio.h>
-
-#include "Log.h"
 
 static void logCompilationErrors(GLuint shader);
 static void logShaderInfoLog(GLuint shader);
