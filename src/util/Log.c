@@ -82,7 +82,7 @@ static void logCompilationErrors(GLuint shader) {
     glGetShaderiv(shader, GL_COMPILE_STATUS, &params);
     
     if (params != GL_TRUE) {
-        cohLog.logGLError("ERROR: GL shader index %i did not compile\n", shader);
+        cohLog.logGLError("GL shader index %i did not compile\n", shader);
 
         // Log additional info
         logShaderInfoLog(shader);
@@ -103,7 +103,7 @@ static void logLinkerErrors(GLuint program) {
     glGetProgramiv(program, GL_LINK_STATUS, &params);
     
     if (params != GL_TRUE) {
-        cohLog.logGLError("ERROR: GL shader program index %u could not be linked\n", program);
+        cohLog.logGLError("GL shader program index %u could not be linked\n", program);
 
         // Log additionalInfo
         logProgramInfoLog(program, cohLog.logGLError);
