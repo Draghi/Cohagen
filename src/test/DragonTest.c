@@ -2,6 +2,8 @@
 
 #include "DragonTest.h"
 
+#include <GL/freeglut.h>
+
 static void dragonInit();
 static void dragonDisplay();
 
@@ -9,12 +11,28 @@ static GLuint vao;
 static int numIndicesToDraw;
 static Shader *dragonShader;
 
-void dragonTest() {
+void runDragonTest() {
 	dragonInit();
 
 	display.setRenderCallback(dragonDisplay);
 
 	printf("My Dragon test\n");
+}
+
+static void setupDisplay() {
+	display.setDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_DOUBLE);
+	display.setWindowSize(800, 600); //800x600 window
+	display.doCenterWindow(); //Make sure the window pops up in the center
+	display.setOGLVersion(3, 0); //Set the context to OGL 3.0 (set to 3.3 when we move to shader only)
+
+	//Tell glut to create our window
+	display.createWindow();
+}
+
+static void setupOpenGL(){
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
+    manOGLUtil.setBackfaceCulling(GL_CCW);
 }
 
 static void dragonDisplay() {
@@ -28,6 +46,9 @@ static void dragonDisplay() {
 }
 
 static void dragonInit() {
+	setupDisplay();
+	setupOpenGL();
+
 	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 	glClearDepth(1.0f);
 

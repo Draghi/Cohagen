@@ -4,5 +4,6 @@
 #include "DragonTest.h"
 
 void runWindowTest();
+void runDragonTest();
 
 #endif
