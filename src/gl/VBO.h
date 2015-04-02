@@ -79,8 +79,8 @@ struct VBOManager_s {
 	 * @param vbo The VBO to alter.
 	 * @param vertCount The number of vertices the VBO represents.
 	 * @param countPerVert The number of elements that represents a vertex.
-     * @param stride
-	 * @param pointer 
+ 	 * @param stride Number of bytes from the start of one element to the start of the next.
+ 	 * @param pointer Offset to start reading from.
 	 */
 	void(* setRenderInfo)(VBO* const, GLint, GLint, GLint, GLvoid*);
 

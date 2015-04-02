@@ -105,8 +105,8 @@ static bool subData(const VBO* const vbo, GLvoid* data, GLsizeiptr size, GLintpt
  * @param vbo The VBO to alter.
  * @param vertCount The number of vertices the VBO represents.
  * @param countPerVert The number of elements that represents a vertex.
- * @param stride
- * @param pointer 
+ * @param stride Number of bytes from the start of one element to the start of the next.
+ * @param pointer Offset to start reading from.
  */
 static void setRenderInfo(VBO* const vbo, GLint vertCount, GLint countPerVert, GLint stride, GLvoid *pointer) {
 	vbo->vertCount=vertCount;
