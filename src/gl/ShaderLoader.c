@@ -1,9 +1,10 @@
+#include "ShaderLoader.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ShaderLoader.h"
-#include "../util/Log.h"
+#include "util/Log.h"
 
 static void loadShaderString(const char *const filename, GLubyte **loadedShaderString) {
     FILE    *fp;

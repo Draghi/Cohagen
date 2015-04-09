@@ -3,10 +3,9 @@
 
 #include <stdarg.h>
 
-#include "../lib/ogl.h"
-
-#include "../util/DynamicArray.h"
-#include "Shader.h"
+#include "lib/ogl.h"
+#include "util/DynamicArray.h"
+#include "gl/Shader.h"
 
 /**
  *  Singleton for loading shader source code.

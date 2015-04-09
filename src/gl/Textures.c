@@ -1,12 +1,13 @@
-#include"../gl/Textures.h"
+#include "Textures.h"
 
-#include"../lib/ogl.h"
-#include"../util/OGLUtil.h"
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 
-#include<stdlib.h>
-#include<stdbool.h>
-#include<math.h>
+#include "lib/ogl.h"
+#include "util/OGLUtil.h"
 
+#define TEX_MAX_SLOTS 16
 
 static Texture* slots[TEX_MAX_SLOTS];
 

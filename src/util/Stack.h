@@ -1,7 +1,7 @@
 #ifndef COH_STACK_H
 #define COH_STACK_H
 
-#include<stdint.h>
+#include <stdint.h>
 
 struct Stack_s {
 	void** contents;

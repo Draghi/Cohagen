@@ -6,12 +6,15 @@
 
 #include "Display.h"
 
-#include"../lib/ogl.h"
-#include "Keyboard.h"
-#include "Mouse.h"
-
 #include <stdbool.h>
+
+#include "lib/ogl.h"
+#include "glut/Keyboard.h"
+#include "glut/Mouse.h"
+
 #include <GL/freeglut.h>
+
+static void setWindowPos(const int32_t x, const int32_t y);
 
 /** Whether or not the main window has been created or not. **/
 static bool isCreated = false;
@@ -137,6 +140,7 @@ static void onReshape(const int width, const int height) {
 ///////////////////////
 static bool createWindow() {
 	if (!isCreated) {
+
 		//Setup and create our window
 		glutInitContextVersion(glMajor, glMinor);
 		glutInitDisplayMode(dispMode);
@@ -170,7 +174,7 @@ static void doCenterWindow() {
 	int32_t scrW = glutGet(GLUT_SCREEN_WIDTH);
 	int32_t scrH = glutGet(GLUT_SCREEN_HEIGHT);
 
-	display.setWindowPos((scrW-winWidth)/2, (scrH-winHeight)/2);
+	setWindowPos((scrW-winWidth)/2, (scrH-winHeight)/2);
 }
 
 ///////////////////

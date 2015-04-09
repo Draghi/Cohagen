@@ -1,11 +1,12 @@
+#include "ShaderBuilder.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ShaderBuilder.h"
-#include "ShaderLoader.h"
-#include "../util/DynamicArray.h"
-#include "../util/Log.h"
+#include "gl/ShaderLoader.h"
+#include "util/DynamicArray.h"
+#include "util/Log.h"
 
 static GLuint   compileShader(GLenum shaderType, GLubyte **shaderData);
 static void     getFileName(char **filename, const char *const path, const char *const baseFileName, const char *const extension);

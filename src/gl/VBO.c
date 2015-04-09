@@ -1,9 +1,9 @@
 #include "VBO.h"
 
-#include "../lib/ogl.h"
-
 #include <stdlib.h>
 #include <stdbool.h>
+
+#include "lib/ogl.h"
 
 static const VBO* boundBuffer;
 

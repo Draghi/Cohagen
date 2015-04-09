@@ -1,7 +1,7 @@
 #ifndef MATH_MAT4_H
 #define MATH_MAT4_H
 
-#include "Vec4.h"
+#include "math/Vec4.h"
 
 typedef struct Mat4_s {
     Vec4 data[4];

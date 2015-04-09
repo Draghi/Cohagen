@@ -1,9 +1,9 @@
 #ifndef COH_VBO_H
 #define COH_VBO_H
 
-#include"../lib/ogl.h"
-
 #include <stdbool.h>
+
+#include "lib/ogl.h"
 
 /**
  * A fake object struct that represents an OpenGL vertex buffer object.

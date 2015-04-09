@@ -38,3 +38,4 @@ local.properties
 /Debug/
 /dox/
 /dbg/
+/.sconsign.dblite

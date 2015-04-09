@@ -1,9 +1,9 @@
 #ifndef COH_GLUTIL_H
 #define COH_GLUTIL_H
 
-#include "../lib/ogl.h"
-
 #include <stdbool.h>
+
+#include "lib/ogl.h"
 
 struct OGLUtilManager_s {
 	/**

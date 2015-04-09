@@ -2,12 +2,12 @@
 #ifndef COH_FBO_H
 #define COH_FBO_H
 
-#include"RBO.h"
-#include"../lib/ogl.h"
-#include"../gl/Textures.h"
-#include"../gl/FBO.h"
-#include"../util/DynamicArray.h"
-#include"../util/DynamicIntArray.h"
+#include"lib/ogl.h"
+#include"gl/Textures.h"
+#include"gl/FBO.h"
+#include"gl/RBO.h"
+#include"util/DynamicArray.h"
+#include"util/DynamicIntArray.h"
 
 struct FBO_s {
 	GLuint id;

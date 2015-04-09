@@ -1,12 +1,12 @@
 #ifndef COH_MATRIXMANAGER_H
 #define COH_MATRIXMANAGER_H
 
-#include "../math/Precision.h"
-#include "../math/Vec3.h"
-#include "../math/Mat4.h"
-
 #include <stdbool.h>
 #include <stdint.h>
+
+#include "math/Precision.h"
+#include "math/Vec3.h"
+#include "math/Mat4.h"
 
 extern const int MATRIX_MODE_PROJECTION;
 extern const int MATRIX_MODE_VIEW;

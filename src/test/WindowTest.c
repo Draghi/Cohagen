@@ -1,11 +1,12 @@
 #include "Tests.h"
 
-#include "../lib/ogl.h"
-#include "../glut/Display.h"
-#include "../util/OGLUtil.h"
+#include <stdio.h>
+
+#include "lib/ogl.h"
+#include "glut/Display.h"
+#include "util/OGLUtil.h"
 
 #include <GL/glut.h>
-#include <stdio.h>
 
 void update(uint32_t delta) {
 	char buf[64];

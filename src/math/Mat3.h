@@ -1,8 +1,8 @@
 #ifndef MATH_MAT3_H
 #define MATH_MAT3_H
 
-#include "Precision.h"
-#include "Vec3.h"
+#include "math/Precision.h"
+#include "math/Vec3.h"
 
 typedef struct Mat3_s {
     Vec3 data[3];

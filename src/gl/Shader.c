@@ -1,8 +1,9 @@
+#include "Shader.h"
+
 #include <stdlib.h>
 
-#include "Shader.h"
-#include "ShaderBuilder.h"
-#include "../util/DynamicArray.h"
+#include "gl/ShaderBuilder.h"
+#include "util/DynamicArray.h"
 
 static void bind(const Shader *const shader);
 static void unbind();

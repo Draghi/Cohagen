@@ -1,6 +1,6 @@
 #include "Stack.h"
 
-#include<stdlib.h>
+#include <stdlib.h>
 
 ////////////////////////
 // Internal Functions //

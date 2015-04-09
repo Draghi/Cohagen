@@ -4,10 +4,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "../gl/VBO.h"
-
-#include "../lib/ogl.h"
-#include "../util/DynamicArray.h"
+#include "lib/ogl.h"
+#include "gl/VBO.h"
+#include "util/DynamicArray.h"
 
 
 struct VAO_s {

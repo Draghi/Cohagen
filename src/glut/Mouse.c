@@ -2,13 +2,15 @@
  * The Mouse unit monitors the glut mouse events and provides various methods to check the state of the mouse.
  */
 
-#define MAX_MOUSE_BUTTONS 3
-
 #include "Mouse.h"
-#include "../lib/ogl.h"
 
 #include <stdbool.h>
+
+#include "lib/ogl.h"
+
 #include <GL/freeglut.h>
+
+#define MAX_MOUSE_BUTTONS 3
 
 static int32_t xPos;
 static int32_t yPos;

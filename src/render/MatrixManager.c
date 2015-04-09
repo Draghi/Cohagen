@@ -1,14 +1,14 @@
 #include "MatrixManager.h"
 
-#include "../math/Precision.h"
-#include "../math/Vec3.h"
-#include "../math/Mat4.h"
-#include "../util/Stack.h"
-
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
+
+#include "math/Precision.h"
+#include "math/Vec3.h"
+#include "math/Mat4.h"
+#include "util/Stack.h"
 
 /** The Projection Matrix Stack **/
 const int MATRIX_MODE_PROJECTION = 0x0000;
