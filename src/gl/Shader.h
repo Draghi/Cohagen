@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "lib/ogl.h"
+#include "math/Mat4.h"
 
 /**
  *  Shader object.
@@ -40,8 +41,17 @@ typedef struct ShaderManager_s {
      *  @returns                pointer to Shader object.
      */
     Shader *(*newFromGroup)(const char *const path, const char *const baseFileName);
+
+    /**
+     *  Bind a Mat4 to a uniform in the given shader.
+     *s
+     *  @param  shader          const pointer to const Shader, shader to bind uniform to.
+     *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
+     *  @param  matrix          const pointer to const Mat4, matrix to bind.
+     */
+    void (*bindUniformMat4)(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
 } ShaderManager;
 
-extern const ShaderManager shaderManager;
+extern const ShaderManager manShader;
 
 #endif
