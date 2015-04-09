@@ -152,6 +152,16 @@ typedef struct Mat4Manager_s {
      *  @return         Mat4, inverse of given Mat4.
      */
      Mat4 (*inverse)(const Mat4 *const matrix);
+
+    /**
+     *  Fills the given float array with Mat4 data. Data is filled in column-major order.
+     *
+     *  @pre    size of data array parameter must be atleast 16 * sizeof(float)
+     *
+     *  @param  matrix  const pointer to const Mat4, matrix to get data of.
+     *  @param  data    const pointer to float, an array of floats to fill with Mat4 data.
+     */
+    void (*getMat4Data)(const Mat4 *const matrix, scalar *const data);
 } Mat4Manager;
 
 // Mat4 createMat4(        scalar el00, scalar el10, scalar el20, scalar el30, 

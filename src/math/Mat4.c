@@ -282,4 +282,18 @@ static Mat4 inverse(const Mat4 *const matrix) {
     return (inv);
 }
 
-const Mat4Manager manMat4 = {create, createLeading, createFromVec4, createFromMat4, sum, sub, postMulScalar, preMulScalar, mul, postMulVec4, preMulVec4, inverse};
+static void getMat4Data(const Mat4 *const matrix, scalar *const data)
+{
+    // Load each column of matrix into data array
+    int j = 0;
+    for (int i = 0; i < 16; i = i + 4)
+    {
+        data[i] = (matrix->data[j].x);
+        data[i + 1] = (matrix->data[j].y);
+        data[i + 2] = (matrix->data[j].z);
+        data[i + 3] = (matrix->data[j].w);
+        ++j;
+    }
+}
+
+const Mat4Manager manMat4 = {create, createLeading, createFromVec4, createFromMat4, sum, sub, postMulScalar, preMulScalar, mul, postMulVec4, preMulVec4, inverse, getMat4Data};
