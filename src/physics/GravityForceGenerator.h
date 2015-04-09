@@ -8,6 +8,10 @@
  * 	gravity each frame. Most likely won't use
  * 	this in practice. Instead apply gravity directly
  * 	as an acceleration.
+ *
+ * 	Every force generator needs to have a ParticleForceGenerator as
+ * 	the first member of it's structure. I use this to achieve
+ * 	a sort of polymorphism.
  */
 typedef struct GravityForceGenerator_s {
 	/**
