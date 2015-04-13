@@ -1,6 +1,5 @@
-
-#ifndef COH_FBO_H
-#define COH_FBO_H
+#ifndef FBO_H
+#define FBO_H
 
 #include"lib/ogl.h"
 #include"gl/Textures.h"
@@ -35,5 +34,4 @@ typedef struct FBOManager_s FBOManager;
 
 extern const FBOManager manFBO;
 
-
-#endif /* GL_FBO_H_ */
+#endif /* FBO_H */

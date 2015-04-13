@@ -15,13 +15,10 @@ static FBO* new() {
 	glGenFramebuffers(1, &(fbo->id));
 	fbo->height = 0;
 	fbo->width = 0;
-	fbo->textures = malloc(sizeof(DynamicArray));
-	fbo->texRelations = malloc(sizeof(DynamicArray));
-	fbo->renderbuffers = malloc(sizeof(DynamicArray));
 
-	newDynamicArray(fbo->textures, 1, sizeof(void*));
-	newDynamicArray(fbo->renderbuffers, 1, sizeof(void*));
-	newDynamicArray(fbo->texRelations, 1, sizeof(void*));
+	fbo->textures = manDynamicArray.new(1, sizeof(void*));
+	fbo->renderbuffers = manDynamicArray.new(1, sizeof(void*));
+	fbo->texRelations = manDynamicArray.new(1, sizeof(void*));
 
 	return fbo;
 }
@@ -55,11 +52,11 @@ static bool unbind(FBO* fbo) {
 static bool attachTexture(FBO* fbo, Texture* texture, GLenum relation) {
 	if (bind(fbo)) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, relation, GL_TEXTURE_2D, texture->id, 0);
-		fbo->textures->append(fbo->textures, texture);
+		manDynamicArray.append(fbo->textures, texture);
 
 		GLenum *heapRel = malloc(sizeof(GLenum));
 		*heapRel = relation;
-		fbo->texRelations->append(fbo->texRelations, heapRel);
+		manDynamicArray.append(fbo->texRelations, heapRel);
 
 		glDrawBuffers(fbo->texRelations->size, *((GLenum**)(fbo->texRelations->contents)));
 
@@ -73,7 +70,7 @@ static bool attachTexture(FBO* fbo, Texture* texture, GLenum relation) {
 static bool attachRBO(FBO* fbo, RBO* rbo, GLenum relation) {
 	if (bind(fbo)) {
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, relation, GL_RENDERBUFFER, rbo->id);
-		fbo->renderbuffers->append(fbo->renderbuffers, rbo);
+		manDynamicArray.append(fbo->renderbuffers, rbo);
 		unbind(fbo);
 
 		return true;
@@ -85,6 +82,17 @@ static bool attachRBO(FBO* fbo, RBO* rbo, GLenum relation) {
 static void delete(FBO* fbo) {
 	unbind(fbo);
 	glDeleteFramebuffers(1, &(fbo->id));
+
+	// Use of these free statements may crash the program if you at any point
+	// put stack memory inside the array. Remove these statements if you do.
+	manDynamicArray.free(fbo->textures);
+	manDynamicArray.free(fbo->texRelations);
+	manDynamicArray.free(fbo->renderbuffers);
+
+	manDynamicArray.delete(fbo->textures);
+	manDynamicArray.delete(fbo->texRelations);
+	manDynamicArray.delete(fbo->renderbuffers);
+
 	free(fbo);
 }
 
