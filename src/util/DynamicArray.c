@@ -3,21 +3,18 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static void *getDynamicArrayElement(const DynamicArray *const array, unsigned int index);
-static void appendDynamicArrayElement(DynamicArray *array, void *const element);
+static void *get(const DynamicArray *const array, unsigned int index);
+static void append(DynamicArray *array, void *const element);
 
-void newDynamicArray(DynamicArray *const array, unsigned int initialCapacity, unsigned int elementSize) {
+static void new(DynamicArray *const array, unsigned int initialCapacity, unsigned int elementSize) {
     array->size = 0;
     array->capacity = initialCapacity;
     array->capacityExpansionRate = initialCapacity;
     array->elementSize = elementSize;
     array->contents = calloc(initialCapacity, sizeof(void *));
-
-    array->get = getDynamicArrayElement;
-    array->append = appendDynamicArrayElement;
 }
 
-void deleteDynamicArray(DynamicArray *const array) {
+static void delete(DynamicArray *const array) {
     // Free array of elements
     free(array->contents);
 
@@ -28,21 +25,21 @@ void deleteDynamicArray(DynamicArray *const array) {
     array->elementSize = 0;
 }
 
-void freeDynamicArrayContents(DynamicArray *const array) {
+static void freeDynamicArray(DynamicArray *const array) {
     for (int i = 0; i < array->size; ++i) {
-        free(array->get(array, i));
+        free(manDynamicArray.get(array, i));
     }
 
     array->size = 0;
 }
 
-static void *getDynamicArrayElement(const DynamicArray *const array, unsigned int index) {
+static void *get(const DynamicArray *const array, unsigned int index) {
     assert(index < array->size && "Attempt to index out-of-bounds on DynamicArray.");
 
     return (array->contents[index]);
 }
 
-static void appendDynamicArrayElement(DynamicArray *array, void *const element) {
+static void append(DynamicArray *array, void *const element) {
     if (array->size + 1 > array->capacity) {
         array->capacity += array->capacityExpansionRate;
 
@@ -52,3 +49,5 @@ static void appendDynamicArrayElement(DynamicArray *array, void *const element) 
     array->contents[array->size] = element;
     ++(array->size);
 }
+
+const DynamicArrayManager manDynamicArray = {new, delete, free, get, append, freeDynamicArray};
