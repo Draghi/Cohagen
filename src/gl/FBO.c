@@ -85,9 +85,9 @@ static void delete(FBO* fbo) {
 
 	// Use of these free statements may crash the program if you at any point
 	// put stack memory inside the array. Remove these statements if you do.
-	manDynamicArray.free(fbo->textures);
-	manDynamicArray.free(fbo->texRelations);
-	manDynamicArray.free(fbo->renderbuffers);
+	manDynamicArray.freeContents(fbo->textures);
+	manDynamicArray.freeContents(fbo->texRelations);
+	manDynamicArray.freeContents(fbo->renderbuffers);
 
 	manDynamicArray.delete(fbo->textures);
 	manDynamicArray.delete(fbo->texRelations);
