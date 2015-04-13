@@ -42,11 +42,10 @@ typedef struct DynamicArrayManager_s {
      *  Creates a new dynamic array with the DynamicArray provided and
      *  the given initial capacity.
      *
-     *  @param  array               pointer to DynamicArray, address of new array.
      *  @param  initialCapacity     unsigned int, initial size of array in memory.
      *  @param  elementSize         unsigned int, size of each element in the array.
      */
-     void (*new)(DynamicArray *array, unsigned int initialCapacity, unsigned int elementSize);
+    DynamicArray *(*new)(unsigned int initialCapacity, unsigned int elementSize);
 
     /**
      *  Reset the structure and free the memory associated with it.
@@ -55,17 +54,17 @@ typedef struct DynamicArrayManager_s {
      *
      *  @param  array   pointer to DynamicArray to clear.
      */
-     void (*delete)(DynamicArray *array);
+    void (*delete)(DynamicArray *array);
 
     /**
      *  Cycle through the contents of the array and frees each element, also sets size of array to 0.
      *  This function will crash the program if two elements of the array point to the
-     *  same location in memory.
+     *  same location in memory or any pointer points to stack memory.
      *
      *  @params     array   const pointer to Dynamic Array, array to free contents of.
      */
     void (*free)(DynamicArray *const array);
-    
+
     /**
      *  Attempts to return element at given index in array.
      *  Method will fail if the index given exceeds the size of the array.

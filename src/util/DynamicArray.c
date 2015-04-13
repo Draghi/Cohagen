@@ -6,12 +6,16 @@
 static void *get(const DynamicArray *const array, unsigned int index);
 static void append(DynamicArray *array, void *const element);
 
-static void new(DynamicArray *const array, unsigned int initialCapacity, unsigned int elementSize) {
+static DynamicArray *new(unsigned int initialCapacity, unsigned int elementSize) {
+    DynamicArray *array = malloc(sizeof(DynamicArray));
+
     array->size = 0;
     array->capacity = initialCapacity;
     array->capacityExpansionRate = initialCapacity;
     array->elementSize = elementSize;
     array->contents = calloc(initialCapacity, sizeof(void *));
+
+    return array;
 }
 
 static void delete(DynamicArray *const array) {
