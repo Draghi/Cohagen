@@ -1,18 +1,16 @@
 #include "ParticleForceRegistry.h"
 
 static ParticleForceRegistry *new() {
-	DynamicArray *forceRegistrations = malloc(sizeof(DynamicArray));
-	newDynamicArray(forceRegistrations, 10, sizeof(ParticleForceRegistration));
-
 	ParticleForceRegistry *registry = malloc(sizeof(ParticleForceRegistry));
-	registry->forceRegistrations = *forceRegistrations;
+
+	registry->forceRegistrations = manDynamicArray.new(10, sizeof(ParticleForceRegistration));
 
 	return (registry);
 }
 
 static void delete(ParticleForceRegistry *registry) {
-	freeDynamicArrayContents(&(registry->forceRegistrations));
-	deleteDynamicArray(&(registry->forceRegistrations));
+	manDynamicArray.freeContents(registry->forceRegistrations);
+	manDynamicArray.delete(registry->forceRegistrations);
 }
 
 static void add(ParticleForceRegistry *const registry, Particle *const particle, ParticleForceGenerator *const forceGenerator) {
@@ -20,7 +18,7 @@ static void add(ParticleForceRegistry *const registry, Particle *const particle,
 	registration->particle = particle;
 	registration->forceGenerator = forceGenerator;
 
-	registry->forceRegistrations.append(&(registry->forceRegistrations), registration);
+	manDynamicArray.append(registry->forceRegistrations, registration);
 }
 
 static void remove(ParticleForceRegistry *const registry, Particle *const particle, const ParticleForceGenerator *const forceGenerator) {
@@ -29,8 +27,8 @@ static void remove(ParticleForceRegistry *const registry, Particle *const partic
 
 static void updateForces(const ParticleForceRegistry *const registry, scalar frameTime) {
 	// Call update force for each registration
-	for(int i = 0; i < registry->forceRegistrations.size; ++i) {
-		ParticleForceRegistration *registration = (ParticleForceRegistration *) registry->forceRegistrations.get(&(registry->forceRegistrations), i);
+	for(int i = 0; i < registry->forceRegistrations->size; ++i) {
+		ParticleForceRegistration *registration = (ParticleForceRegistration *) manDynamicArray.get(registry->forceRegistrations, i);
 		registration->forceGenerator->updateForce(registration->forceGenerator, registration->particle, frameTime);
 	}
 }

@@ -28,7 +28,7 @@ typedef struct ParticleForceRegistration_s {
  *	A registry containing an array of ParticleForceRegistrations.
  */
 typedef struct ParticleForceRegistry_s {
-	DynamicArray 	forceRegistrations;
+	DynamicArray 	*forceRegistrations;
 } ParticleForceRegistry;
 
 /** 
