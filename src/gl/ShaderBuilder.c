@@ -69,7 +69,7 @@ static GLuint linkProgram(int numShaders, const DynamicArray *const shaderList) 
     // Attach shaders 
     for (int i = 0; i < shaderList->size; ++i)
     {
-        GLuint *shader = (GLuint *) shaderList->get(shaderList, i);
+        GLuint *shader = (GLuint *) manDynamicArray.get(shaderList, i);
         glAttachShader(programObject, *shader);
     }
 
@@ -81,7 +81,7 @@ static GLuint linkProgram(int numShaders, const DynamicArray *const shaderList) 
     // Clean up
     for (int i = 0; i < shaderList->size; ++i)
     {
-        GLuint *shader = (GLuint *) shaderList->get(shaderList, i);
+        GLuint *shader = (GLuint *) manDynamicArray.get(shaderList, i);
 
         glDetachShader(programObject, *shader);
         glDeleteShader(*shader);
@@ -143,20 +143,19 @@ static GLuint loadShaders(const char *const path, const char *const baseFileName
     shaders[0] = loadShader(GL_VERTEX_SHADER, path, baseFileName);
     shaders[1] = loadShader(GL_FRAGMENT_SHADER, path, baseFileName);
 
-    DynamicArray shaderList;
-    newDynamicArray(&shaderList, 8, sizeof(GLuint));
+    DynamicArray *shaderList = manDynamicArray.new(8, sizeof(GLuint *));
 
     for (int i = 0; i < numTypesShaders; ++i) {
-        GLuint *temp = (GLuint *) calloc(1, sizeof(GLuint));
+        GLuint *temp = (GLuint *) calloc(1, sizeof(GLuint *));
         *temp = shaders[i];
-        shaderList.append(&shaderList, temp);
+        manDynamicArray.append(shaderList, temp);
     }
 
-    program = linkProgram(numTypesShaders, &shaderList);
+    program = linkProgram(numTypesShaders, shaderList);
 
     // Clean up shaderList
-    freeDynamicArrayContents(&shaderList);
-    deleteDynamicArray(&shaderList);
+    manDynamicArray.freeContents(shaderList);
+    manDynamicArray.delete(shaderList);
 
     return program;
 }
