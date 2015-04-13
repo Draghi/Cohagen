@@ -20,7 +20,7 @@ static VAO* new() {
 	glGenVertexArrays(1, &(vao->id));
 	vao->numVbo=0;
 	vao->primaryVBO = -1;
-	newDynamicArray((vao->vbos), 1, sizeof(void*));
+	vao->vbos = manDynamicArray.new(1, sizeof(void *));
 
 	return vao;
 }
@@ -73,7 +73,7 @@ static int32_t attachVBO(VAO* vao, VBO* vbo, GLenum dataType) {
 		if ((bind(vao)) && (manVBO.bind(vbo))) {
 			glVertexAttribPointer(vbo->id, vbo->countPerVert, dataType, GL_FALSE, vbo->stride, vbo->pointer);
 
-			vao->vbos->append(vao->vbos, vbo);
+			manDynamicArray.append(vao->vbos, vbo);
 	        (vao->numVbo)++;
 
 			return vao->numVbo-1;
@@ -103,7 +103,7 @@ static void setPrimaryVBO(VAO* vao, int32_t id) {
  * @return The VBO at the given ID.
  */
 static VBO* getVBO(VAO* vao, int32_t id) {
-	return (VBO*) vao->vbos->get(vao->vbos, id);
+	return (VBO*) manDynamicArray.get(vao->vbos, id);
 }
 
 /**
@@ -114,7 +114,7 @@ static VBO* getVBO(VAO* vao, int32_t id) {
 static bool draw(VAO* vao) {
 	if (bind(vao)) {
 		if (vao->primaryVBO>=0) {
-			VBO* renderInfo = (VBO*) vao->vbos->get(vao->vbos, vao->primaryVBO);
+			VBO* renderInfo = (VBO*) manDynamicArray.get(vao->vbos, vao->primaryVBO);
 			glDrawArrays(GL_TRIANGLES, 0, renderInfo->vertCount);
 			return true;
 		}
@@ -131,10 +131,11 @@ static void delete(VAO* vao) {
 	glDeleteVertexArrays(1, &(vao->id));
 
 	for(int i = 0; i<vao->numVbo; i++) {
-		manVBO.delete((VBO *)vao->vbos->get(vao->vbos, i));
+		manVBO.delete((VBO *)manDynamicArray.get(vao->vbos, i));
 	}
 
-	deleteDynamicArray(vao->vbos);
+	manDynamicArray.delete(vao->vbos);
+
 	free(vao->vbos);
 	free(vao);
 }
