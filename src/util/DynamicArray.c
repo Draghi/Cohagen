@@ -54,4 +54,4 @@ static void append(DynamicArray *array, void *const element) {
     ++(array->size);
 }
 
-const DynamicArrayManager manDynamicArray = {new, delete, free, get, append, freeContents};
+const DynamicArrayManager manDynamicArray = {new, delete, freeContents, get, append};
