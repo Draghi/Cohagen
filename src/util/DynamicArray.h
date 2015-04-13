@@ -63,7 +63,7 @@ typedef struct DynamicArrayManager_s {
      *
      *  @params     array   const pointer to Dynamic Array, array to free contents of.
      */
-    void (*free)(DynamicArray *const array);
+    void (*freeContents)(DynamicArray *const array);
 
     /**
      *  Attempts to return element at given index in array.

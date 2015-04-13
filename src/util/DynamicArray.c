@@ -29,7 +29,7 @@ static void delete(DynamicArray *const array) {
     array->elementSize = 0;
 }
 
-static void freeDynamicArray(DynamicArray *const array) {
+static void freeContents(DynamicArray *const array) {
     for (int i = 0; i < array->size; ++i) {
         free(manDynamicArray.get(array, i));
     }
@@ -54,4 +54,4 @@ static void append(DynamicArray *array, void *const element) {
     ++(array->size);
 }
 
-const DynamicArrayManager manDynamicArray = {new, delete, free, get, append, freeDynamicArray};
+const DynamicArrayManager manDynamicArray = {new, delete, free, get, append, freeContents};
