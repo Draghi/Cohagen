@@ -1,6 +1,7 @@
 #include "render/MatrixManager.h"
 #include "lib/ogl.h"
 #include "test/Tests.h"
+#include "test/BallisticTest.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -15,7 +16,7 @@ int main(int argc, char **argv) {
     srand((unsigned)time(NULL));
 	setupLibraries(argc, argv);
 
-	dragonTest();
+	ballisticTest();
 	// runWindowTest();
 
 	glutMainLoop();
