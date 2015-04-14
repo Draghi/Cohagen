@@ -1,4 +1,4 @@
-#include <stdio.h>
+	#include <stdio.h>
 #include <math.h>
 
 #include "DragonTest.h"
@@ -91,7 +91,7 @@ static void setupDragonDisplay() {
 	display.setOGLVersion(3, 3); //Set the context to OGL 3.3
 
 	display.setVirtualFPS(60); //Sets the virtual FPS
-	display.setVirtualTPS(120); //Sets the virtual TPS
+	display.setVirtualTPS(60); //Sets the virtual TPS
 
 	display.setUpdateCallback(dragonUpdate);
 	display.setRenderCallback(dragonDisplay);
@@ -118,7 +118,7 @@ static void loadDragonResources() {
 	worldMatrix = manMat4.createLeading(NULL, 1.0f);
 
 	Mat4 viewMatrix = manMat4.createLeading(NULL, 1.0f);
-	viewMatrix.data[3].z = -3.0f;
+	viewMatrix.data[3].z = -10.0f;
 
 	projMatrix = createProjectionMatrix(1.152f, 0.1f, 100.0f, display.getWindowWidth()/(float)display.getWindowHeight());
 	// projMatrix = manMat4.createLeading(NULL, 1.0f);
@@ -133,7 +133,7 @@ static void loadDragonResources() {
 
 	particleForceRegistry = manForceRegistry.new();
 
-	Vec3 gravityAccel = manVec3.create(NULL, 0.0f, -1.0f, 0.0f);
+	Vec3 gravityAccel = manVec3.create(NULL, 0.0f, -0.1f, 0.0f);
 	gravityFG = manGravityForceGenerator.new(&gravityAccel);
 
 	manForceRegistry.add(particleForceRegistry, dragonParticle, &(gravityFG->forceGenerator));
