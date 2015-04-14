@@ -116,6 +116,62 @@ typedef struct ParticleManager_s {
 	 * 	@returns 				bool, true if particle has finite mass, false otherwise.
 	 */
 	bool (*hasFiniteMass)(Particle *const particle);
+
+	/**
+	 *	Set the mass of the particle.
+	 * 	
+	 * 	@pre 	Mass given is not zero.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to set the mass of.
+	 * 	@param 	mass 		float, 	mass of the particle.
+	 */
+	void (*setMass)(Particle *const particle, float mass);
+
+	/**
+	 *	Set the velocity of the given particle.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to change velocity of.
+	 * 	@param 	velocity 	const pointer to const Vec3, velocity to set.
+	 */
+	void (*setVelocity)(Particle *const particle, const Vec3 *const velocity);
+
+	/**
+	 *	Set the velocity of the given particle.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to change velocity of.
+	 * 	@param 	x 			float, x velocity.
+	 * 	@param 	y 			float, y velocity.
+	 * 	@param 	z 			float, z velocity.
+	 */
+	void (*setVelocityXYZ)(Particle *const particle, float x, float y, float z);
+
+	/**
+	 *	Set the acceleration of the given particle.
+	 *
+	 *	@param 	particle 	const pointer to Particle, particle to change acceleration of.
+	 * 	@param 	x 			float, x acceleration.
+	 * 	@param 	y 			float, y acceleration.
+	 * 	@param  z 			float, z acceleration.
+	 */
+	void (*setAccelerationXYZ)(Particle *const particle, float x, float y, float z);
+
+	/**
+	 *	Set the damping of the given particle.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to set damping of.
+	 * 	@param 	damping 	float, damping qty to apply.
+	 */
+	void (*setDamping)(Particle *const particle, float damping);
+
+	/**
+	 *	Set the position of the given particl.e
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to set the position of.
+	 * 	@param 	x 			float, the x position to set.
+	 * 	@param 	y 			float, the y position to set.
+	 * 	@param 	z 			float, the z position to set.
+	 */
+	void (*setPositionXYZ)(Particle *const particle, float x, float y, float z);
 } ParticleManager;
 
 /**
