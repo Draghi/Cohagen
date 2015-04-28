@@ -26,11 +26,11 @@ static void delete(Particle *particle) {
 static void integrate(Particle *const particle, scalar frameTime) {
 	assert(frameTime > 0.0);
 
-	printf("%f \n", frameTime);
+	// printf("%f \n", frameTime);
 
-	printf("Velocity: %f %f %f\n", particle->velocity.x, particle->velocity.y, particle->velocity.z);
-	printf("Position: %f %f %f\n", particle->position.x, particle->position.y, particle->position.z);
-	printf("Acceleration: %f %f %f\n", particle->acceleration.x, particle->acceleration.y, particle->acceleration.z);
+	// printf("Velocity: %f %f %f\n", particle->velocity.x, particle->velocity.y, particle->velocity.z);
+	// printf("Position: %f %f %f\n", particle->position.x, particle->position.y, particle->position.z);
+	// printf("Acceleration: %f %f %f\n", particle->acceleration.x, particle->acceleration.y, particle->acceleration.z);
 
 	// Update position
 	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
@@ -105,4 +105,16 @@ static void setPositionXYZ(Particle *const particle, float x, float y, float z) 
 	particle->position.z = z;	
 }
 
-const ParticleManager manParticle = {new, delete, integrate, clearForceAccumulator, addForce, getMass, hasFiniteMass, setMass, setVelocity, setVelocityXYZ, setAccelerationXYZ, setDamping, setPositionXYZ};
+static Vec3 getPosition(const Particle *const particle, Vec3 *const vector) {
+	Vec3 pos = manVec3.createFromVec3(NULL, &particle->position);
+
+	if (vector != NULL) {
+		vector->x = pos.x;
+		vector->y = pos.y;
+		vector->z = pos.z;
+	}
+
+	return pos;
+}
+
+const ParticleManager manParticle = {new, delete, integrate, clearForceAccumulator, addForce, getMass, hasFiniteMass, setMass, setVelocity, setVelocityXYZ, setAccelerationXYZ, setDamping, setPositionXYZ, getPosition};

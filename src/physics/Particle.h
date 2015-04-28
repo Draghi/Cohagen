@@ -164,7 +164,7 @@ typedef struct ParticleManager_s {
 	void (*setDamping)(Particle *const particle, float damping);
 
 	/**
-	 *	Set the position of the given particl.e
+	 *	Set the position of the given particle.
 	 *
 	 * 	@param 	particle 	const pointer to Particle, particle to set the position of.
 	 * 	@param 	x 			float, the x position to set.
@@ -172,6 +172,18 @@ typedef struct ParticleManager_s {
 	 * 	@param 	z 			float, the z position to set.
 	 */
 	void (*setPositionXYZ)(Particle *const particle, float x, float y, float z);
+
+	/**
+	 *	Get the position of the particle.
+	 * 	Position will be returned as a Vec3, optionally, the user may pass a reference
+	 * 	to a vector in as a second parameter. This vector will be filled with the position 
+	 * 	of the particle.
+	 *
+	 * 	@param 	particle 	const pointer to const Particle, particle to get the position of.
+	 * 	@param 	vector 		const pointer to Vec3, vector to fill with particle's position.
+	 * 	@return 			Vec3, position of particle as a Vec3.
+	 */
+	Vec3 (*getPosition)(const Particle *const particle, Vec3 *const vector);
 } ParticleManager;
 
 /**
