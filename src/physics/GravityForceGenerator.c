@@ -10,9 +10,9 @@ static GravityForceGenerator *new(const Vec3 *const gravityAccel) {
 	fg->gravity = manVec3.createFromVec3(NULL, gravityAccel);
 
 	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
-
+	
 	fg->forceGenerator = *tempForceGen;
-
+	
 	manParticleForceGenerator.delete(tempForceGen);
 
 	return fg;

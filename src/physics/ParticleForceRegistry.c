@@ -33,5 +33,4 @@ static void updateForces(const ParticleForceRegistry *const registry, scalar fra
 	}
 }
 
-
 const ParticleForceRegistryManager manForceRegistry = {new, delete, add, remove, updateForces};

@@ -10,7 +10,7 @@ typedef struct SpringForceGenerator_s {
 	/**
 	 *	Particle force generator instance to use.
 	 */
-	ParticleForceGenerator *forceGenerator;
+	ParticleForceGenerator forceGenerator;
 
 	/**
 	 *	Particle at other end of spring.
@@ -35,6 +35,7 @@ typedef struct SpringForceGeneratorManager_s {
 	 * 	@param 	otherParticle 	const pointer to Particle, particle on other end of spring.
 	 * 	@param 	springConstant 	scalar, spring constant of the spring.
 	 * 	@param 	restLength 		scalar, the resting length of the spring.
+	 * 	@return 				pointer to SpringForceGenerator, the constructed SpringForceGenerator.
 	 */
 	SpringForceGenerator *(*new)(Particle *const otherParticle, scalar springConstant, scalar restLength);
 

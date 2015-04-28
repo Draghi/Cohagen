@@ -9,7 +9,11 @@ static SpringForceGenerator *new(Particle *const otherParticle, scalar springCon
 	fg->springConstant = springConstant;
 	fg->restLength = restLength;
 
-	fg->forceGenerator = manParticleForceGenerator.new(updateForce);
+	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
+	
+	fg->forceGenerator = *tempForceGen;
+
+	manParticleForceGenerator.delete(tempForceGen);
 
 	return fg;
 }
