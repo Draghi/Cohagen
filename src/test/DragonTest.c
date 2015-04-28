@@ -15,6 +15,7 @@
 #include "physics/Particle.h"
 #include "physics/ParticleForceRegistry.h"
 #include "physics/GravityForceGenerator.h"
+#include "physics/AnchoredSpringForceGenerator.h"
 
 #include <GL/glut.h>
 
@@ -33,6 +34,7 @@ static Mat4 projMatrix;
 static Particle *dragonParticle;
 static ParticleForceRegistry *particleForceRegistry;
 static GravityForceGenerator *gravityFG;
+static AnchoredSpringForceGenerator *springFG;
 
 void dragonTest() {
 	setupDragonDisplay();
@@ -65,6 +67,8 @@ static void dragonUpdate(uint32_t delta) {
 
 	// Update particle
 	manParticle.integrate(dragonParticle, 1 / (float) tps);
+
+	// printf("%f %f %f\n", dragonParticle->position.x, dragonParticle->position.y, dragonParticle->position.z);
 
 	// Update world matrix (position of dragon)
 	worldMatrix.data[3].x = dragonParticle->position.x;
@@ -136,7 +140,11 @@ static void loadDragonResources() {
 	Vec3 gravityAccel = manVec3.create(NULL, 0.0f, -0.1f, 0.0f);
 	gravityFG = manGravityForceGenerator.new(&gravityAccel);
 
+	Vec3 anchor = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	springFG = manAnchoredSpringForceGenerator.new(&anchor, 0.1f, 2.0f);
+
 	manForceRegistry.add(particleForceRegistry, dragonParticle, &(gravityFG->forceGenerator));
+	manForceRegistry.add(particleForceRegistry, dragonParticle, &(springFG->forceGenerator));
 }
 
 static Mat4 createProjectionMatrix(float verticalFovRad, float nearZClip, float farZClip, float aspectRatio) 

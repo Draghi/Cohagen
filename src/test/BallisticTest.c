@@ -14,12 +14,13 @@ static void keyboard(unsigned char key, int x, int y);
 static Mat4 worldMatrix;
 static Mat4 viewMatrix;
 static Mat4 projMatrix;
-static int prevTime = 0;
-static int deltaTime = 0.0f;
+// static int prevTime = 0;
+static float deltaTime = 0.0f;
 static BallisticSimulation *sim;
 static GLuint vao;
 static int numIndicesToDraw;
 static Shader *simShader;
+static float elapsedTime;
 
 void ballisticTest() {
 	setupDisplay();
@@ -28,9 +29,21 @@ void ballisticTest() {
 }
 
 static void ballisticDisplay() {
-	float elapsedTime = glutGet(GLUT_ELAPSED_TIME);
-	deltaTime = elapsedTime - prevTime;
+	char buf[64];
+	snprintf(buf, 64, "FPS: %d | TPS: %d | Ticks/Frames: %f", display.getFPS(), display.getTPS(), display.getTPS()/(float)display.getFPS());
+	display.setWindowTitle(buf);
+
+	// float elapsedTime = glutGet(GLUT_ELAPSED_TIME);
+	// deltaTime = elapsedTime - prevTime;
+	// deltaTime = deltaTime == 0.0f ? 1.0f : deltaTime;
+
+	// printf("elapsedTime: %f\n", elapsedTime);
+
+	int tps = display.getTPS() == 0 ? 400 : display.getTPS();
+	deltaTime = (1 / (float) tps);
 	deltaTime = deltaTime == 0 ? 1 : deltaTime;
+	// printf("deltaTime: %f\n", deltaTime);
+	elapsedTime += deltaTime;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -52,8 +65,7 @@ static void ballisticDisplay() {
  		}
  	}
 
-
-	prevTime = elapsedTime;
+	// prevTime = elapsedTime;
 }
 
 static void ballisticUpdate() {
@@ -61,7 +73,7 @@ static void ballisticUpdate() {
 
 	// printf("%d\n", deltaTime);
 	// printf("%d\n", prevTime);
-	if (prevTime >= 3000.0f && sim->ammoRound[0].shotType != PISTOL) {
+	if (elapsedTime >= 3.0f && sim->ammoRound[0].shotType != PISTOL) {
 		printf("FIRED TIME\n");
 		manBallisticSimulation.fireRound(sim);
 	}
@@ -167,7 +179,7 @@ static void fireRound(BallisticSimulation *sim) {
 static void updateBallisticSim(BallisticSimulation *sim) {
 	for (int i = 0; i < MAX_AMMO_ROUNDS; ++i) {
 		if (sim->ammoRound[i].shotType != UNUSED) {
-			manParticle.integrate(&(sim->ammoRound[i].particle), deltaTime/1000.0f);
+			manParticle.integrate(&(sim->ammoRound[i].particle), deltaTime);
 		}
 	}
 }
