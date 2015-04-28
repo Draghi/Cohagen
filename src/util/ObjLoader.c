@@ -239,7 +239,7 @@ static void loadObj(    const char *const filename,
             }
         }
     } else {
-        fprintf(stderr, "Can't open file '%s' for reading.", "cube.obj");
+        fprintf(stderr, "Can't open file '%s' for reading.", filename);
     }
 
     fclose(ifp);
