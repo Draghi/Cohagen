@@ -1,41 +1,29 @@
-*.pydevproject
-.metadata
-.gradle
+#folders
 bin/
 tmp/
+build/
+Debug/
+.settings/
+.externalToolBuilders/
+dox/
+dbg/
+
+#FileTypes
+*.pydevproject
 *.tmp
 *.bak
 *.swp
 *~.nib
-local.properties
-.settings/
-.loadpath
 *.o
-
-# Eclipse Core
-.project
-
-# External tool builders
-.externalToolBuilders/
-
-# Locally stored "Eclipse launch configurations"
 *.launch
 
-# CDT-specific
+#SpecificFiles
+.metadata
+.gradle
+.loadpath
+.project
 .cproject
-
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
-
-# PDT-specific
 .buildpath
-
-# sbteclipse plugin
 .target
-
-# TeXlipse plugin
 .texlipse
-/Debug/
-/dox/
-/dbg/
-/.sconsign.dblite
+.sconsign.dblite
