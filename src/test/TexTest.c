@@ -5,17 +5,11 @@
 
 #include "lib/ogl.h"
 #include "glut/Display.h"
-#include "math/Mat4.h"
-#include "math/Vec3.h"
 #include "util/ObjLoader.h"
 #include "util/OGLUtil.h"
 #include "util/TextureUtil.h"
 #include "gl/Shader.h"
 #include "gl/Textures.h"
-#include "physics/Particle.h"
-#include "physics/ParticleForceRegistry.h"
-#include "physics/GravityForceGenerator.h"
-#include "physics/AnchoredSpringForceGenerator.h"
 
 #include <GL/glut.h>
 
