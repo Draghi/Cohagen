@@ -1,5 +1,5 @@
-#ifndef COH_BMPPIXELS_H
-#define COH_BMPPIXELS_H
+#ifndef COH_BITMAP_H
+#define COH_BITMAP_H
 
 #include <stdint.h>
 
@@ -19,7 +19,7 @@ typedef union Pixel_u {
 typedef struct Bitmap_s {
 	uint16_t height;
 	uint16_t width;
-	Pixel **pixels;
+	Pixel *pixels;
 } Bitmap;
 
 /**
@@ -46,6 +46,6 @@ typedef struct BitmapManager_s {
 /**
  * The bitmap manager instance.
  */
-extern const BitmapManager bitmapManager;
+extern const BitmapManager manBitmap;
 
 #endif

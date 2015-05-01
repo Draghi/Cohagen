@@ -26,7 +26,7 @@ static void setupDisplay() {
 	display.setDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_DOUBLE); //Double buffered, RGB + depth buffer, Multisampled window.
 	display.setOGLVersion(3, 3); //Set the context to OGL 3.3
 
-	display.setVirtualTPS(60); //Sets the virtual FPS
+	display.setVirtualFPS(60); //Sets the virtual FPS
 	display.setVirtualTPS(120); //Sets the virtual TPS
 
 	display.setRenderCallback(render); //Sets the render callback
