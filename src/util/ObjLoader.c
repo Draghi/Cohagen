@@ -103,6 +103,10 @@ static void loadObj(    const char *const filename,
             if (strcmp(key, "vt\0") == 0) {
                 char element[MAX_ELEMENT_SIZE];
 
+                // Count texture coordinate stride
+                if (texCoordStride != NULL) {
+                    (*texCoordStride) = 0;
+                }
                 do {
                     sscanf(handle, "%s", element);
 
@@ -120,6 +124,10 @@ static void loadObj(    const char *const filename,
 
                     // Ensure handle is moved to the whitespace after the number just read
                     ++handle;
+
+                    if (texCoordStride != NULL) {
+                        (*texCoordStride)++;
+                    }
                 } while (*handle != '\n');
             }
             if (strcmp(key, "f\0\0") == 0) {
@@ -276,6 +284,23 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
             &vertices, &normals, &texCoords, &vIndices, &nIndices, &tIndices,
             &vertexStride, &normalStride, &texCoordStride, &vIndexStride, &nIndexStride, &tIndexStride);
 
+    // printf("tIndices size: %d\n", tIndices.size);
+    // for (int i = 0; i < tIndices.size; ++i) {
+    //     printf("%d ", tIndices.get(&tIndices, i));
+    //     if ((i + 1) % 3 == 0) {
+    //         printf("\n");
+    //     }
+    // }
+    // printf("\n");
+
+    // for (int i = 0; i < texCoords.size; ++i) {
+    //     printf("%f (%d)", texCoords.get(&texCoords, i), i);
+    //     if ((i + 1) % 2 == 0) {
+    //         printf("\n");
+    //     }
+    // }
+    // printf("tIndexStride: %d\n", tIndexStride);
+
     // Number of faces (triangles or quads) in object = number of indices / number of indices per face.
     int numFaces = vIndices.size / vIndexStride;
 
@@ -309,9 +334,15 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 2);
+            
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 2);
+
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride);
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1);
+            // printf("TexCoord u: %f (%d)\n", texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride), tIndices.get(&tIndices, i * tIndexStride) * texCoordStride);
+            // printf("TexCoord v: %f (%d)\n", texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1), tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1);
             (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
             ++j;
 
@@ -319,9 +350,13 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 2);
+
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 2);
+
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride);
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride + 1);
             (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
             ++j;
 
@@ -329,9 +364,13 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 2);
+
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 1);
             (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 2);
+
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride);
+            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride + 1);
             (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
             ++j;
         }
@@ -346,6 +385,10 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndices.size*sizeof(unsigned int), ip, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    // for (int i = 0; i < numFaces * 3; ++i) {
+    //     printf("%f %f\n", (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, i)).u, (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, i)).v);
+    // }
 
     free(vp);
     free(ip);
