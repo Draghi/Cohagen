@@ -11,9 +11,7 @@
 
 struct VAO_s {
 	GLuint id;
-	int32_t numVbo;
-	int32_t primaryVBO;
-	DynamicArray *vbos;
+	uint32_t vertCount;
 };
 
 typedef struct VAO_s VAO;
@@ -34,39 +32,30 @@ struct VAOManager_s {
 	bool(* bind)(VAO*);
 
 	/**
-	 * Unbinds the vao.
+	 * Unbinds the current vao.
 	 *
-	 * @param self The vao to bind.
-	 * @return If the unbind was successful, or not. Normally, false means it wasn't bound in the first place.
+	 * @return If the unbind was successful, or not.
 	 */
-	bool(* unbind)(VAO*);
+	bool(* unbind)();
 
 	/**
-	 * Attaches a VBO to the given vao and returns the index of the VBO in the VAO.
+	 * Attaches a VBO to the given VAO and returns if it was successful.
 	 *
 	 * @param vao The VAO to attach to.
 	 * @param vbo The VBO to attach to the VAO.
+	 * @param attribLocation The attribute location to bind to.
 	 * @param dataType The type of data that's in the VBO.
-	 * @param countPerVertex The number of elements in the VBO per vertex.
-	 * @return The index of the VBO in the VAO
+	 * @return If the VBO was successfully attached.
 	 */
-	int32_t(* attachVBO)(VAO*, VBO*, GLenum);
+	bool(* attachVBO)(VAO*, VBO*, GLuint, GLenum);
 
 	/**
-	 * Sets the primary vbo that the vao uses for render information.
-	 * AKA the number of vertices to draw.
-	 * @param vao The vao to modify.
-	 * @param id The id of the vbo to use.
+	 * Sets the VAO render information.
+	 *
+	 * @param vao The VAO to modify.
+	 * @param vertexCount the number of vertices to draw.
 	 */
-	void (* setPrimaryVBO)(VAO*, int32_t);
-
-	/**
-	 * Returns the VBO at the given ID from the VAO.
-	 * @param vao The vao to fetch the vbo from.
-	 * @param id The id of the VBO to return.
-	 * @return The VBO at the given ID.
-	 */
-	VBO* (* getVBO)(VAO*, int32_t);
+	void (*setRenderInfo)(VAO*, uint32_t);
 
 	/**
 	 * Renders the given vao.
@@ -79,7 +68,7 @@ struct VAOManager_s {
 	 * Frees the VAO and all attached VBOs from the GPU and Heap.
 	 * @param vao The VAO to clear.
 	 */
-	void(* delete)();
+	void(* delete)(VAO* vao);
 };
 
 typedef struct VAOManager_s VAOManager;

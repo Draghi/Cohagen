@@ -5,8 +5,6 @@
 
 #include "lib/ogl.h"
 
-static const VBO* boundBuffer;
-
 ///////////////////////
 // VBO Manager Class //
 ///////////////////////
@@ -33,14 +31,8 @@ static VBO* new(){
  * @return If the bind was successful, or not.
  */
 static bool bind(const VBO* const vbo) {
-	if (boundBuffer!=vbo) {
-		boundBuffer = vbo;
-		glBindBuffer(GL_ARRAY_BUFFER, vbo->id);
-
-		return true;
-	} else {
-		return false;
-	}
+	glBindBuffer(GL_ARRAY_BUFFER, vbo->id);
+	return true;
 }
 
 /**
@@ -49,15 +41,9 @@ static bool bind(const VBO* const vbo) {
  * @param vbo The VBO to unbind.
  * @return If the unbind was successful, or not. Normally, false means it wasn't bound.
  */
-static bool unbind(const VBO* const vbo) {
-	if (boundBuffer==vbo) {
-		boundBuffer = NULL;
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		return true;
-	} else {
-		return false;
-	}
+static bool unbind() {
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	return true;
 }
 
 /**
@@ -91,8 +77,7 @@ static bool setData(const VBO* const vbo, GLvoid* data, GLsizeiptr size, GLenum 
 static bool subData(const VBO* const vbo, GLvoid* data, GLsizeiptr size, GLintptr offset) {
 	if (bind(vbo)) {
 		glBufferSubData(vbo->id, offset, size, data);
-
-		unbind(vbo);
+		unbind();
 		return true;
 	} else {
 		return false;
