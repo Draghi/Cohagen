@@ -2,6 +2,7 @@
 #include "lib/ogl.h"
 #include "test/Tests.h"
 #include "test/TexTest.h"
+#include "test/HouseTest.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -16,7 +17,8 @@ int main(int argc, char **argv) {
     srand((unsigned)time(NULL));
 	setupLibraries(argc, argv);
 
-	runTexTest();
+	// runTexTest();
+	runHouseTest();
 	// runWindowTest();
 
 	glutMainLoop();
