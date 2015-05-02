@@ -191,19 +191,25 @@ Bitmap* loadBmp(uint8_t* data, BmpDib* dib) {
 	uint32_t bytesRow = (dest->width *bytesPerPixel);
 	uint32_t paddingBytes = (bytesRow % 4) ? 4 - (bytesRow % 4) : 0;
 
+	uint32_t row = dib->imageHeight < 0 ? dib->imageHeight - 1 : 0;
+
 	uint32_t raw = 0;
 	for(uint32_t i = 0; i<dest->height; i++) {
+		uint32_t col = dib->imageWidth < 0 ? dib->imageWidth - 1 : 0;
+
 		for(uint32_t j = 0; j<dest->width; j++) {
 			memUtil.fillBytes(&raw, data, offset, sizeof(uint32_t));
 
-			dest->pixels[i+j*dest->width].r = ((raw & masks[0].mask) >> masks[0].shiftin) * 255.0 / masks[0].maxValue + 0.5;
-			dest->pixels[i+j*dest->width].g = ((raw & masks[1].mask) >> masks[1].shiftin) * 255.0 / masks[1].maxValue + 0.5;
-			dest->pixels[i+j*dest->width].b = ((raw & masks[2].mask) >> masks[2].shiftin) * 255.0 / masks[2].maxValue + 0.5;
-			dest->pixels[i+j*dest->width].a = ((raw & masks[3].mask) >> masks[3].shiftin) * 255.0 / masks[3].maxValue + 0.5;
+			dest->pixels[row*dest->height+col].r = ((raw & masks[0].mask) >> masks[0].shiftin) * 255.0 / masks[0].maxValue + 0.5;
+			dest->pixels[row*dest->height+col].g = ((raw & masks[1].mask) >> masks[1].shiftin) * 255.0 / masks[1].maxValue + 0.5;
+			dest->pixels[row*dest->height+col].b = ((raw & masks[2].mask) >> masks[2].shiftin) * 255.0 / masks[2].maxValue + 0.5;
+			dest->pixels[row*dest->height+col].a = ((raw & masks[3].mask) >> masks[3].shiftin) * 255.0 / masks[3].maxValue + 0.5;
 
 			offset += bytesPerPixel;
+			col += dib->imageWidth < 0 ? -1 : 1;
 		}
 		offset += paddingBytes;
+		row += dib->imageHeight < 0 ? -1 : 1;
 	}
 
 	return dest;

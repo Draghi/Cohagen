@@ -2,7 +2,6 @@
 
 in vec2 tc;
 
-uniform sampler2D a;
 uniform sampler2D tex;
 
 out vec4 fragColour;
