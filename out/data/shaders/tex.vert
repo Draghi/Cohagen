@@ -10,7 +10,7 @@ out float z;
 out vec2 tc;
 
 void main() {
-	tc = normal.xz;
+	tc = texCoord.xy;
 	z = position.y;
 	gl_Position = vec4(position.x, position.z, position.y, 1.0);
 }
