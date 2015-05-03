@@ -3,15 +3,17 @@
 #include <stdio.h>
 
 #include "lib/ogl.h"
-#include "glut/Display.h"
+#include "glfw/Display.h"
 #include "util/OGLUtil.h"
 
 #include <GL/glut.h>
 
+Window* window;
+
 void update(uint32_t delta) {
-	char buf[64];
-	snprintf(buf, 64, "FPS: %d | TPS: %d | Ticks/Frames: %f", display.getFPS(), display.getTPS(), display.getTPS()/(float)display.getFPS());
-	display.setWindowTitle(buf);
+	//char buf[64];
+	//snprintf(buf, 64, "FPS: %d | TPS: %d | Ticks/Frames: %f", display.getFPS(), display.getTPS(), display.getTPS()/(float)display.getFPS());
+	//manWin.setTitle(buf);
 }
 
 void render(uint32_t delta) {
@@ -20,19 +22,19 @@ void render(uint32_t delta) {
 }
 
 static void setupDisplay() {
-	display.setWindowSize(800, 600); //800x600 window
-	display.doCenterWindow(); //Make sure the window pops up in the center
+	manWin.setSize(window, 800, 600); //800x600 window
+	//manWin.doCenterWindow(); //Make sure the window pops up in the center
 
-	display.setDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_DOUBLE); //Double buffered, RGB + depth buffer, Multisampled window.
-	display.setOGLVersion(3, 3); //Set the context to OGL 3.3
+	//manWin.setDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_DOUBLE); //Double buffered, RGB + depth buffer, Multisampled window.
+	//manWin.setOGLVersion(3, 3); //Set the context to OGL 3.3
 
-	display.setVirtualFPS(60); //Sets the virtual FPS
-	display.setVirtualTPS(120); //Sets the virtual TPS
+	//manWin.setVirtualFPS(60); //Sets the virtual FPS
+	//manWin.setVirtualTPS(120); //Sets the virtual TPS
 
-	display.setRenderCallback(render); //Sets the render callback
-	display.setUpdateCallback(update); //Sets the update callback
+	//manWin.setRenderCallback(render); //Sets the render callback
+	//manWin.setUpdateCallback(update); //Sets the update callback
 
-	display.createWindow(); //Create the window
+	manWin.openWindow(window); //Create the window
 }
 
 static void setupOpenGL(){
@@ -43,7 +45,7 @@ static void setupOpenGL(){
 
 
 void runWindowTest() {
+	window = manWin.new();
 	setupDisplay();
 	setupOpenGL();
-	glutMainLoop();
 }

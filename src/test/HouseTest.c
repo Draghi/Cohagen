@@ -3,16 +3,17 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "render/MatrixManager.h"
 #include "lib/ogl.h"
-#include "glut/Display.h"
+#include "glfw/Display.h"
+#include "glfw/Keyboard.h"
+#include "glfw/Mouse.h"
 #include "util/ObjLoader.h"
 #include "util/OGLUtil.h"
 #include "util/TextureUtil.h"
 #include "gl/Shader.h"
 #include "gl/Textures.h"
 #include "math/Mat4.h"
-
-#include <GL/glut.h>
 
 static void setupCubeDisplay();
 static void setupCubeOpenGL();
@@ -27,11 +28,19 @@ static Shader *cubeShader;
 static Texture *tex;
 static Mat4 projMatrix;
 static Mat4 modelMatrix;
+Window* window;
 
 void runHouseTest() {
+	window = manWin.new();
 	setupCubeDisplay();
 	setupCubeOpenGL();
 	loadCubeResources();
+	while(manWin.isOpen(window)) {
+		cubeUpdate(1);
+		cubeDisplay();
+		manWin.update(window);
+		manWin.swapBuffers(window);
+	}
 }
 
 static void cubeDisplay() {
@@ -39,35 +48,38 @@ static void cubeDisplay() {
 
 	glEnable(GL_TEXTURE);
 
-	manShader.bind(cubeShader);
-		manTex.bind(tex, 0);
+	manTex.bind(tex, 0);
+		manMat.push();
 			glBindVertexArray(vao);
-			glDrawElements(GL_TRIANGLES, numIndicesToDraw, GL_UNSIGNED_INT, 0);
+				manShader.bindUniformMat4(cubeShader, "modelMatrix", manMat.peek());
+				manShader.bind(cubeShader);
+					glDrawElements(GL_TRIANGLES, numIndicesToDraw, GL_UNSIGNED_INT, 0);
+				manShader.unbind();
 			glBindVertexArray(0);
-		manTex.unbind(tex);
-	manShader.unbind();
+		manMat.pop();
+	manTex.unbind(tex);
 
 	glDisable(GL_TEXTURE);
 }
 
 static void cubeUpdate(uint32_t delta) {
-	glViewport(0, 0, display.getWindowWidth(), display.getWindowHeight());
+	glViewport(0, 0, manWin.getWidth(window), manWin.getHeight(window));
+
+	if(manMouse.isDown(window, MOUSE_BUTTON_LEFT)) {
+		manMat.translate(manVec3.create(NULL, manMouse.getDX(window)/100, 0, manMouse.getDY(window)/100));
+	}
+
+	if(manMouse.isDown(window, MOUSE_BUTTON_RIGHT)) {
+		manMat.rotate(manMouse.getDY(window)/100,manVec3.create(NULL, 1,0,0));
+		manMat.rotate(manMouse.getDX(window)/100,manVec3.create(NULL, 0,1,0));
+	}
+
+	manShader.bindUniformMat4(cubeShader, "modelMatrix", &modelMatrix);
 }
 
 static void setupCubeDisplay() {
-	display.setWindowSize(800, 600); //800x600 window
-	display.doCenterWindow(); //Make sure the window pops up in the center
-
-	display.setDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_DOUBLE); //Double buffered, RGB + depth buffer, Multisampled window.
-	display.setOGLVersion(3, 3); //Set the context to OGL 3.3
-
-	display.setVirtualFPS(60); //Sets the virtual FPS
-	display.setVirtualTPS(60); //Sets the virtual TPS
-
-	display.setUpdateCallback(cubeUpdate);
-	display.setRenderCallback(cubeDisplay);
-
-	display.createWindow(); //Create the window
+	manWin.setSize(window, 800, 600);
+	manWin.openWindow(window); //Create the window
 }
 
 static void setupCubeOpenGL() {
@@ -85,14 +97,11 @@ static void loadCubeResources() {
 	cubeShader = manShader.newFromGroup("./data/shaders/", "house");
 	tex = textureUtil.createTextureFromFile("./data/texture/house2.bmp", GL_LINEAR, GL_LINEAR);
 
-	projMatrix = createProjectionMatrix(1.152f, 1.0f, 100.0f, (float) display.getWindowWidth() / (float) display.getWindowHeight());
+	projMatrix = createProjectionMatrix(1.152f, 1.0f, 100.0f, (float) manWin.getWidth(window) /(float) manWin.getHeight(window));
 	manShader.bindUniformMat4(cubeShader, "projectionMatrix", &projMatrix);
 
-	modelMatrix = manMat4.createLeading(NULL, 1.0f);
-	modelMatrix.data[3].z = -19.0f;
-	modelMatrix.data[3].y = -3.8f;
-	modelMatrix.data[3].x = -5.0f;
-	manShader.bindUniformMat4(cubeShader, "modelMatrix", &modelMatrix);
+	manMat.setMode(MATRIX_MODE_MODEL);
+	manMat.pushIdentity();
 
 	//Bind Texture Uniform
 	glUseProgram(cubeShader->program);
