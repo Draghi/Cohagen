@@ -95,7 +95,7 @@ static void pushMat4(Mat4* mat) {
 	if (mat!=NULL) {
 		Stack* stack = stacks[matMode];
 		Mat4* matClone = malloc(sizeof(Mat4));
-		manMat4.createFromMat4(matClone, peek());
+		manMat4.createFromMat4(matClone, mat);
 		manStack.push(stack, matClone);
 	}
 }
@@ -125,18 +125,28 @@ static void pushIdentity() {
  * @param far The farthest clipping plane's distance.
  */
 static void pushPerspective(scalar fov, scalar aspect, scalar near, scalar far) {
-	Mat4 mat = manMat4.createLeading(NULL, 1);
-	scalar x_scale = (scalar) (1/tan(0.5f * fov));
+	Stack* stack = stacks[matMode];
 
-	mat.data[0].x = x_scale;
-	mat.data[1].y = x_scale/aspect;
-	mat.data[2].z = -((far+near)/(far-near));
-	mat.data[3].w = 0;
 
-	mat.data[2].w = -1;
-	mat.data[3].z = -((2*near*far)/(far-near));
+	scalar frustumDepth = far - near;
+	scalar oneOverDepth = 1 / frustumDepth;
 
-	pushMat4(&mat);
+	scalar y1 = 1 / tan(0.5f * fov);
+	scalar x0 = -1 * y1 / aspect;
+	scalar z2 = far * oneOverDepth;
+	scalar z3 = (-far * near) * oneOverDepth;
+	scalar w2 = 1;
+	scalar w3 = 0;
+
+
+	Mat4* mat = malloc(sizeof(Mat4));
+	manMat4.create(mat,
+				   x0,  0,  0,  0,
+				    0, y1,  0,  0,
+					0,  0, z2, z3,
+					0,  0, w2, w3);
+
+	manStack.push(stack, mat);
 }
 
 /**
