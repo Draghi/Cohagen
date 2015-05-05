@@ -50,7 +50,6 @@ void onCreate(GameLoop* self) {
 void onInitWindow(GameLoop* self) {
 	manWin.setSize(self->primaryWindow, 800, 600);
 	manWin.centerWindow(self->primaryWindow);
-	manWin.openWindow(gameloop->primaryWindow);
 }
 
 void onInitOpenGL(GameLoop* self) {
@@ -152,7 +151,7 @@ void onClose(GameLoop* self) {
 	InternalData* data = self->extraData;
 
 	manTex.delete(data->tex);
-	//free(data->shader);
+	free(data->shader);
 	free(data->camPos);
 	free(data->camRot);
 }
