@@ -3,6 +3,7 @@
 #include "test/Tests.h"
 #include "test/TexTest.h"
 #include "test/HouseTest.h"
+#include "test/DragonTest.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -17,8 +18,9 @@ int main(int argc, char **argv) {
     srand((unsigned)time(NULL));
 	setupLibraries(argc, argv);
 
+	runDragonTest();
 	// runTexTest();
-	runHouseTest();
+	// runHouseTest();
 	// runWindowTest();
 
 	glutMainLoop();

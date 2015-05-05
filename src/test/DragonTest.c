@@ -16,6 +16,8 @@
 #include "physics/ParticleForceRegistry.h"
 #include "physics/GravityForceGenerator.h"
 #include "physics/AnchoredSpringForceGenerator.h"
+#include "gl/Textures.h"
+#include "util/TextureUtil.h"
 
 #include <GL/glut.h>
 
@@ -29,62 +31,65 @@ static Mat4 createProjectionMatrix(float verticalFovRad, float nearZClip, float 
 static GLuint vao;
 static int numIndicesToDraw;
 static Shader *dragonShader;
-static Mat4 worldMatrix;
+static Mat4 modelMatrix;
 static Mat4 projMatrix;
 static Particle *dragonParticle;
 static ParticleForceRegistry *particleForceRegistry;
 static GravityForceGenerator *gravityFG;
 static AnchoredSpringForceGenerator *springFG;
+static Texture *tex;
 
-void dragonTest() {
+void runDragonTest() {
 	setupDragonDisplay();
 	setupDragonOpenGL();
 	loadDragonResources();
-
-	printf("My Dragon test\n");
 }
 
-static void dragonDisplay() {
+static void dragonDisplay(uint32_t deltaFrame) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glEnable(GL_TEXTURE);
+
 	manShader.bind(dragonShader);
-	glBindVertexArray(vao);
-	glDrawElements(GL_TRIANGLES, numIndicesToDraw, GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
+		manTex.bind(tex, 0);
+			glBindVertexArray(vao);
+			glDrawElements(GL_TRIANGLES, numIndicesToDraw, GL_UNSIGNED_INT, 0);
+			glBindVertexArray(0);
+		manTex.unbind(tex);
 	manShader.unbind();
+
+	glDisable(GL_TEXTURE);
+
+	// printf("%d\n", deltaFraem);
 }
 
-static void dragonUpdate(uint32_t delta) {
+static void dragonUpdate(uint32_t deltaTick) {
 	char buf[64];
 	snprintf(buf, 64, "FPS: %d | TPS: %d | Ticks/Frames: %f", display.getFPS(), display.getTPS(), display.getTPS()/(float)display.getFPS());
 	display.setWindowTitle(buf);
 
-	// Needed to prevent particle trying to integrate over an infinite time step when TPS = 0 (happens on startup)
-	int tps = display.getTPS() == 0 ? 400 : display.getTPS();
+	// // Needed to prevent particle trying to integrate over an infinite time step when TPS = 0 (happens on startup)
+	// int tps = display.getTPS() == 0 ? 400 : display.getTPS();
 
-	// Update forces acting on particle
-	manForceRegistry.updateForces(particleForceRegistry, 1 / (float) tps);
+	// printf("%d\n", deltaTick);
+	// // Update forces acting on particle
+	// manForceRegistry.updateForces(particleForceRegistry, deltaTick);
 
-	// Update particle
-	manParticle.integrate(dragonParticle, 1 / (float) tps);
+	// // Update particle
+	// manParticle.integrate(dragonParticle, deltaTick);
 
-	// printf("%f %f %f\n", dragonParticle->position.x, dragonParticle->position.y, dragonParticle->position.z);
+	// Update model matrix (position of dragon)
+	modelMatrix.data[3].x = dragonParticle->position.x;
+	modelMatrix.data[3].y = dragonParticle->position.y;
+	modelMatrix.data[3].z = dragonParticle->position.z;
+	manShader.bindUniformMat4(dragonShader, "modelMatrix", &modelMatrix);
 
-	// Update world matrix (position of dragon)
-	worldMatrix.data[3].x = dragonParticle->position.x;
-	worldMatrix.data[3].y = dragonParticle->position.y;
-	worldMatrix.data[3].z = dragonParticle->position.z;
-	manShader.bindUniformMat4(dragonShader, "worldMatrix", &worldMatrix);
-
-	// Update projection matrix
-	projMatrix = createProjectionMatrix(1.152f, 0.1f, 100.0f, display.getWindowWidth()/(float)display.getWindowHeight());
+	// // Update projection matrix
+	projMatrix = createProjectionMatrix(1.152f, 1.0f, 100.0f, display.getWindowWidth()/(float)display.getWindowHeight());
 	manShader.bindUniformMat4(dragonShader, "projMatrix", &projMatrix);
 
 	// Update viewport in case of display change
 	glViewport(0, 0, display.getWindowWidth(), display.getWindowHeight());
-
-	// Vec3 force = manVec3.create(NULL, 0.0f, -1.0f, 0.0f);
-	// manParticle.addForce(dragonParticle, &force);
 }
 
 static void setupDragonDisplay() {
@@ -113,27 +118,24 @@ static void setupDragonOpenGL() {
 }
 
 static void loadDragonResources() {
-	vao = objLoader.genVAOFromFile("./build/data/models/dragon_smooth.obj", &numIndicesToDraw);
-	printf("VAO ID: %d Vertex Count: %d\n", vao, numIndicesToDraw);
+	//Load Resources
+	vao = objLoader.genVAOFromFile("./data/models/town.obj", &numIndicesToDraw);
+	dragonShader = manShader.newFromGroup("./data/shaders/", "house");
+	tex = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
-	dragonShader = manShader.newFromGroup("./build/data/shaders/", "dragon");
+	projMatrix = createProjectionMatrix(1.152f, 1.0f, 100.0f, (float) display.getWindowWidth() / (float) display.getWindowHeight());
+	manShader.bindUniformMat4(dragonShader, "projectionMatrix", &projMatrix);
 
-	// Bind matrices
-	worldMatrix = manMat4.createLeading(NULL, 1.0f);
+	modelMatrix = manMat4.createLeading(NULL, 1.0f);
+	manShader.bindUniformMat4(dragonShader, "modelMatrix", &modelMatrix);
 
-	Mat4 viewMatrix = manMat4.createLeading(NULL, 1.0f);
-	viewMatrix.data[3].z = -10.0f;
-
-	projMatrix = createProjectionMatrix(1.152f, 0.1f, 100.0f, display.getWindowWidth()/(float)display.getWindowHeight());
-	// projMatrix = manMat4.createLeading(NULL, 1.0f);
-
-	manShader.bindUniformMat4(dragonShader, "worldMatrix", &worldMatrix);
-	manShader.bindUniformMat4(dragonShader, "projMatrix", &projMatrix);
-	manShader.bindUniformMat4(dragonShader, "viewMatrix", &viewMatrix);
+	// Bind Texture Uniform
+	glUseProgram(dragonShader->program);
+	glUniform1i(glGetUniformLocation(dragonShader->program, "tex"), 0);
 
 	// Load physics sub-system
 	dragonParticle = manParticle.new();
-	dragonParticle->position = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	dragonParticle->position = manVec3.create(NULL, -4.0f, -3.0f, -19.0f);
 
 	particleForceRegistry = manForceRegistry.new();
 
@@ -144,7 +146,7 @@ static void loadDragonResources() {
 	springFG = manAnchoredSpringForceGenerator.new(&anchor, 0.1f, 2.0f);
 
 	manForceRegistry.add(particleForceRegistry, dragonParticle, &(gravityFG->forceGenerator));
-	manForceRegistry.add(particleForceRegistry, dragonParticle, &(springFG->forceGenerator));
+	// manForceRegistry.add(particleForceRegistry, dragonParticle, &(springFG->forceGenerator));
 }
 
 static Mat4 createProjectionMatrix(float verticalFovRad, float nearZClip, float farZClip, float aspectRatio) 
