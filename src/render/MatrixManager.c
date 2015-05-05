@@ -36,7 +36,7 @@ bool initialized = false;
  */
 static void init() {
 	if (!initialized) {
-		stacks = malloc(sizeof(void*)*MATRIX_MODE_COUNT);
+		stacks = malloc(sizeof(Stack*)*MATRIX_MODE_COUNT);
 		for(int i = 0; i < MATRIX_MODE_COUNT; i++) {
 			stacks[i] = manStack.new();
 		}
@@ -95,7 +95,7 @@ static void pushMat4(Mat4* mat) {
 	if (mat!=NULL) {
 		Stack* stack = stacks[matMode];
 		Mat4* matClone = malloc(sizeof(Mat4));
-		manMat4.createFromMat4(matClone, peek());
+		manMat4.createFromMat4(matClone, mat);
 		manStack.push(stack, matClone);
 	}
 }
@@ -125,18 +125,28 @@ static void pushIdentity() {
  * @param far The farthest clipping plane's distance.
  */
 static void pushPerspective(scalar fov, scalar aspect, scalar near, scalar far) {
-	Mat4 mat = manMat4.createLeading(NULL, 1);
-	scalar x_scale = (scalar) (1/tan(0.5f * fov));
+	Stack* stack = stacks[matMode];
 
-	mat.data[0].x = x_scale;
-	mat.data[1].y = x_scale/aspect;
-	mat.data[2].z = -((far+near)/(far-near));
-	mat.data[3].w = 0;
 
-	mat.data[2].w = -1;
-	mat.data[3].z = -((2*near*far)/(far-near));
+	scalar frustumDepth = far - near;
+	scalar oneOverDepth = 1 / frustumDepth;
 
-	pushMat4(&mat);
+	scalar y1 = 1 / tan(0.5f * fov);
+	scalar x0 = -1 * y1 / aspect;
+	scalar z2 = far * oneOverDepth;
+	scalar z3 = (-far * near) * oneOverDepth;
+	scalar w2 = 1;
+	scalar w3 = 0;
+
+
+	Mat4* mat = malloc(sizeof(Mat4));
+	manMat4.create(mat,
+				   x0,  0,  0,  0,
+				    0, y1,  0,  0,
+					0,  0, z2, z3,
+					0,  0, w2, w3);
+
+	manStack.push(stack, mat);
 }
 
 /**
@@ -158,7 +168,7 @@ static Mat4* pop() {
  */
 static void rotate(scalar angle, Vec3 axis) {
 	Mat4 src = *peek(); //Copy the data onto the stack for faster read access (no dereferencing)
-	Mat4 dest;
+	Mat4 dest = manMat4.createFromMat4(NULL, &src);
 
 	//Pre-calculations to streamline matrix transformation.
 	scalar aCos = (scalar) cos(angle);
@@ -183,26 +193,26 @@ static void rotate(scalar angle, Vec3 axis) {
 	scalar m00 = xx + aCos;
 	scalar m01 = xy + zsin;
 	scalar m02 = xz - ysin;
-	dest.data[0].x = src.data[0].x * m00 + src.data[1].x * m01 + src.data[2].x * m02;
-	dest.data[0].y = src.data[0].y * m00 + src.data[1].y * m01 + src.data[2].y * m02;
-	dest.data[0].z = src.data[0].z * m00 + src.data[1].z * m01 + src.data[2].z * m02;
-	dest.data[0].w = src.data[0].w * m00 + src.data[1].w * m01 + src.data[2].w * m02;
+	dest.data[0].x = src.data[0].x * m00 + src.data[0].y * m01 + src.data[0].z * m02;
+	dest.data[1].x = src.data[1].x * m00 + src.data[1].y * m01 + src.data[1].z * m02;
+	dest.data[2].x = src.data[2].x * m00 + src.data[2].y * m01 + src.data[2].z * m02;
+	dest.data[3].x = src.data[3].x * m00 + src.data[3].y * m01 + src.data[3].z * m02;
 
 	scalar m10 = xy - zsin;
 	scalar m11 = yy + aCos;
 	scalar m12 = yz + xsin;
-	dest.data[1].x = src.data[0].x * m10 + src.data[1].x * m11 + src.data[2].x * m12;
-	dest.data[1].y = src.data[0].y * m10 + src.data[1].y * m11 + src.data[2].y * m12;
-	dest.data[1].z = src.data[0].z * m10 + src.data[1].z * m11 + src.data[2].z * m12;
-	dest.data[1].w = src.data[0].w * m10 + src.data[1].w * m11 + src.data[2].w * m12;
+	dest.data[0].y = src.data[0].x * m10 + src.data[0].y * m11 + src.data[0].z * m12;
+	dest.data[1].y = src.data[1].x * m10 + src.data[1].y * m11 + src.data[1].z * m12;
+	dest.data[2].y = src.data[2].x * m10 + src.data[2].y * m11 + src.data[2].z * m12;
+	dest.data[3].y = src.data[3].x * m10 + src.data[3].y * m11 + src.data[3].z * m12;
 
 	scalar m20 = xz + ysin;
 	scalar m21 = yz - xsin;
 	scalar m22 = zz + aCos;
-	dest.data[2].x = src.data[0].x * m20 + src.data[1].x * m21 + src.data[2].x * m22;
-	dest.data[2].y = src.data[0].y * m20 + src.data[1].y * m21 + src.data[2].y * m22;
-	dest.data[2].z = src.data[0].z * m20 + src.data[1].z * m21 + src.data[2].z * m22;
-	dest.data[2].w = src.data[0].w * m20 + src.data[1].w * m21 + src.data[2].w * m22;
+	dest.data[0].z = src.data[0].x * m20 + src.data[0].y * m21 + src.data[0].z * m22;
+	dest.data[1].z = src.data[1].x * m20 + src.data[1].y * m21 + src.data[1].z * m22;
+	dest.data[2].z = src.data[2].x * m20 + src.data[2].y * m21 + src.data[2].z * m22;
+	dest.data[3].z = src.data[3].x * m20 + src.data[3].y * m21 + src.data[3].z * m22;
 
 	//Apply the matrix transformation to the matrix
 	(*peek()) = dest;
@@ -213,16 +223,11 @@ static void rotate(scalar angle, Vec3 axis) {
  * @param translation The vector containing how far to translate the matrix by along each axis.
  */
 static void translate(Vec3 translation) {
-	Mat4 src = *peek(); //Copy the data onto the stack for faster read access (no dereferencing)
-	Mat4 dest;
+	Mat4* src = peek(); //Copy the data onto the stack for faster read access (no dereferencing)
 
-	dest.data[3].x += src.data[0].x * translation.x + src.data[1].x * translation.y + src.data[2].x * translation.z;
-	dest.data[3].y += src.data[0].y * translation.x + src.data[1].y * translation.y + src.data[2].y * translation.z;
-	dest.data[3].z += src.data[0].z * translation.x + src.data[1].z * translation.y + src.data[2].z * translation.z;
-	dest.data[3].w += src.data[0].w * translation.x + src.data[1].w * translation.y + src.data[2].w * translation.z;
-
-	//Apply the matrix transformation to the matrix
-	(*peek()) = dest;
+	src->data[3].x += src->data[0].x * translation.x + src->data[0].y * translation.y + src->data[0].z * translation.z;
+	src->data[3].y += src->data[1].x * translation.x + src->data[1].y * translation.y + src->data[1].z * translation.z;
+	src->data[3].z += src->data[2].x * translation.x + src->data[2].y * translation.y + src->data[2].z * translation.z;
 }
 
 /**
@@ -234,19 +239,19 @@ static void scale(Vec3 scale) {
 	Mat4 dest;
 
 	dest.data[0].x *= src.data[0].x * scale.x;
-	dest.data[0].y *= src.data[0].y * scale.x;
-	dest.data[0].z *= src.data[0].z * scale.x;
-	dest.data[0].w *= src.data[0].w * scale.x;
+	dest.data[1].x *= src.data[1].x * scale.x;
+	dest.data[2].x *= src.data[2].x * scale.x;
+	dest.data[3].x *= src.data[3].x * scale.x;
 
-	dest.data[1].x *= src.data[1].x * scale.y;
+	dest.data[0].y *= src.data[0].y * scale.y;
 	dest.data[1].y *= src.data[1].y * scale.y;
-	dest.data[1].z *= src.data[1].z * scale.y;
-	dest.data[1].w *= src.data[1].w * scale.y;
+	dest.data[2].y *= src.data[2].y * scale.y;
+	dest.data[3].y *= src.data[3].y * scale.y;
 
-	dest.data[2].x *= src.data[2].x * scale.z;
-	dest.data[2].y *= src.data[2].y * scale.z;
-	dest.data[2].z *= src.data[2].z * scale.z;
-	dest.data[2].w *= src.data[2].w * scale.z;
+	dest.data[0].z *= src.data[0].y * scale.z;
+	dest.data[1].z *= src.data[1].y * scale.z;
+	dest.data[2].z *= src.data[2].y * scale.z;
+	dest.data[3].z *= src.data[3].y * scale.z;
 
 	//Apply the matrix transformation to the matrix
 	(*peek()) = dest;

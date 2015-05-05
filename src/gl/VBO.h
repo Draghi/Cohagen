@@ -45,10 +45,9 @@ struct VBOManager_s {
 	/**
 	 * Unbinds the vbo from the array buffer.
 	 *
-	 * @param vbo The VBO to unbind
-	 * @return If the unbind was successful, or not. Normally, false means it wasn't bound.
+	 * @return If the unbind was successful, or not.
 	 */
-	bool(* unbind)(const VBO* const);
+	bool(* unbind)();
 
 	/**
 	 * Creates or changes the data that the VBO references.
