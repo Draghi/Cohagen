@@ -28,7 +28,6 @@ static void loadObj(    const char *const filename,
 
         while (fgets(line, MAX_LINE_LENGTH, ifp) != NULL) {
             char *handle = line;
-
             char key[3];
 
             sscanf(handle, "%s", key);
@@ -299,7 +298,7 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
     //         printf("\n");
     //     }
     // }
-    // printf("tIndexStride: %d\n", tIndexStride);
+    // printf("tIndexStride : %d\n", tIndexStride);
 
     // Number of faces (triangles or quads) in object = number of indices / number of indices per face.
     int numFaces = vIndices.size / vIndexStride;

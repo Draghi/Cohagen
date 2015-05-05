@@ -16,6 +16,7 @@
 typedef struct ObjLoader_s {
     /**
      *  Loads an obj file. NULL can be passed to parameters not needed.
+     *  Obj file MUST have a newline at the end of the file.
      *
      *  @param  filename        const pointer to const char, path to file.
      *  @param  vertices        pointer to DynamicFloatArray, array will hold all vertex data after function completes.
