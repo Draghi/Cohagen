@@ -81,9 +81,9 @@ static void setupCubeOpenGL() {
 
 static void loadCubeResources() {
 	//Load Resources
-	vao = objLoader.genVAOFromFile("./data/models/house2.obj", &numIndicesToDraw);
+	vao = objLoader.genVAOFromFile("./data/models/town.obj", &numIndicesToDraw);
 	cubeShader = manShader.newFromGroup("./data/shaders/", "house");
-	tex = textureUtil.createTextureFromFile("./data/texture/house2.bmp", GL_LINEAR, GL_LINEAR);
+	tex = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
 	projMatrix = createProjectionMatrix(1.152f, 1.0f, 100.0f, (float) display.getWindowWidth() / (float) display.getWindowHeight());
 	manShader.bindUniformMat4(cubeShader, "projectionMatrix", &projMatrix);
@@ -94,7 +94,7 @@ static void loadCubeResources() {
 	modelMatrix.data[3].x = -5.0f;
 	manShader.bindUniformMat4(cubeShader, "modelMatrix", &modelMatrix);
 
-	//Bind Texture Uniform
+	// Bind Texture Uniform
 	glUseProgram(cubeShader->program);
 	glUniform1i(glGetUniformLocation(cubeShader->program, "tex"), 0);
 }
