@@ -8,10 +8,10 @@
 #include "math/Vec3.h"
 #include "math/Mat4.h"
 
-extern const int MATRIX_MODE_PROJECTION;
-extern const int MATRIX_MODE_VIEW;
-extern const int MATRIX_MODE_MODEL;
-extern const int MATRIX_MODE_COUNT;
+extern const uint32_t MATRIX_MODE_PROJECTION;
+extern const uint32_t MATRIX_MODE_VIEW;
+extern const uint32_t MATRIX_MODE_MODEL;
+extern const uint32_t MATRIX_MODE_COUNT;
 
 struct MatrixManager_s {
 	/**

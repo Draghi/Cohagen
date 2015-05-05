@@ -53,17 +53,14 @@ static Shader *newFromGroup(const char *const path, const char *const baseFileNa
     return newShader;
 }
 
-static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix)
-{
+static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix){
+	// Get matrix data
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
-	// Get matrix data
+	glUseProgram(shader->program);
 	scalar *data = malloc(16 * sizeof(scalar));
 	manMat4.getMat4Data(matrix, data);
-
-	glUseProgram(shader->program);
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, data);
-	glUseProgram(0);
 
 	free(data);
 }

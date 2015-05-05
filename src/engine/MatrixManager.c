@@ -11,16 +11,16 @@
 #include "util/Stack.h"
 
 /** The Projection Matrix Stack **/
-const int MATRIX_MODE_PROJECTION = 0x0000;
+const uint32_t MATRIX_MODE_PROJECTION = 0x0000;
 
 /** The View Matrix Stack **/
-const int MATRIX_MODE_VIEW  = 0x0001;
+const uint32_t MATRIX_MODE_VIEW  = 0x0001;
 
 /** The Model Matrix Stack **/
-const int MATRIX_MODE_MODEL = 0x0002;
+const uint32_t MATRIX_MODE_MODEL = 0x0002;
 
 /** The Number of Matrix Stacks **/
-const int MATRIX_MODE_COUNT = 3;
+const uint32_t MATRIX_MODE_COUNT = 3;
 
 /** The stacks where matricies are stored */
 Stack** stacks;
