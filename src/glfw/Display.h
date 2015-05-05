@@ -4,8 +4,10 @@
 #include <stdbool.h>
 
 typedef struct Mouse_s Mouse;
+typedef struct Keyboard_s Keyboard;
 
 #include "Mouse.h"
+#include "Keyboard.h"
 
 #include "lib/ogl.h"
 #include "lib/glfw3.h"
@@ -15,6 +17,7 @@ typedef struct Window_s {
 	GLFWwindow* window;
 
 	Mouse* mouse;
+	Keyboard* keyboard;
 
 	/** The Window's Width. **/
 	int width;
@@ -152,7 +155,7 @@ typedef struct WindowManager_s {
 	 *
 	 * @return the width of the window.
 	 **/
-	int(* getMontiorWidth)(Window* window);
+	int(* getMonitorWidth)(Window* window);
 
 	/**
 	 * Gets the height of the display.

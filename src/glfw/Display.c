@@ -1,12 +1,18 @@
 #include "Display.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
 
 #include "lib/ogl.h"
 #include "lib/glfw3.h"
 
 #include "Mouse.h"
+#include "Keyboard.h"
+
+static void errorcallback(int code, const char* message) {
+	printf("GLFW Error Occurred: %s", message);
+}
 
 static bool isOpen(Window* window) {
 	if (window->window != NULL)
@@ -33,6 +39,7 @@ static Window* new() {
 	res->title = "";
 
 	res->mouse = manMouse.new();
+	res->keyboard = manKeyboard.new();
 
 	return res;
 }
@@ -44,6 +51,7 @@ static void delete(Window* window) {
 }
 
 static bool openWindow(Window* window) {
+	glfwSetErrorCallback(&errorcallback);
 	if (!window->window) {
 		glfwWindowHint(GLFW_RESIZABLE, 0);
 		glfwWindowHint(GLFW_VISIBLE, 1);
@@ -72,10 +80,10 @@ static bool openWindow(Window* window) {
 
 		window->window = glfwCreateWindow(window->width, window->height, window->title, NULL, NULL);
 
-		if (window->window) {
+		if (window->window){
 			glfwSetWindowPos(window->window, window->x, window->y);
-			glfwSetInputMode(window->window, GLFW_STICKY_KEYS, 1);
 			makeContextCurrent(window);
+			glfwSwapInterval(1);
 		}
 
 		glfwDefaultWindowHints();
@@ -88,7 +96,7 @@ static void update(Window* window) {
 	if(isOpen(window)) {
 		manMouse.update(window);
 		glfwPollEvents();
-		//kb.update();
+		manKeyboard.update(window);
 
 		glfwGetWindowPos(window->window, &window->x, &window->y);
 		glfwGetWindowSize(window->window, &window->width, &window->height);
@@ -111,11 +119,9 @@ static void getDisplaySize(Window* window, int* size) {
 }
 
 static void getMonitorSize(Window* window, int* size) {
-	if (isOpen(window)) {
-		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		size[0] = mode->width;
-		size[1] = mode->height;
-	}
+	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	size[0] = mode->width;
+	size[1] = mode->height;
 }
 
 static void setPosition(Window* window, int x, int y) {
@@ -153,7 +159,7 @@ static int getDisplayHeight(Window* window) {
 	return size[1];
 }
 
-static int getMontiorWidth(Window* window) {
+static int getMonitorWidth(Window* window) {
 	int size[2];
 	getMonitorSize(window, size);
 	return size[0];
@@ -192,9 +198,9 @@ static int getHeight(Window* window) {
 }
 
 static void centerWindow(Window* window) {
-	int x = ( getWidth(window) - getMontiorWidth(window))/2;
-	int y = (getHeight(window)- getMonitorHeight(window))/2;
+	int x = 0.5*(getMonitorWidth(window)-getWidth(window));
+	int y = 0.5*(getMonitorHeight(window)-getHeight(window));
 	setPosition(window, x, y);
 }
 
-const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMontiorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow};
+const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMonitorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow};
