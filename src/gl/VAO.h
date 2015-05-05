@@ -6,6 +6,7 @@
 
 #include "lib/ogl.h"
 #include "gl/VBO.h"
+#include "gl/EAB.h"
 #include "util/DynamicArray.h"
 
 
@@ -48,6 +49,17 @@ struct VAOManager_s {
 	 * @return If the VBO was successfully attached.
 	 */
 	bool(* attachVBO)(VAO*, VBO*, GLuint, GLenum);
+
+	/**
+	 * Attaches a EAB to the given VAO and returns if it was successful.
+	 *
+	 * @param vao The VAO to attach to.
+	 * @param vbo The EAB to attach to the VAO.
+	 * @param attribLocation The attribute location to bind to.
+	 * @param dataType The type of data that's in the VBO.
+	 * @return If the VBO was successfully attached.
+	 */
+	bool(* attachEAB)(VAO*, EAB*, GLuint, GLenum);
 
 	/**
 	 * Sets the VAO render information.

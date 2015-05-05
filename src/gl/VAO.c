@@ -41,6 +41,22 @@ static bool attachVBO(VAO* vao, VBO* vbo, GLuint attribLocation, GLenum dataType
 	return false;
 }
 
+static bool attachEAB(VAO* vao, EAB* eab, GLuint attribLocation, GLenum dataType) {
+	if (eab!=NULL) {
+		if ((bind(vao)) && (manEAB.bind(eab))) {
+		    glEnableVertexAttribArray(attribLocation);
+		    glVertexAttribPointer(attribLocation, eab->countPerVert, dataType, GL_FALSE, eab->stride, eab->pointer);
+
+			return true;
+		}
+
+		unbind();
+		manVBO.unbind();
+	}
+
+	return false;
+}
+
 static void setRenderInfo(VAO* vao, uint32_t vertCount) {
 	vao->vertCount = vertCount;
 }
@@ -59,4 +75,4 @@ static void delete(VAO* vao) {
 	free(vao);
 }
 
-const VAOManager manVAO = {new, bind, unbind, attachVBO, setRenderInfo, draw, delete};
+const VAOManager manVAO = {new, bind, unbind, attachVBO, attachEAB, setRenderInfo, draw, delete};
