@@ -6,34 +6,49 @@
 
 typedef struct GameLoop_s GameLoop;
 
+/** Called when the gameloop is being constructed **/
 typedef void NewCallback(GameLoop* self);
+/** Called then the window should be initialised. **/
 typedef void InitWindowCallback(GameLoop* self);
+/** Called when the context is created and opengl should be initialised.**/
 typedef void InitOpenGLCallback(GameLoop* self);
+/** Called after all other things are initialised. **/
 typedef void InitMiscCallback(GameLoop* self);
+/** Called everytime the world state should be updated **/
 typedef void UpdateCallback(GameLoop* self, float tickDelta);
+/** Called everytime the world should be rendered. **/
 typedef void RenderCallback(GameLoop* self, float frameDelta);
+/** Called when the main window of a gameloop is closed. **/
 typedef void CloseCallback(GameLoop* self);
+/** Called when the gameloop is beign destroyed, being freed. **/
 typedef void DestroyCallback(GameLoop* self);
 
+/** Struct containing all the information for a given gameloop **/
 typedef struct GameLoop_s {
-	NewCallback*   onNew;
-	InitWindowCallback*   onInitWindow;
-	InitWindowCallback*   onInitOpenGL;
-	InitMiscCallback*     onInitMisc;
+	NewCallback* onNew;
+	InitWindowCallback* onInitWindow;
+	InitWindowCallback* onInitOpenGL;
+	InitMiscCallback* onInitMisc;
 	UpdateCallback* onUpdate;
 	RenderCallback* onRender;
-	CloseCallback*  onClose;
-	DestroyCallback*  onDestroy;
+	CloseCallback* onClose;
+	DestroyCallback* onDestroy;
 
+	/** The primary window of the gameloop. Safe to swap to any non-null window.**/
 	Window* primaryWindow;
 
+	/** The internal accumulator used for calculating when to update the world. Not recommended to alter.**/
 	double timeAccumulator;
+	/** The target time in ms a frame should take to render. May be changed at runtime. **/
 	double targetFrameTime;
+	/** The target time in ms a tick should take to update. May be changed at runtime. **/
 	double targetTickTime;
 
+	/** An anchor point for a loop's extra data. Must be manually freed if used.**/
 	void* extraData;
 } GameLoop;
 
+/** The game loop manager. Responsible for the creation, use and clean-up of gameloops.**/
 typedef struct GameLoopManager_s {
 	/**
 	 * Creates a new gameloop.

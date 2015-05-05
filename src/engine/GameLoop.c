@@ -75,11 +75,13 @@ static GameLoop* new(NewCallback* onNew, InitWindowCallback* onInitWindow, InitO
 
 static void enterGameLoop(GameLoop* gameloop) {
 	doOnInitWindow(gameloop);
-	doOnInitOpenGL(gameloop);
-	doOnInitMisc(gameloop);
 
 	if (!manWin.isOpen(gameloop->primaryWindow))
 		manWin.openWindow(gameloop->primaryWindow);
+
+	doOnInitOpenGL(gameloop);
+	doOnInitMisc(gameloop);
+
 
 	while(manWin.isOpen(gameloop->primaryWindow)) {
 		doOnRender(gameloop);
