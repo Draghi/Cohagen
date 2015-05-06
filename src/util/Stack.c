@@ -78,7 +78,6 @@ static void trim(Stack* stack) {
 
 static void delete(Stack* stack) {
 	free(stack->contents);
-	free(stack);
 }
 
 const StackManager manStack = {new, push, peek, pop, trim, delete};
