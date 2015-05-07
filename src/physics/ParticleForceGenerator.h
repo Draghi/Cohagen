@@ -5,6 +5,11 @@
 
 typedef struct ParticleForceGenerator_s {
 	/**
+	 *	Pointer to the start of the structure using this force generator.
+	 */
+	void *self;
+
+	/**
 	 *	Pointer to function to use to update the force of the particle.
 	 * 	
 	 * 	@param 	self 		const pointer to void, pointer to ParticleForceGenerator. A void pointer
@@ -20,11 +25,12 @@ typedef struct ParticleForceGeneratorManager_s {
 	 *	Allocate memory for a particle forceGenerator using
 	 * 	the given function to update the force acting on a particle each frame.
 	 *
+	 * 	@param 	self 			pointer to start of structure using this force generator.
 	 * 	@param 	updateForce 	pointer to function, the function to use to update the force acting on
 	 * 							a particle each frame.
 	 * 	@returns 				pointer to ParticleForceGenerator, the new ParticleForceGenerator.
 	 */
-	ParticleForceGenerator *(*new)(void (*updateForce)(void *const self, Particle *const particle, scalar frameTime));
+	ParticleForceGenerator *(*new)(void *const self, void (*updateForce)(void *const self, Particle *const particle, scalar frameTime));
 
 	/**
 	 *	Free all memory associated with the ParticleForceGenerator.
