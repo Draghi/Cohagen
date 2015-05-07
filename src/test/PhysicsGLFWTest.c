@@ -14,6 +14,7 @@
 #include "physics/Particle.h"
 #include "physics/GravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
+#include "physics/AnchoredSpringForceGenerator.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -51,7 +52,9 @@ typedef struct InternalData_s {
 	Particle *particle;
 	ParticleForceRegistry *particleForceRegistry;
 	GravityForceGenerator *gravityFG;
+	AnchoredSpringForceGenerator *anchoredSpringFG;
 	Vec3 *gravity;
+	Vec3 *anchor;
 } InternalData;
 
 void onCreate(GameLoop* self) {
@@ -62,6 +65,7 @@ void onCreate(GameLoop* self) {
 	((InternalData *)self->extraData)->particle = manParticle.new();
 	((InternalData *)self->extraData)->particleForceRegistry = manForceRegistry.new();
 	((InternalData *)self->extraData)->gravity = malloc(sizeof(Vec3));
+	((InternalData *)self->extraData)->anchor = malloc(sizeof(Vec3));
 }
 
 void onInitWindow(GameLoop* self) {
@@ -104,10 +108,15 @@ void onInitMisc(GameLoop* self) {
 	manMat.setMode(MATRIX_MODE_MODEL);
 	manMat.pushIdentity();
 
-	// Create and registry GravityForceGenerator
+	// Create and register GravityForceGenerator
 	manVec3.create(data->gravity, 0.0f, -0.001f, 0.0f);
 	((InternalData *)self->extraData)->gravityFG = manGravityForceGenerator.new(data->gravity);
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->gravityFG->forceGenerator));
+
+	// Create and register AnchoredSpringForceGenerator
+	manVec3.create(data->anchor, 0.0f, 0.0f, 0.0f);
+	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 1.0f, 15.0f);
+	// manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
 }
 
 void onUpdate(GameLoop* self, float tickDelta) {
@@ -148,11 +157,11 @@ void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
 
-	printf("%f %f %f\n", data->particle->position.x, data->particle->position.y, data->particle->position.z);
+	printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
-	
+
 	// Update particle
 	manParticle.integrate(data->particle, tickDelta);
 }
@@ -209,6 +218,8 @@ void onClose(GameLoop* self) {
 	manForceRegistry.delete(data->particleForceRegistry);
 	manGravityForceGenerator.delete(data->gravityFG);
 	free(data->gravity);
+	free(data->anchor);
+	manAnchoredSpringForceGenerator.delete(data->anchoredSpringFG);
 }
 
 void onDestroy(GameLoop* self) {
