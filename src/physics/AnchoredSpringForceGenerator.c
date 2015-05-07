@@ -11,7 +11,7 @@ static AnchoredSpringForceGenerator *new(Vec3 *const anchor, scalar springConsta
 	fg->springConstant = springConstant;
 	fg->restLength = restLength;
 
-	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
+	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(fg, updateForce);
 
 	fg->forceGenerator = *tempForceGen;
 
@@ -25,11 +25,11 @@ static void delete(AnchoredSpringForceGenerator *forceGenerator) {
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
-	AnchoredSpringForceGenerator *fg = (AnchoredSpringForceGenerator *) self;
-
+	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
+	AnchoredSpringForceGenerator *fg = pfg->self;
+	
 	// Calculate the vector of the spring
 	Vec3 force = manParticle.getPosition(particle, NULL);
-	printf("Force: %f %f %f\n", force.x, force.y, force.z);
 	force = manVec3.sub(&force, fg->anchor);
 
 	// Calculate the magnitude of the force
@@ -39,6 +39,7 @@ static void updateForce(void *const self, Particle *const particle, scalar frame
 
 	// Calculate and apply the final force
 	force = manVec3.normalize(&force);
+	printf("Force: %f %f %f\n", force.x, force.y, force.z);
 	force = manVec3.postMulScalar(&force, -magnitude);
 
 	manParticle.addForce(particle, &force);
