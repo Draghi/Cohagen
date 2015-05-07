@@ -139,7 +139,7 @@ void onRender(GameLoop* self, float frameDelta) {
 }
 
 void onClose(GameLoop* self) {
-	manTex.delete(tex);
+	//manTex.delete(tex);
 	free(tex);
 	free(shader);
 }
