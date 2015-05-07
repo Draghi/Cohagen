@@ -11,6 +11,9 @@
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
 #include "engine/MatrixManager.h"
+#include "physics/Particle.h"
+#include "physics/GravityForceGenerator.h"
+#include "physics/ParticleForceRegistry.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -38,15 +41,27 @@ typedef struct InternalData_s {
 	int vaoSphere;
 	int iCountSphere;
 	Shader* shaderHouse;
+	Shader *shaderPassThru;
 	Texture* texTown;
+
 	Vec3* camPos;
 	Vec3* camRot;
+
+	// Physics
+	Particle *particle;
+	ParticleForceRegistry *particleForceRegistry;
+	GravityForceGenerator *gravityFG;
+	Vec3 *gravity;
 } InternalData;
 
 void onCreate(GameLoop* self) {
 	self->extraData = malloc(sizeof(InternalData));
 	((InternalData*)self->extraData)->camPos = malloc(sizeof(Vec3));
 	((InternalData*)self->extraData)->camRot = malloc(sizeof(Vec3));
+
+	((InternalData *)self->extraData)->particle = manParticle.new();
+	((InternalData *)self->extraData)->particleForceRegistry = manForceRegistry.new();
+	((InternalData *)self->extraData)->gravity = malloc(sizeof(Vec3));
 }
 
 void onInitWindow(GameLoop* self) {
@@ -65,9 +80,12 @@ void onInitOpenGL(GameLoop* self) {
 
 	InternalData* data = self->extraData;
 
-	data->vaoTown    = objLoader.genVAOFromFile("./data/models/town.obj", &data->iCountTown);
-	data->shaderHouse = manShader.newFromGroup("./data/shaders/", "house");
-	data->texTown    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
+	data->vaoTown    	= objLoader.genVAOFromFile("./data/models/town.obj", &data->iCountTown);
+	data->shaderHouse 	= manShader.newFromGroup("./data/shaders/", "house");
+	data->texTown    	= textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
+
+	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj", &data->iCountSphere);
+	data->shaderPassThru	= manShader.newFromGroup("./data/shaders/", "passThru");
 
 	glUseProgram(data->shaderHouse->program);
 	glUniform1i(glGetUniformLocation(data->shaderHouse->program, "tex"), 0);
@@ -85,6 +103,11 @@ void onInitMisc(GameLoop* self) {
 	manMat.pushIdentity();
 	manMat.setMode(MATRIX_MODE_MODEL);
 	manMat.pushIdentity();
+
+	// Create and registry GravityForceGenerator
+	manVec3.create(data->gravity, 0.0f, -0.001f, 0.0f);
+	((InternalData *)self->extraData)->gravityFG = manGravityForceGenerator.new(data->gravity);
+	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->gravityFG->forceGenerator));
 }
 
 void onUpdate(GameLoop* self, float tickDelta) {
@@ -124,6 +147,14 @@ void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->x -= manMouse.getDY(self->primaryWindow)/100;
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
+
+	printf("%f %f %f\n", data->particle->position.x, data->particle->position.y, data->particle->position.z);
+
+	// Update forces acting on particle
+	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
+	
+	// Update particle
+	manParticle.integrate(data->particle, tickDelta);
 }
 
 void onRender(GameLoop* self, float frameDelta) {
@@ -139,19 +170,31 @@ void onRender(GameLoop* self, float frameDelta) {
 		manMat.rotate(data->camRot->x, manVec3.create(NULL, 1, 0, 0));
 
 		manMat.setMode(MATRIX_MODE_MODEL);
-		manShader.bind(data->shaderHouse);
-		manTex.bind(data->texTown, 0);
-			manMat.push();
-				glBindVertexArray(data->vaoTown);
-					manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMat.peekStack(MATRIX_MODE_PROJECTION));
-					manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMat.peekStack(MATRIX_MODE_VIEW));
-					manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMat.peekStack(MATRIX_MODE_MODEL));
-					glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
-				glBindVertexArray(0);
-			manMat.pop();
-		manTex.unbind(data->texTown);
-		manShader.unbind();
-	manMat.setMode(MATRIX_MODE_VIEW);
+			manShader.bind(data->shaderHouse);
+			manTex.bind(data->texTown, 0);
+				manMat.push();
+					glBindVertexArray(data->vaoTown);
+						manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMat.peekStack(MATRIX_MODE_PROJECTION));
+						manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMat.peekStack(MATRIX_MODE_VIEW));
+						manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMat.peekStack(MATRIX_MODE_MODEL));
+						glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
+					glBindVertexArray(0);
+				manMat.pop();
+			manTex.unbind(data->texTown);
+			manShader.unbind();
+
+			manShader.bind(data->shaderPassThru);
+				manMat.push();
+					manMat.translate(data->particle->position);
+					glBindVertexArray(data->vaoSphere);
+						manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMat.peekStack(MATRIX_MODE_PROJECTION));
+						manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMat.peekStack(MATRIX_MODE_VIEW));
+						manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMat.peekStack(MATRIX_MODE_MODEL));
+						glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
+					glBindVertexArray(0);
+				manMat.pop();
+			manShader.unbind();
+		manMat.setMode(MATRIX_MODE_VIEW);
 	manMat.pop();
 }
 
@@ -162,6 +205,10 @@ void onClose(GameLoop* self) {
 	free(data->shaderHouse);
 	free(data->camPos);
 	free(data->camRot);
+	manParticle.delete(data->particle);
+	manForceRegistry.delete(data->particleForceRegistry);
+	manGravityForceGenerator.delete(data->gravityFG);
+	free(data->gravity);
 }
 
 void onDestroy(GameLoop* self) {
