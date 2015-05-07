@@ -33,10 +33,12 @@ void runPhysicsGLFWTest() {
 }
 
 typedef struct InternalData_s {
-	int vao;
-	int iCount;
-	Shader* shader;
-	Texture* tex;
+	int vaoTown;
+	int iCountTown;
+	int vaoSphere;
+	int iCountSphere;
+	Shader* shaderHouse;
+	Texture* texTown;
 	Vec3* camPos;
 	Vec3* camRot;
 } InternalData;
@@ -63,12 +65,12 @@ void onInitOpenGL(GameLoop* self) {
 
 	InternalData* data = self->extraData;
 
-	data->vao    = objLoader.genVAOFromFile("./data/models/town.obj", &data->iCount);
-	data->shader = manShader.newFromGroup("./data/shaders/", "house");
-	data->tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
+	data->vaoTown    = objLoader.genVAOFromFile("./data/models/town.obj", &data->iCountTown);
+	data->shaderHouse = manShader.newFromGroup("./data/shaders/", "house");
+	data->texTown    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
-	glUseProgram(data->shader->program);
-	glUniform1i(glGetUniformLocation(data->shader->program, "tex"), 0);
+	glUseProgram(data->shaderHouse->program);
+	glUniform1i(glGetUniformLocation(data->shaderHouse->program, "tex"), 0);
 }
 
 void onInitMisc(GameLoop* self) {
@@ -90,26 +92,32 @@ void onUpdate(GameLoop* self, float tickDelta) {
 
 	glViewport(0, 0, manWin.getWidth(self->primaryWindow), manWin.getHeight(self->primaryWindow));
 
+	float rate = 0.2f;
+
+	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
+		rate = 0.005f;
+	}
+
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		data->camPos->x += -0.2*sin(data->camRot->y);
-		data->camPos->z += -0.2*cos(data->camRot->y);
-		data->camPos->y +=  0.2*sin(data->camRot->x);
+		data->camPos->x += -rate*sin(data->camRot->y);
+		data->camPos->z += -rate*cos(data->camRot->y);
+		data->camPos->y +=  rate*sin(data->camRot->x);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		data->camPos->x +=  0.2*sin(data->camRot->y);
-		data->camPos->z +=  0.2*cos(data->camRot->y);
-		data->camPos->y += -0.2*sin(data->camRot->x);
+		data->camPos->x +=  rate*sin(data->camRot->y);
+		data->camPos->z +=  rate*cos(data->camRot->y);
+		data->camPos->y += -rate*sin(data->camRot->x);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		data->camPos->x += 0.2*sin(data->camRot->y-1.57079632679);
-		data->camPos->z += 0.2*cos(data->camRot->y-1.57079632679);
+		data->camPos->x += rate*sin(data->camRot->y-1.57079632679);
+		data->camPos->z += rate*cos(data->camRot->y-1.57079632679);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		data->camPos->x += 0.2*sin(data->camRot->y+1.57079632679);
-		data->camPos->z += 0.2*cos(data->camRot->y+1.57079632679);
+		data->camPos->x += rate*sin(data->camRot->y+1.57079632679);
+		data->camPos->z += rate*cos(data->camRot->y+1.57079632679);
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -131,17 +139,17 @@ void onRender(GameLoop* self, float frameDelta) {
 		manMat.rotate(data->camRot->x, manVec3.create(NULL, 1, 0, 0));
 
 		manMat.setMode(MATRIX_MODE_MODEL);
-		manShader.bind(data->shader);
-		manTex.bind(data->tex, 0);
+		manShader.bind(data->shaderHouse);
+		manTex.bind(data->texTown, 0);
 			manMat.push();
-				glBindVertexArray(data->vao);
-					manShader.bindUniformMat4(data->shader, "projectionMatrix", manMat.peekStack(MATRIX_MODE_PROJECTION));
-					manShader.bindUniformMat4(data->shader, "viewMatrix", manMat.peekStack(MATRIX_MODE_VIEW));
-					manShader.bindUniformMat4(data->shader, "modelMatrix", manMat.peekStack(MATRIX_MODE_MODEL));
-					glDrawElements(GL_TRIANGLES, data->iCount, GL_UNSIGNED_INT, 0);
+				glBindVertexArray(data->vaoTown);
+					manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMat.peekStack(MATRIX_MODE_PROJECTION));
+					manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMat.peekStack(MATRIX_MODE_VIEW));
+					manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMat.peekStack(MATRIX_MODE_MODEL));
+					glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
 				glBindVertexArray(0);
 			manMat.pop();
-		manTex.unbind(data->tex);
+		manTex.unbind(data->texTown);
 		manShader.unbind();
 	manMat.setMode(MATRIX_MODE_VIEW);
 	manMat.pop();
@@ -150,8 +158,8 @@ void onRender(GameLoop* self, float frameDelta) {
 void onClose(GameLoop* self) {
 	InternalData* data = self->extraData;
 
-	manTex.delete(data->tex);
-	free(data->shader);
+	manTex.delete(data->texTown);
+	free(data->shaderHouse);
 	free(data->camPos);
 	free(data->camRot);
 }
