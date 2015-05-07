@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "math/Precision.h"
 #include "math/Vec3.h"
@@ -236,22 +237,22 @@ static void translate(Vec3 translation) {
  */
 static void scale(Vec3 scale) {
 	Mat4 src = *peek(); //Copy the data onto the stack for faster read access (no dereferencing)
-	Mat4 dest;
+	Mat4 dest = manMat4.createLeading(NULL, 1.0f);
 
-	dest.data[0].x *= src.data[0].x * scale.x;
-	dest.data[1].x *= src.data[1].x * scale.x;
-	dest.data[2].x *= src.data[2].x * scale.x;
-	dest.data[3].x *= src.data[3].x * scale.x;
+	dest.data[0].x = src.data[0].x * scale.x;
+	// dest.data[1].x *= src.data[1].x * scale.x;
+	// dest.data[2].x *= src.data[2].x * scale.x;
+	// dest.data[3].x *= src.data[3].x * scale.x;
 
-	dest.data[0].y *= src.data[0].y * scale.y;
-	dest.data[1].y *= src.data[1].y * scale.y;
-	dest.data[2].y *= src.data[2].y * scale.y;
-	dest.data[3].y *= src.data[3].y * scale.y;
+	// dest.data[0].y *= src.data[0].y * scale.y;
+	dest.data[1].y = src.data[1].y * scale.y;
+	// dest.data[2].y *= src.data[2].y * scale.y;
+	// dest.data[3].y *= src.data[3].y * scale.y;
 
-	dest.data[0].z *= src.data[0].y * scale.z;
-	dest.data[1].z *= src.data[1].y * scale.z;
-	dest.data[2].z *= src.data[2].y * scale.z;
-	dest.data[3].z *= src.data[3].y * scale.z;
+	// dest.data[0].z *= src.data[0].z * scale.z;
+	// dest.data[1].z *= src.data[1].z * scale.z;
+	dest.data[2].z = src.data[2].z * scale.z;
+	// dest.data[3].z *= src.data[3].z * scale.z;
 
 	//Apply the matrix transformation to the matrix
 	(*peek()) = dest;
