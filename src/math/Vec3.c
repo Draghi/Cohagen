@@ -108,14 +108,18 @@ static Vec3 cross(const Vec3 *const v1, const Vec3 *const v2) {
 static Vec3 normalize(const Vec3 *const vec) {
     scalar magnitude = manVec3.magnitude(vec);
 
-    return (
+    Vec3 normalized = manVec3.createFromVec3(NULL, vec);
+
+    if (magnitude != 0) {
         manVec3.create(
             NULL,
             vec->x / magnitude,
             vec->y / magnitude,
             vec->z / magnitude
-        )
-    );
+        );
+    }
+
+    return (normalized);
 }
 
 static scalar magnitude(const Vec3 *const vec) {
