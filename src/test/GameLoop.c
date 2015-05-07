@@ -17,14 +17,14 @@
 
 GameLoop* gameloop;
 
-void onCreate(GameLoop* self);
-void onInitWindow(GameLoop* self);
-void onInitOpenGL(GameLoop* self);
-void onInitMisc(GameLoop* self);
-void onUpdate(GameLoop* self, float tickDelta);
-void onRender(GameLoop* self, float frameDelta);
-void onClose(GameLoop* self);
-void onDestroy(GameLoop* self);
+static void onCreate(GameLoop* self);
+static void onInitWindow(GameLoop* self);
+static void onInitOpenGL(GameLoop* self);
+static void onInitMisc(GameLoop* self);
+static void onUpdate(GameLoop* self, float tickDelta);
+static void onRender(GameLoop* self, float frameDelta);
+static void onClose(GameLoop* self);
+static void onDestroy(GameLoop* self);
 
 void runGameLoopTest() {
 	gameloop = manGameLoop.new(&onCreate, &onInitWindow, &onInitOpenGL, &onInitMisc, &onUpdate, &onRender, &onClose, &onDestroy, 1/120.0, 1/60.0);
@@ -63,9 +63,9 @@ void onInitOpenGL(GameLoop* self) {
 
 	InternalData* data = self->extraData;
 
-	data->vao    = objLoader.genVAOFromFile("./data/models/house2.obj", &data->iCount);
+	data->vao    = objLoader.genVAOFromFile("./data/models/town.obj", &data->iCount);
 	data->shader = manShader.newFromGroup("./data/shaders/", "house");
-	data->tex    = textureUtil.createTextureFromFile("./data/texture/house2.bmp", GL_LINEAR, GL_LINEAR);
+	data->tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
 	glUseProgram(data->shader->program);
 	glUniform1i(glGetUniformLocation(data->shader->program, "tex"), 0);
