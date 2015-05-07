@@ -7,17 +7,16 @@
 #include <time.h>
 
 static void setupLibraries(int argc, char **argv) {
-	ogl_LoadFunctions();
 	glfwInit();
 }
 
 int main(int argc, char **argv) {
     srand((unsigned)time(NULL));
-	setupLibraries(argc, argv);
+    setupLibraries(argc, argv);
 
     runGameLoopTest();
 
-	glfwTerminate();
+    glfwTerminate();
 
 	return 0;
 }

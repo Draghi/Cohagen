@@ -34,8 +34,8 @@ static Window* new() {
 	res->window = NULL;
 	res->x = 0;
 	res->y = 0;
-	res->width = 0;
-	res->height = 0;
+	res->width = 800;
+	res->height = 600;
 	res->title = "";
 
 	res->mouse = manMouse.new();
@@ -84,6 +84,7 @@ static bool openWindow(Window* window) {
 			glfwSetWindowPos(window->window, window->x, window->y);
 			makeContextCurrent(window);
 			glfwSwapInterval(1);
+			ogl_LoadFunctions();
 		}
 
 		glfwDefaultWindowHints();
