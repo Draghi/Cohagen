@@ -60,9 +60,9 @@ void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	vao    = objLoader.genVAOFromFile("./data/models/house2.obj", &iCount);
+	vao    = objLoader.genVAOFromFile("./data/models/town.obj", &iCount);
 	shader = manShader.newFromGroup("./data/shaders/", "house");
-	tex    = textureUtil.createTextureFromFile("./data/texture/house2.bmp", GL_LINEAR, GL_LINEAR);
+	tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
 	glUseProgram(shader->program);
 	glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);

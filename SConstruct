@@ -1,16 +1,19 @@
 import os
 import sys
 
-env = Environment(tools = ['mingw'], CC = 'gcc', ENV = os.environ)
-env.Append(CPPPATH = './src/')
-env.Append(LIBPATH = './out/lib/')
-env.Append(CFLAGS = ['-Wall', '-pedantic', '-std=c11', '-ggdb'])
+env = None
 
 platform = sys.platform
 if platform == "win32":
+	env = Environment(tools = ['mingw'], CC = 'gcc', ENV = os.environ)
 	env.Append(LIBS = ['opengl32','m', 'glfw3'])
 else:
+	env = Environment(CC = 'gcc', ENV = {'PATH' : os.environ['PATH']})
 	env.Append(LIBS = ['libglfw', 'GL', 'm'])
+	
+env.Append(CPPPATH = './src/')
+env.Append(LIBPATH = './out/lib/')
+env.Append(CFLAGS = ['-Wall', '-pedantic', '-std=c11', '-ggdb'])
 
 #Set scons to output object files to the "build" directory.
 env.VariantDir('./build', './src', duplicate=0)
