@@ -17,4 +17,6 @@ env.VariantDir('./build', './src', duplicate=0)
 sources = [Glob("./build/*.c"), Glob("./build/*/*.c")]
 
 object_list = env.Object(source = sources)
+
 env.Program(target="./out/bin/coh", source=object_list)
+
