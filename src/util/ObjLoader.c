@@ -19,6 +19,26 @@ static void loadObj(    const char *const filename,
                         int *vIndexStride, int *nIndexStride, int *tIndexStride) {
     FILE *ifp;
 
+    // Initialize strides
+    if (vertexStride != NULL) {
+        *vertexStride = 0;
+    }
+    if (normalStride != NULL) {
+        *normalStride = 0;
+    }
+    if (texCoordStride != NULL) {
+        *texCoordStride = 0;
+    }
+    if (vIndexStride != NULL) {
+        *vIndexStride = 0;
+    }
+    if (nIndexStride != NULL) {
+        *nIndexStride = 0;
+    }
+    if (tIndexStride != NULL) {
+        *tIndexStride = 0;
+    }
+
     // Open file for reading.
     ifp = fopen(filename, "r");
 
@@ -283,6 +303,8 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
             &vertices, &normals, &texCoords, &vIndices, &nIndices, &tIndices,
             &vertexStride, &normalStride, &texCoordStride, &vIndexStride, &nIndexStride, &tIndexStride);
 
+    printf("texCoordStride: %d, tIndexStride: %d\n", texCoordStride, tIndexStride);
+
     // printf("tIndices size: %d\n", tIndices.size);
     // for (int i = 0; i < tIndices.size; ++i) {
     //     printf("%d ", tIndices.get(&tIndices, i));
@@ -330,54 +352,60 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
     for (int j = 0, i = 0; i < numFaces; ++i) {
         // If object has normals, use normals
         if (normals.size > 0) {
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 2);
-            
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 2);
+            if (vertexStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride) * vertexStride + 2);
+            }
+            if (normalStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride) * normalStride + 2);
+            }
+            if (texCoordStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1);
+            }
+            (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
+            ++j;
 
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1);
-            // printf("TexCoord u: %f (%d)\n", texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride), tIndices.get(&tIndices, i * tIndexStride) * texCoordStride);
-            // printf("TexCoord v: %f (%d)\n", texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1), tIndices.get(&tIndices, i * tIndexStride) * texCoordStride + 1);
+            if (vertexStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 2);
+            }
+            if (normalStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 2);
+            }
+            if (texCoordStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride + 1);
+            }
             (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
             ++j;
 
 
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 1) * vertexStride + 2);
-
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 1) * normalStride + 2);
-
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 1) * texCoordStride + 1);
-            (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
-            ++j;
-
-
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 2);
-
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 1);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 2);
-
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride);
-            (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride + 1);
+            if (vertexStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).x = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).y = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).z = vertices.get(&vertices, vIndices.get(&vIndices, i * vIndexStride + 2) * vertexStride + 2);
+            }
+            if (normalStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nx = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).ny = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 1);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).nz = normals.get(&normals, nIndices.get(&nIndices, i * nIndexStride + 2) * normalStride + 2);
+            }
+            if (texCoordStride != 0) {
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).u = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride);
+                (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, j)).v = texCoords.get(&texCoords, tIndices.get(&tIndices, i * tIndexStride + 2) * texCoordStride + 1);
+            }
             (*(unsigned int *)manDynamicArray.get(indicesInternal, j)) = j;
             ++j;
         }
     }
 
-    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    // glBufferData(GL_ARRAY_BUFFER, vIndices.size*sizeof(struct Vertex_s), vp, GL_STATIC_DRAW);
-    
     manVBO.setData(vbo, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -403,22 +431,9 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
 }
 
 static GLuint genVAOFromFile(const char *const filename, int *const numIndicesToDraw) {
-    // VBO     *vbo = vboManager.createVBO();
-    // GLuint  ibo;
-    // VAO     *vao = vaoManager.newVAO();
-
-    // glGenBuffers(1, &ibo);
-
-    // // setupBuffers(vbo, ibo);
-
-    // vaoManager.bind(vao);
-    // vboManager.bind(vbo);
-
-    // GLuint vao, vbo, ibo;
     GLuint vao, ibo;
 
     // Generate vbo and ibo buffers
-    // glGenBuffers(1, &vbo);
     glGenBuffers(1, &ibo);
 
     // Fill them with data
