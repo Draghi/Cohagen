@@ -159,7 +159,7 @@ void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
 
-	// printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
+	printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
