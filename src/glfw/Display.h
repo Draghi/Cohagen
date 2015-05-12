@@ -214,6 +214,22 @@ typedef struct WindowManager_s {
 	 * Centers the window on the screen.
 	 */
 	void(* centerWindow)(Window* window);
+
+	/**
+	 *	Get the framebuffer width (used for high DPI displays).
+	 *
+	 * 	@param 	window 	pointer to Window, window to get framebuffer width of.
+	 * 	@return 		int, width of the framebuffer.
+	 */
+	int (* getFramebufferWidth)(Window *window);
+
+	/**
+	 *	Get the framebuffer height (used for high DPI displays).
+	 *
+	 * 	@param 	window 	pointer to Window, window to get framebuffer height of.
+	 * 	@return 		int, heightd of the framebuffer.
+	 */
+	int (* getFramebufferHeight)(Window *window);
 } WindowManager;
 
 extern const WindowManager manWin;

@@ -204,4 +204,20 @@ static void centerWindow(Window* window) {
 	setPosition(window, x, y);
 }
 
-const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMonitorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow};
+static int getFramebufferWidth(Window *window)
+{
+	int width;
+	glfwGetFramebufferSize(window->window, &width, NULL);
+
+	return width;
+}
+
+static int getFramebufferHeight(Window *window)
+{
+	int height;
+	glfwGetFramebufferSize(window->window, NULL, &height);
+
+	return height;
+}
+
+const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMonitorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow,getFramebufferWidth,getFramebufferHeight};
