@@ -10,7 +10,7 @@
 	#if TARGET_OS_IPHONE
 		#error Unsupported Plaform.
     #elif TARGET_OS_MAC
-		#error Currently an unsupported plaform, on todo list.
+		#include <sys/stat.h>
 	#else
 		#error Unsupported Plaform.
 	#endif
@@ -69,7 +69,14 @@ uint32_t getFileSize(const char *filename, off_t* size) {
 			return FILE_FAIL;
 		}
 	#elif defined __APPLE__
+		struct stat st;
 
+		if (stat(filename, &st) == 0) {
+			*size = st.st_size;
+			return FILE_SUCCEEDED;
+		} else {
+			return FILE_FAIL;
+		}
 	#elif defined __linux__
 		struct stat st;
 
