@@ -124,7 +124,7 @@ void onInitMisc(GameLoop* self) {
 void onUpdate(GameLoop* self, float tickDelta) {
 	InternalData* data = self->extraData;
 
-	glViewport(0, 0, manWin.getWidth(self->primaryWindow), manWin.getHeight(self->primaryWindow));
+	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
 	float rate = 0.2f;
 
@@ -159,7 +159,7 @@ void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
 
-	printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
+	// printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
