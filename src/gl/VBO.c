@@ -58,7 +58,7 @@ static bool unbind() {
 static bool setData(const VBO* const vbo, GLvoid* data, GLsizeiptr size, GLenum usage) {
 	if (bind(vbo)) {
 		glBufferData(GL_ARRAY_BUFFER, size, data, usage);
-		unbind(vbo);
+		unbind();
 		return true;
 	} else {
 		return false;

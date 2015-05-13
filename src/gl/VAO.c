@@ -64,7 +64,7 @@ static void setRenderInfo(VAO* vao, uint32_t vertCount) {
 static bool draw(VAO* vao) {
 	if (bind(vao)) {
 		glDrawArrays(GL_TRIANGLES, 0, vao->vertCount);
-		unbind(vao);
+		unbind();
 		return true;
 	}
 	return false;
