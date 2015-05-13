@@ -313,22 +313,18 @@ static void setupBuffers(VBO *vbo, GLuint ibo, VBO *positionVBO, VBO *normalVBO,
     DynamicArray    *indicesInternal = manDynamicArray.new(vIndices.size, sizeof(unsigned int));
 
     // Initialize verticesInternal array
-    struct Vertex_s *vp = calloc(vIndices.size, sizeof(struct Vertex_s));
+    struct Vertex_s *vvp = (struct Vertex_s *) calloc(1, sizeof(struct Vertex_s));
     for (int i = 0; i < vIndices.size; ++i) {
-        manDynamicArray.append(verticesInternal, vp);
-        ++vp;
+        manDynamicArray.append(verticesInternal, vvp);
     }
-    // Get address of first element so we can "free" later.
-    vp = manDynamicArray.get(verticesInternal, 0);
+    struct Vertex_s *vp = (struct Vertex_s *) manDynamicArray.get(verticesInternal, 0);
 
     // Initialize indicesInternal array
-    unsigned int *ip = calloc(vIndices.size, sizeof(unsigned int));
+    unsigned int *iip = (unsigned int *) calloc(1, sizeof(unsigned int));
     for (int i = 0; i < vIndices.size; ++i) {
-        manDynamicArray.append(indicesInternal, ip);
-        ++ip;
+        manDynamicArray.append(indicesInternal, iip);
     }
-    // Get address of first element so we can "free" later.
-    ip = manDynamicArray.get(indicesInternal, 0);
+    unsigned int *ip = (unsigned int *) manDynamicArray.get(indicesInternal, 0);
 
     for (int j = 0, i = 0; i < numFaces; ++i) {
         // If object has normals, use normals
@@ -403,8 +399,8 @@ static void setupBuffers(VBO *vbo, GLuint ibo, VBO *positionVBO, VBO *normalVBO,
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    free(vp);
-    free(ip);
+    // free(freeVp);
+    // free(freeIp);
     manDynamicArray.delete(verticesInternal);
     manDynamicArray.delete(indicesInternal);
 

@@ -34,13 +34,14 @@ typedef struct DynamicArray_s {
     /**
      *  Contents of array.
      */
-    void **contents;
+    char *contents;
 } DynamicArray;
 
 typedef struct DynamicArrayManager_s {
     /**
      *  Creates a new dynamic array with the DynamicArray provided and
-     *  the given initial capacity.
+     *  the given initial capacity. 
+     *  All bytes in the array are initialized to 0.
      *
      *  @param  initialCapacity     unsigned int, initial size of array in memory.
      *  @param  elementSize         unsigned int, size of each element in the array.
@@ -73,7 +74,7 @@ typedef struct DynamicArrayManager_s {
      *  @param  index   unsigned int, index to retrieve.
      *  @return         pointer to void, pointer to element retrieved.
      */
-    void *(*get)(const struct DynamicArray_s *const array, unsigned int index);
+    char *(*get)(const struct DynamicArray_s *const array, unsigned int index);
 
     /**
      *  Append an element to the end of the DynamicArray. The size and capacity of the

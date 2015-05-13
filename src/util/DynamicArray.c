@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 
-static void *get(const DynamicArray *const array, unsigned int index);
+static char *get(const DynamicArray *const array, unsigned int index);
 static void append(DynamicArray *array, void *const element);
 
 static DynamicArray *new(unsigned int initialCapacity, unsigned int elementSize) {
@@ -13,7 +13,7 @@ static DynamicArray *new(unsigned int initialCapacity, unsigned int elementSize)
     array->capacity = initialCapacity;
     array->capacityExpansionRate = initialCapacity;
     array->elementSize = elementSize;
-    array->contents = calloc(initialCapacity, sizeof(void *));
+    array->contents = (char *)calloc(initialCapacity*elementSize, sizeof(char));
 
     return array;
 }
@@ -27,30 +27,41 @@ static void delete(DynamicArray *const array) {
     array->capacity = 0;
     array->capacityExpansionRate = 0;
     array->elementSize = 0;
+
+    free(array);
 }
 
 static void freeContents(DynamicArray *const array) {
-    for (int i = 0; i < array->size; ++i) {
-        free(manDynamicArray.get(array, i));
-    }
+    // for (int i = 0; i < array->size; ++i) {
+    //     free(manDynamicArray.get(array, i));
+    // }
 
-    array->size = 0;
+    // array->size = 0;
 }
 
-static void *get(const DynamicArray *const array, unsigned int index) {
+static char *get(const DynamicArray *const array, unsigned int index) {
     assert(index < array->size && "Attempt to index out-of-bounds on DynamicArray.");
 
-    return (array->contents[index]);
+    return (&array->contents[index * array->elementSize]);
 }
 
 static void append(DynamicArray *array, void *const element) {
     if (array->size + 1 > array->capacity) {
         array->capacity += array->capacityExpansionRate;
 
-        array->contents = realloc(array->contents, array->capacity*sizeof(void *));
+        array->contents = realloc(array->contents, array->capacity*array->elementSize);
     }
 
-    array->contents[array->size] = element;
+    // Convert void pointer to char pointer
+    char *cp = (char *) element;
+
+    // Move to the end of the array, put first byte there,
+    // move along a byte and put next byte there etc...
+    for (int i = array->elementSize; i > 0; --i) {
+        array->contents[((array->size + 1) * array->elementSize) - i] = *cp;
+        ++cp;
+    }
+
     ++(array->size);
 }
 
