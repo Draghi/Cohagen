@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 
 #include "AnchoredSpringForceGenerator.h"
 
@@ -11,7 +12,7 @@ static AnchoredSpringForceGenerator *new(Vec3 *const anchor, scalar springConsta
 	fg->springConstant = springConstant;
 	fg->restLength = restLength;
 
-	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
+	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(fg, updateForce);
 
 	fg->forceGenerator = *tempForceGen;
 
@@ -25,7 +26,8 @@ static void delete(AnchoredSpringForceGenerator *forceGenerator) {
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
-	AnchoredSpringForceGenerator *fg = (AnchoredSpringForceGenerator *) self;
+	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
+	AnchoredSpringForceGenerator *fg = (AnchoredSpringForceGenerator *) pfg->self;
 
 	// Calculate the vector of the spring
 	Vec3 force = manParticle.getPosition(particle, NULL);
@@ -34,7 +36,7 @@ static void updateForce(void *const self, Particle *const particle, scalar frame
 
 	// Calculate the magnitude of the force
 	scalar magnitude = manVec3.magnitude(&force);
-	magnitude = abs(magnitude - fg->restLength);
+	magnitude = fabs(magnitude - fg->restLength);
 	magnitude *= fg->springConstant;
 
 	// Calculate and apply the final force

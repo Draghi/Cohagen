@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "SpringForceGenerator.h"
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime);
@@ -9,7 +11,7 @@ static SpringForceGenerator *new(Particle *const otherParticle, scalar springCon
 	fg->springConstant = springConstant;
 	fg->restLength = restLength;
 
-	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
+	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(fg, updateForce);
 	
 	fg->forceGenerator = *tempForceGen;
 
@@ -23,14 +25,15 @@ static void delete(SpringForceGenerator *forceGenerator) {
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
-	SpringForceGenerator *fg = (SpringForceGenerator *) self;
+	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
+	SpringForceGenerator *fg = (SpringForceGenerator *) pfg->self;
 
 	// Force of the spring | f = -k(magnitude(vectorOfSpring) - restLength)*normalize(vectorOfSpring)
 	Vec3 force = manVec3.createFromVec3(NULL, &(particle->position));
 	force = manVec3.sub(&force, &(fg->other->position));
 
 	scalar magnitude = manVec3.magnitude(&force);
-	magnitude = abs(magnitude - fg->restLength);
+	magnitude = fabs(magnitude - fg->restLength);
 	magnitude *= fg->springConstant;
 
 	force = manVec3.normalize(&force);

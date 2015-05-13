@@ -9,7 +9,7 @@ static GravityForceGenerator *new(const Vec3 *const gravityAccel) {
 
 	fg->gravity = manVec3.createFromVec3(NULL, gravityAccel);
 
-	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(updateForce);
+	ParticleForceGenerator *tempForceGen = manParticleForceGenerator.new(fg, updateForce);
 	
 	fg->forceGenerator = *tempForceGen;
 	
@@ -23,7 +23,8 @@ static void delete(GravityForceGenerator *gravityForceGenerator) {
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
-	GravityForceGenerator *fg = (GravityForceGenerator *) self;
+	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
+	GravityForceGenerator *fg = (GravityForceGenerator *) pfg->self;
 
 	Vec3 forceToAdd = manVec3.postMulScalar(&(fg->gravity), manParticle.getMass(particle));
 
