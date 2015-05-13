@@ -37,9 +37,9 @@ void runPhysicsGLFWTest() {
 }
 
 typedef struct InternalData_s {
-	int vaoTown;
+	VAO *vaoTown;
 	int iCountTown;
-	int vaoSphere;
+	VAO *vaoSphere;
 	int iCountSphere;
 	Shader* shaderHouse;
 	Shader *shaderPassThru;
@@ -86,11 +86,11 @@ void onInitOpenGL(GameLoop* self) {
 
 	InternalData* data = self->extraData;
 
-	data->vaoTown    	= objLoader.genVAOFromFile("./data/models/town.obj", &data->iCountTown);
+	data->vaoTown    	= objLoader.genVAOFromFile("./data/models/town.obj");
 	data->shaderHouse 	= manShader.newFromGroup("./data/shaders/", "house");
 	data->texTown    	= textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
-	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj", &data->iCountSphere);
+	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj");
 	data->shaderPassThru	= manShader.newFromGroup("./data/shaders/", "passThru");
 
 	glUseProgram(data->shaderHouse->program);
@@ -184,12 +184,13 @@ void onRender(GameLoop* self, float frameDelta) {
 			manShader.bind(data->shaderHouse);
 			manTex.bind(data->texTown, 0);
 				manMatMan.push(data->manMat);
-					glBindVertexArray(data->vaoTown);
+					manVAO.bind(data->vaoTown);
 						manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-						glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
-					glBindVertexArray(0);
+						manVAO.draw(data->vaoTown);
+						// glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
+					manVAO.unbind();
 				manMatMan.pop(data->manMat);
 			manTex.unbind(data->texTown);
 			manShader.unbind();
@@ -197,12 +198,13 @@ void onRender(GameLoop* self, float frameDelta) {
 			manShader.bind(data->shaderPassThru);
 				manMatMan.push(data->manMat);
 					manMatMan.translate(data->manMat, data->particle->position);
-					glBindVertexArray(data->vaoSphere);
+					manVAO.bind(data->vaoSphere);
 						manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-						glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
-					glBindVertexArray(0);
+						manVAO.draw(data->vaoSphere);
+						//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
+					manVAO.unbind();
 				manMatMan.pop(data->manMat);
 			manShader.unbind();
 		manMatMan.setMode(data->manMat, MATRIX_MODE_VIEW);
@@ -222,6 +224,9 @@ void onClose(GameLoop* self) {
 	free(data->gravity);
 	free(data->anchor);
 	manAnchoredSpringForceGenerator.delete(data->anchoredSpringFG);
+
+	manVAO.delete(data->vaoTown);
+	manVAO.delete(data->vaoSphere);
 }
 
 void onDestroy(GameLoop* self) {

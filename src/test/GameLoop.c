@@ -32,8 +32,7 @@ void runGameLoopTest() {
 	manGameLoop.delete(gameloop);
 }
 
-int vao;
-int iCount;
+VAO *vao;
 Shader* shader;
 Texture* tex;
 Vec3* camPos;
@@ -60,7 +59,7 @@ void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	vao    = objLoader.genVAOFromFile("./data/models/town.obj", &iCount);
+	vao    = objLoader.genVAOFromFile("./data/models/town.obj");
 	shader = manShader.newFromGroup("./data/shaders/", "house");
 	tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
@@ -81,7 +80,7 @@ void onInitMisc(GameLoop* self) {
 }
 
 void onUpdate(GameLoop* self, float tickDelta) {
-	glViewport(0, 0, manWin.getWidth(self->primaryWindow), manWin.getHeight(self->primaryWindow));
+	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
 		camPos->x += -0.2*sin(camRot->y);
@@ -125,12 +124,13 @@ void onRender(GameLoop* self, float frameDelta) {
 		manShader.bind(shader);
 		manTex.bind(tex, 0);
 			manMatMan.push(manMat);
-				glBindVertexArray(vao);
+				manVAO.bind(vao);
 					manShader.bindUniformMat4(shader, "projectionMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_PROJECTION));
 					manShader.bindUniformMat4(shader, "viewMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_VIEW));
 					manShader.bindUniformMat4(shader, "modelMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_MODEL));
-					glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_INT, 0);
-				glBindVertexArray(0);
+					manVAO.draw(vao);
+					// glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_INT, 0);
+				manVAO.unbind();
 			manMatMan.pop(manMat);
 		manTex.unbind(tex);
 		manShader.unbind();
@@ -149,4 +149,5 @@ void onDestroy(GameLoop* self) {
 	free(manMat);
 	free(camPos);
 	free(camRot);
+	manVAO.delete(vao);
 }
