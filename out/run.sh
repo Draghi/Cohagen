@@ -1,4 +1,5 @@
 #!/bin/bash
+export LD_LIBRARY_PATH=lib/
 
 if command primusrun; then
   echo Primusrun Launch.

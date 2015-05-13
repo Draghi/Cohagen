@@ -6,7 +6,7 @@ env = None
 platform = sys.platform
 if platform == "win32":
 	env = Environment(tools = ['mingw'], CC = 'gcc', ENV = os.environ)
-	env.Append(LIBS = ['opengl32','m', 'glfw3'])
+	env.Append(LIBS = ['glfw3', 'opengl32', 'gdi32', 'm'])
 elif platform == "darwin":
 	env = Environment(CC = 'gcc', ENV = {'PATH' : os.environ['PATH']})
 	env.Append(LIBS = ['libglfw3', 'm'])
@@ -26,4 +26,3 @@ sources = [Glob("./build/*.c"), Glob("./build/*/*.c")]
 object_list = env.Object(source = sources)
 
 env.Program(target="./out/bin/coh", source=object_list)
-

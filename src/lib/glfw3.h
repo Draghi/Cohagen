@@ -30,6 +30,9 @@
 #define _glfw3_h_
 
 #define GLFW_INCLUDE_NONE
+#define GLFW_DLL
+
+
 
 /*************************************************************************
  * Doxygen documentation
@@ -3327,6 +3330,11 @@ GLFWAPI GLFWglproc glfwGetProcAddress(const char* procname);
 #endif
 
 /* -------------------- END SYSTEM/COMPILER SPECIFIC --------------------- */
+
+
+
+
+
 
 #endif /* _glfw3_h_ */
 
