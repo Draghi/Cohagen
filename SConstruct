@@ -10,7 +10,7 @@ if platform == "win32":
 elif platform == "darwin":
 	env = Environment(CC = 'gcc', ENV = {'PATH' : os.environ['PATH']})
 	env.Append(LIBS = ['libglfw3', 'm'])
-	env.Append(CFLAGS = '-framework OpenGL')
+	#env.Append(CFLAGS = '-framework OpenGL')
 else:
 	env = Environment(CC = 'gcc', ENV = {'PATH' : os.environ['PATH']})
 	env.Append(LIBS = ['libglfw', 'GL', 'm'])
