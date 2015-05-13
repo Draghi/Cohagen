@@ -9,6 +9,7 @@
 #include "gl/VAO.h"
 #include "gl/VBO.h"
 #include "lib/ogl.h"
+#include "gl/EAB.h"
 
 /**
  *  Singleton used for loading .obj files.
@@ -44,8 +45,9 @@ typedef struct ObjLoader_s {
      *  @param  filename            const pointer to const char, path to file.
      *  @param  numIndicesToDraw    const pointer to int, when function returns, will contain the number
      *                              of indices that must be drawn to draw the object.
+     *  @return                     pointer to VAO, VAO generated.
      */
-    GLuint (*genVAOFromFile)(const char *const filename, int *const numIndicesToDraw);
+    VAO *(*genVAOFromFile)(const char *const filename);
 
 } ObjLoader;
 

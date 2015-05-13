@@ -275,7 +275,7 @@ static void loadObj(    const char *const filename,
 /*
  *  Fill vertex buffer object and index buffer object with data from file.
  */
-static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *const numIndicesToDraw) {
+static void setupBuffers(VBO *vbo, GLuint ibo, VBO *positionVBO, VBO *normalVBO, VBO *texCoordVBO, const char *const filename, int *const numIndicesToDraw) {
     // Setup data structures for receiving information
     DynamicFloatArray   vertices;
     DynamicFloatArray   normals;
@@ -302,25 +302,6 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
     loadObj(filename, 
             &vertices, &normals, &texCoords, &vIndices, &nIndices, &tIndices,
             &vertexStride, &normalStride, &texCoordStride, &vIndexStride, &nIndexStride, &tIndexStride);
-
-    printf("texCoordStride: %d, tIndexStride: %d\n", texCoordStride, tIndexStride);
-
-    // printf("tIndices size: %d\n", tIndices.size);
-    // for (int i = 0; i < tIndices.size; ++i) {
-    //     printf("%d ", tIndices.get(&tIndices, i));
-    //     if ((i + 1) % 3 == 0) {
-    //         printf("\n");
-    //     }
-    // }
-    // printf("\n");
-
-    // for (int i = 0; i < texCoords.size; ++i) {
-    //     printf("%f (%d)", texCoords.get(&texCoords, i), i);
-    //     if ((i + 1) % 2 == 0) {
-    //         printf("\n");
-    //     }
-    // }
-    // printf("tIndexStride : %d\n", tIndexStride);
 
     // Number of faces (triangles or quads) in object = number of indices / number of indices per face.
     int numFaces = vIndices.size / vIndexStride;
@@ -408,14 +389,19 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
 
     manVBO.setData(vbo, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
 
+    manVBO.setData(positionVBO, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
+    manVBO.setRenderInfo(positionVBO, vIndices.size, 3, sizeof(struct Vertex_s), 0);
+
+    manVBO.setData(normalVBO, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
+    manVBO.setRenderInfo(normalVBO, vIndices.size, 3, sizeof(struct Vertex_s), (char *)NULL + sizeof(float)*3);
+
+    manVBO.setData(texCoordVBO, vp, vIndices.size*sizeof(struct Vertex_s), GL_STATIC_DRAW);
+    manVBO.setRenderInfo(texCoordVBO, vIndices.size, 2, sizeof(struct Vertex_s), (char *)NULL + sizeof(float)*6);
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, vIndices.size*sizeof(unsigned int), ip, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    // for (int i = 0; i < numFaces * 3; ++i) {
-    //     printf("%f %f\n", (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, i)).u, (*(struct Vertex_s *)manDynamicArray.get(verticesInternal, i)).v);
-    // }
 
     free(vp);
     free(ip);
@@ -430,40 +416,33 @@ static void setupBuffers(VBO *vbo, GLuint ibo, const char *const filename, int *
     deleteDynamicIntArray(&tIndices);
 }
 
-static GLuint genVAOFromFile(const char *const filename, int *const numIndicesToDraw) {
-    GLuint vao, ibo;
+static VAO *genVAOFromFile(const char *const filename) {
+    // GLuint vao, ibo;
+    GLuint ibo;
+    VAO *vao = manVAO.new();
+    VBO *vbo = manVBO.new();
+    VBO *positionVBO = manVBO.new();
+    VBO *normalVBO = manVBO.new();
+    VBO *texCoordVBO = manVBO.new();
+    int numIndicesToDraw;
 
-    // Generate vbo and ibo buffers
+    // Generate ibo buffer
     glGenBuffers(1, &ibo);
 
-    // Fill them with data
-    VBO *vbo = manVBO.new();
-    setupBuffers(vbo, ibo, filename, numIndicesToDraw);
+    // Fill buffers with data
+    setupBuffers(vbo, ibo, positionVBO, normalVBO, texCoordVBO, filename, &numIndicesToDraw);
 
-    glGenVertexArrays(1, &vao);
-
-    glBindVertexArray(vao);
-
-    //glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    manVBO.bind(vbo);
+    manVAO.setRenderInfo(vao, numIndicesToDraw);
 
     // Let VAO know where data is in vbo
-    // position    
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex_s), 0);
+    // position
+    manVAO.attachVBO(vao, positionVBO, 0, GL_FLOAT);    
 
     // normal
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(struct Vertex_s), (char *)NULL + sizeof(float)*3);
+    manVAO.attachVBO(vao, normalVBO, 1, GL_FLOAT);
 
     // texCoord
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(struct Vertex_s), (char *)NULL + sizeof(float)*6);
-
-    // Bind index data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-    glBindVertexArray(0);
+    manVAO.attachVBO(vao, texCoordVBO, 2, GL_FLOAT);
 
     return vao;
 }
