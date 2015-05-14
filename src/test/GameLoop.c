@@ -40,6 +40,7 @@ Vec3* camRot;
 MatrixManager* manMat;
 
 void onCreate(GameLoop* self) {
+
 	camPos = malloc(sizeof(Vec3));
 	camRot = malloc(sizeof(Vec3));
 	manMat = manMatMan.new();
@@ -129,7 +130,6 @@ void onRender(GameLoop* self, float frameDelta) {
 					manShader.bindUniformMat4(shader, "viewMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_VIEW));
 					manShader.bindUniformMat4(shader, "modelMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_MODEL));
 					manVAO.draw(vao);
-					// glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_INT, 0);
 				manVAO.unbind();
 			manMatMan.pop(manMat);
 		manTex.unbind(tex);
@@ -139,7 +139,6 @@ void onRender(GameLoop* self, float frameDelta) {
 }
 
 void onClose(GameLoop* self) {
-	//manTex.delete(tex);
 	free(tex);
 	free(shader);
 }
