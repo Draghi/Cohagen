@@ -72,7 +72,6 @@ static bool draw(VAO* vao) {
 
 static void delete(VAO* vao) {
 	glDeleteVertexArrays(1, &(vao->id));
-	free(vao);
 }
 
 const VAOManager manVAO = {new, bind, unbind, attachVBO, attachEAB, setRenderInfo, draw, delete};

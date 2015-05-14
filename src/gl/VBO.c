@@ -106,7 +106,6 @@ static void setRenderInfo(VBO* const vbo, GLint vertCount, GLint countPerVert, G
  */
 static void delete(VBO* const vbo) {
 	glDeleteBuffers(1, &(vbo->id));
-	free(vbo);
 }
 
 ////////////////////////
