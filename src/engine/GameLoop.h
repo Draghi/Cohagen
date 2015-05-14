@@ -20,7 +20,7 @@ typedef void UpdateCallback(GameLoop* self, float tickDelta);
 typedef void RenderCallback(GameLoop* self, float frameDelta);
 /** Called when the main window of a gameloop is closed. **/
 typedef void CloseCallback(GameLoop* self);
-/** Called when the gameloop is beign destroyed, being freed. **/
+/** Called when the gameloop is being destroyed, being freed. **/
 typedef void DestroyCallback(GameLoop* self);
 
 /** Struct containing all the information for a given gameloop **/
