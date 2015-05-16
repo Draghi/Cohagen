@@ -122,7 +122,7 @@ void onRender(GameLoop* self, float frameDelta) {
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
 		manShader.bind(shader);
-		manTex.bind(tex, 0);
+		manTex.bind(tex, GL_TEXTURE_2D, 0);
 			manMatMan.push(manMat);
 				manVAO.bind(vao);
 					manShader.bindUniformMat4(shader, "projectionMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_PROJECTION));
@@ -132,7 +132,7 @@ void onRender(GameLoop* self, float frameDelta) {
 					// glDrawElements(GL_TRIANGLES, iCount, GL_UNSIGNED_INT, 0);
 				manVAO.unbind();
 			manMatMan.pop(manMat);
-		manTex.unbind(tex);
+		manTex.unbind(tex, GL_TEXTURE_2D);
 		manShader.unbind();
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(manMat);

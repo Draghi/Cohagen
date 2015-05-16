@@ -15,6 +15,7 @@
 #include "physics/GravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "physics/AnchoredSpringForceGenerator.h"
+#include "engine/Skybox.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -45,6 +46,9 @@ typedef struct InternalData_s {
 	Shader *shaderPassThru;
 	Texture* texTown;
 	MatrixManager* manMat;
+
+	Skybox *skybox;
+	Shader *skyboxShader;
 
 	Vec3* camPos;
 	Vec3* camRot;
@@ -95,6 +99,11 @@ void onInitOpenGL(GameLoop* self) {
 
 	glUseProgram(data->shaderHouse->program);
 	glUniform1i(glGetUniformLocation(data->shaderHouse->program, "tex"), 0);
+
+	((InternalData *)self->extraData)->skybox = manSkybox.new(	"./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
+																"./data/texture/purplenebula_top.bmp", "./data/texture/purplenebula_top.bmp",
+																"./data/texture/purplenebula_left.bmp", "./data/texture/purplenebula_right.bmp");
+	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
 void onInitMisc(GameLoop* self) {
@@ -180,19 +189,26 @@ void onRender(GameLoop* self, float frameDelta) {
 		manMatMan.rotate(data->manMat, data->camRot->y, manVec3.create(NULL, 0, 1, 0));
 		manMatMan.rotate(data->manMat, data->camRot->x, manVec3.create(NULL, 1, 0, 0));
 
+		manShader.bind(data->skyboxShader);
+			manShader.bindUniformMat4(data->skyboxShader, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
+			manShader.bindUniformMat4(data->skyboxShader, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
+		manSkybox.draw(data->skybox, data->skyboxShader, "cubeTexture");
+		manShader.unbind();
+
 		manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);
 			manShader.bind(data->shaderHouse);
-			manTex.bind(data->texTown, 0);
+			manTex.bind(data->texTown, GL_TEXTURE_2D, 0);
 				manMatMan.push(data->manMat);
 					manVAO.bind(data->vaoTown);
 						manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
 						manVAO.draw(data->vaoTown);
+						// manVAO.draw(data->skybox->vao);
 						// glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
 					manVAO.unbind();
 				manMatMan.pop(data->manMat);
-			manTex.unbind(data->texTown);
+			manTex.unbind(data->texTown, GL_TEXTURE_2D);
 			manShader.unbind();
 
 			manShader.bind(data->shaderPassThru);
@@ -202,7 +218,7 @@ void onRender(GameLoop* self, float frameDelta) {
 						manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-						manVAO.draw(data->vaoSphere);
+						// manVAO.draw(data->vaoSphere);
 						//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
 					manVAO.unbind();
 				manMatMan.pop(data->manMat);
@@ -214,7 +230,7 @@ void onRender(GameLoop* self, float frameDelta) {
 void onClose(GameLoop* self) {
 	InternalData* data = self->extraData;
 
-	manTex.delete(data->texTown);
+	// manTex.delete(data->texTown);
 	free(data->shaderHouse);
 	free(data->camPos);
 	free(data->camRot);
