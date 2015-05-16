@@ -27,3 +27,4 @@ dbg/
 .target
 .texlipse
 .sconsign.dblite
+.DS_Store
