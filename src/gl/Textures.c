@@ -164,7 +164,7 @@ static bool genData(Texture *const tex, const uint32_t genType, const uint32_t w
 	return setData(tex, data, internalFormat, format, width, height, minFilter, magFilter);
 }
 
-static void imageToTarget(Texture *const tex, GLuint slot, const GLubyte* const data, GLenum target, GLint mipmapLevel, GLint internalFormat, GLenum format, GLenum type, const uint32_t width, const uint32_t height) {
+static void imageToTarget(Texture *const tex, int slot, const GLubyte* const data, GLenum target, GLint mipmapLevel, GLint internalFormat, GLenum format, GLenum type, const uint32_t width, const uint32_t height) {
 	manTex.bind(tex, target, slot);
 
     glTexImage2D(   
@@ -182,7 +182,7 @@ static void imageToTarget(Texture *const tex, GLuint slot, const GLubyte* const 
     manTex.unbind(tex, target);
 }
 
-static void formatTexture(Texture *const tex, GLuint slot, GLenum target, GLenum pname, GLint value) {
+static void formatTexture(Texture *const tex, int slot, GLenum target, GLenum pname, GLint value) {
 	manTex.bind(tex, target, slot);
 
 	glTexParameteri(target, pname, value);
