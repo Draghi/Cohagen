@@ -23,6 +23,11 @@ typedef struct AnchoredSpringForceGenerator_s {
 	scalar springConstant;
 
 	/**
+	 *	Spring dampening.
+	 */
+	scalar springDamp;
+
+	/**
 	 *	Rest length of spring.
 	 */
 	scalar restLength;
@@ -34,10 +39,11 @@ typedef struct AnchoredSpringForceGeneratorManager_s {
 	 *
 	 * 	@param 	anchor 			const pointer to Vec3, anchor point of spring.
 	 * 	@param 	springConstant 	scalar, spring constant for spring.
+	 * 	@param 	springConstant 	scalar, dampening for the spring.
 	 * 	@param 	restLength 		scalar, the resting length of the spring.
 	 * 	@return 				pointer to AnchoredSpringForceGenerator, the constructed AnchoredSpringForceGenerator.
 	 */
-	AnchoredSpringForceGenerator *(*new)(Vec3 *const anchor, scalar springConstant, scalar restLength);
+	AnchoredSpringForceGenerator *(*new)(Vec3 *const anchor, scalar springConstant, scalar springDamp, scalar restLength);
 
 	/**
 	 *	Free all memory associated with the given AnchoredSpringForceGenerator.

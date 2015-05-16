@@ -120,14 +120,14 @@ void onInitMisc(GameLoop* self) {
 	manMatMan.pushIdentity(data->manMat);
 
 	// Create and register GravityForceGenerator
-	manVec3.create(data->gravity, 0.0f, -0.001f, 0.0f);
+	manVec3.create(data->gravity, 0.0f, -9.8f, 0.0f);
 	((InternalData *)self->extraData)->gravityFG = manGravityForceGenerator.new(data->gravity);
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->gravityFG->forceGenerator));
 
 	// Create and register AnchoredSpringForceGenerator
-	manVec3.create(data->anchor, 0.0f, 0.0f, 0.0f);
-	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 1.0f, 15.0f);
-	// manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
+	manVec3.create(data->anchor, 0.0f, 1.0f, 0.0f);
+	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 2.00f, 1, 0.0f);
+	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
 }
 
 void onUpdate(GameLoop* self, float tickDelta) {
@@ -168,7 +168,10 @@ void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
 
-	printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
+	//printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
+	data->anchor->x = -data->camPos->x;
+	data->anchor->y = -data->camPos->y;
+	data->anchor->z = -data->camPos->z;
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
@@ -192,7 +195,7 @@ void onRender(GameLoop* self, float frameDelta) {
 		manShader.bind(data->skyboxShader);
 			manShader.bindUniformMat4(data->skyboxShader, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 			manShader.bindUniformMat4(data->skyboxShader, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
-		manSkybox.draw(data->skybox, data->skyboxShader, "cubeTexture");
+			manSkybox.draw(data->skybox, data->skyboxShader, "cubeTexture");
 		manShader.unbind();
 
 		manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);
@@ -212,16 +215,17 @@ void onRender(GameLoop* self, float frameDelta) {
 			manShader.unbind();
 
 			manShader.bind(data->shaderPassThru);
-				manMatMan.push(data->manMat);
-					manMatMan.translate(data->manMat, data->particle->position);
-					manVAO.bind(data->vaoSphere);
-						manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
-						manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
-						manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-						// manVAO.draw(data->vaoSphere);
-						//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
-					manVAO.unbind();
-				manMatMan.pop(data->manMat);
+			manMatMan.push(data->manMat);
+				manMatMan.translate(data->manMat, data->particle->position);
+				manVAO.bind(data->vaoSphere);
+					manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
+					manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
+					manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
+					manVAO.draw(data->vaoSphere);
+					//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
+				manVAO.unbind();
+			manMatMan.pop(data->manMat);
+
 			manShader.unbind();
 		manMatMan.setMode(data->manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(data->manMat);
