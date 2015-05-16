@@ -51,12 +51,14 @@ static Texture* new() {
 }
 
 /**
- * Attempts to bind the texture to the given texture unit slot.
+ * Attempts to bind the texture to the given texture unit slot and given target.
+ *
  * @param tex The texture to bind too the texture unit.
- * @param slotID The slot to attempt to bind too, must be bellow MAX_TEXTURE_SLOTS.
+ * @param target 	GLenum, target to bind texture (eg. GL_TEXTURE_2D, GL_TEXTURE_CUBE_MAP)
+ * @param slotID The slot to attempt to bind too, must be below MAX_TEXTURE_SLOTS.
  * @return True if the texture is bound, false if the texture fails to bind.
  */
-static bool bind(Texture * const tex, const GLuint slotID) {
+static bool bind(Texture * const tex, GLenum target, const GLuint slotID) {
 	if (slotID<TEX_MAX_SLOTS) {
 		tex->slotID = slotID;
 
@@ -66,7 +68,7 @@ static bool bind(Texture * const tex, const GLuint slotID) {
 		slots[slotID] = tex;
 
 		glActiveTexture(GL_TEXTURE0+slotID);
-		glBindTexture(GL_TEXTURE_2D, tex->id);
+		glBindTexture(target, tex->id);
 
 		return true;
 	} else {
@@ -76,13 +78,14 @@ static bool bind(Texture * const tex, const GLuint slotID) {
 
 /**
  * Attempts to unbind the texture.
- * @param tex The texture to attempt to unbind.
+ * @param 	tex 	The texture to attempt to unbind.
+ * @param 	target 	GLenum, target to unbind. 
  * @return Whether the texture was unbound. Note: If another texture bound itself to the same slot, this will fail to unbind.
  */
-static bool unbind(Texture * const tex) {
+static bool unbind(Texture * const tex, GLenum target) {
 	if (slots[tex->slotID] == tex) {
 		glActiveTexture(GL_TEXTURE0+tex->slotID);
-		glBindTexture(GL_TEXTURE_2D, 0);
+		glBindTexture(target, 0);
 
 		tex->slotID = -1;
 		slots[tex->slotID] = NULL;
@@ -108,7 +111,7 @@ static bool setData(Texture *const tex, const GLubyte *const data, const GLint i
 	int32_t slot = findOpenSlot();
 
 	if (slot>=0) {
-		bind(tex, slot);
+		bind(tex, GL_TEXTURE_2D, slot);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
@@ -119,7 +122,7 @@ static bool setData(Texture *const tex, const GLubyte *const data, const GLint i
 		tex->width = width;
 		tex->height = height;
 
-		unbind(tex);
+		unbind(tex, GL_TEXTURE_2D);
 
 		return true;
 	} else {
@@ -161,13 +164,39 @@ static bool genData(Texture *const tex, const uint32_t genType, const uint32_t w
 	return setData(tex, data, internalFormat, format, width, height, minFilter, magFilter);
 }
 
+static void imageToTarget(Texture *const tex, GLuint slot, const GLubyte* const data, GLenum target, GLint mipmapLevel, GLint internalFormat, GLenum format, GLenum type, const uint32_t width, const uint32_t height) {
+	manTex.bind(tex, target, slot);
+
+    glTexImage2D(   
+        target,
+        mipmapLevel,
+        internalFormat,
+        width,
+        height,
+        0,
+        format,
+        type,
+        data
+    );
+
+    manTex.unbind(tex, target);
+}
+
+static void formatTexture(Texture *const tex, GLuint slot, GLenum target, GLenum pname, GLint value) {
+	manTex.bind(tex, target, slot);
+
+	glTexParameteri(target, pname, value);
+
+	manTex.unbind(tex, target);
+}
+
+
 /**
  * Frees the given texture from both the GPU and System memory.
  * @param The texture to free.
  */
 static void delete(Texture* const tex) {
 	glDeleteTextures(1, &(tex->id));
-	free(tex);
 }
 
 ////////////////////////
@@ -178,5 +207,5 @@ static void delete(Texture* const tex) {
  * Each element corresponds to the strut defined in the header, in order.
  * Do not, I repeat DO NOT mess with this object, unless you are certain about what you're doing.
  */
-const TextureManager manTex = {new, bind, unbind, genData, setData, delete};
+const TextureManager manTex = {new, bind, unbind, genData, setData, imageToTarget, formatTexture, delete};
 
