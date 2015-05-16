@@ -50,8 +50,7 @@ typedef struct DynamicArrayManager_s {
 
     /**
      *  Reset the structure and free the memory associated with it.
-     *  Note that this does not mean pointers passed to the array will be freed,
-     *  they will not. Only the memory used by this struct will be freed.
+     *  Dynamic array itself will not be freed.
      *
      *  @param  array   pointer to DynamicArray to clear.
      */

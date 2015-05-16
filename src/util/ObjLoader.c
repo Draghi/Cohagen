@@ -399,11 +399,13 @@ static void setupBuffers(VBO *vbo, GLuint ibo, VBO *positionVBO, VBO *normalVBO,
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    // free(freeVp);
-    // free(freeIp);
     manDynamicArray.delete(verticesInternal);
     manDynamicArray.delete(indicesInternal);
-
+    free(verticesInternal);
+    free(indicesInternal);
+    free(vvp);
+    free(iip);
+    
     deleteDynamicFloatArray(&vertices);
     deleteDynamicFloatArray(&normals);
     deleteDynamicFloatArray(&texCoords);
@@ -439,6 +441,11 @@ static VAO *genVAOFromFile(const char *const filename) {
 
     // texCoord
     manVAO.attachVBO(vao, texCoordVBO, 2, GL_FLOAT);
+
+    free(vbo);
+    free(positionVBO);
+    free(normalVBO);
+    free(texCoordVBO);
 
     return vao;
 }

@@ -28,7 +28,7 @@ static void delete(DynamicArray *const array) {
     array->capacityExpansionRate = 0;
     array->elementSize = 0;
 
-    free(array);
+    // free(array);
 }
 
 static void freeContents(DynamicArray *const array) {
