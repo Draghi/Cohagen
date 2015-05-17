@@ -226,23 +226,22 @@ static void translate(MatrixManager* manager, Vec3 translation) {
  * @param scale The vector containing how much each axis should be scaled by.
  */
 static void scale(MatrixManager* manager, Vec3 scale) {
-	Mat4 src = *peek(manager); //Copy the data onto the stack for faster read access (no dereferencing)
-	Mat4 dest;
+	Mat4 dest = *peek(manager); //Copy the data onto the stack for faster read access (no dereferencing)
 
-	dest.data[0].x *= src.data[0].x * scale.x;
-	dest.data[1].x *= src.data[1].x * scale.x;
-	dest.data[2].x *= src.data[2].x * scale.x;
-	dest.data[3].x *= src.data[3].x * scale.x;
+	dest.data[0].x *= scale.x;
+	dest.data[0].y *= scale.x;
+	dest.data[0].z *= scale.x;
+	dest.data[0].w *= scale.x;
 
-	dest.data[0].y *= src.data[0].y * scale.y;
-	dest.data[1].y *= src.data[1].y * scale.y;
-	dest.data[2].y *= src.data[2].y * scale.y;
-	dest.data[3].y *= src.data[3].y * scale.y;
+	dest.data[1].x *= scale.y;
+	dest.data[1].y *= scale.y;
+	dest.data[1].z *= scale.y;
+	dest.data[1].w *= scale.y;
 
-	dest.data[0].z *= src.data[0].y * scale.z;
-	dest.data[1].z *= src.data[1].y * scale.z;
-	dest.data[2].z *= src.data[2].y * scale.z;
-	dest.data[3].z *= src.data[3].y * scale.z;
+	dest.data[2].x *= scale.z;
+	dest.data[2].y *= scale.z;
+	dest.data[2].z *= scale.z;
+	dest.data[2].w *= scale.z;
 
 	//Apply the matrix transformation to the matrix
 	(*peek(manager)) = dest;
