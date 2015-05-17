@@ -142,25 +142,25 @@ void onUpdate(GameLoop* self, float tickDelta) {
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		data->camPos->x += -rate*sin(data->camRot->y);
-		data->camPos->z += -rate*cos(data->camRot->y);
-		data->camPos->y +=  rate*sin(data->camRot->x);
-	}
-
-	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		data->camPos->x +=  rate*sin(data->camRot->y);
-		data->camPos->z +=  rate*cos(data->camRot->y);
+		data->camPos->x +=  rate*cos(data->camRot->y-1.57079632679);
+		data->camPos->z +=  rate*sin(data->camRot->y-1.57079632679);
 		data->camPos->y += -rate*sin(data->camRot->x);
 	}
 
+	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
+		data->camPos->x +=  rate*cos(data->camRot->y+1.57079632679);
+		data->camPos->z +=  rate*sin(data->camRot->y+1.57079632679);
+		data->camPos->y +=  rate*sin(data->camRot->x);
+	}
+
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		data->camPos->x += rate*sin(data->camRot->y-1.57079632679);
-		data->camPos->z += rate*cos(data->camRot->y-1.57079632679);
+		data->camPos->x += -rate*cos(data->camRot->y);
+		data->camPos->z += -rate*sin(data->camRot->y);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		data->camPos->x += rate*sin(data->camRot->y+1.57079632679);
-		data->camPos->z += rate*cos(data->camRot->y+1.57079632679);
+		data->camPos->x += rate*cos(data->camRot->y);
+		data->camPos->z += rate*sin(data->camRot->y);
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -187,10 +187,10 @@ void onRender(GameLoop* self, float frameDelta) {
 
 	manMatMan.setMode(data->manMat, MATRIX_MODE_VIEW);
 	manMatMan.push(data->manMat);
-		manMatMan.translate(data->manMat, *data->camPos);
-		manMatMan.rotate(data->manMat, data->camRot->z, manVec3.create(NULL, 0, 0, 1));
-		manMatMan.rotate(data->manMat, data->camRot->y, manVec3.create(NULL, 0, 1, 0));
 		manMatMan.rotate(data->manMat, data->camRot->x, manVec3.create(NULL, 1, 0, 0));
+		manMatMan.rotate(data->manMat, data->camRot->y, manVec3.create(NULL, 0, 1, 0));
+		manMatMan.rotate(data->manMat, data->camRot->z, manVec3.create(NULL, 0, 0, 1));
+		manMatMan.translate(data->manMat, *data->camPos);
 
 		manShader.bind(data->skyboxShader);
 			manShader.bindUniformMat4(data->skyboxShader, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));

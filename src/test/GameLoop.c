@@ -83,26 +83,32 @@ void onInitMisc(GameLoop* self) {
 void onUpdate(GameLoop* self, float tickDelta) {
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
+	float rate = 0.2f;
+
+	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
+		rate = 0.005f;
+	}
+
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		camPos->x += -0.2*sin(camRot->y);
-		camPos->z += -0.2*cos(camRot->y);
-		camPos->y +=  0.2*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y-1.57079632679);
+		camPos->z +=  rate*sin(camRot->y-1.57079632679);
+		camPos->y += -rate*sin(camRot->x);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		camPos->x +=  0.2*sin(camRot->y);
-		camPos->z +=  0.2*cos(camRot->y);
-		camPos->y += -0.2*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y+1.57079632679);
+		camPos->z +=  rate*sin(camRot->y+1.57079632679);
+		camPos->y +=  rate*sin(camRot->x);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		camPos->x += 0.2*sin(camRot->y-1.57079632679);
-		camPos->z += 0.2*cos(camRot->y-1.57079632679);
+		camPos->x += -rate*cos(camRot->y);
+		camPos->z += -rate*sin(camRot->y);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		camPos->x += 0.2*sin(camRot->y+1.57079632679);
-		camPos->z += 0.2*cos(camRot->y+1.57079632679);
+		camPos->x += rate*cos(camRot->y);
+		camPos->z += rate*sin(camRot->y);
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -116,10 +122,10 @@ void onRender(GameLoop* self, float frameDelta) {
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.push(manMat);
-		manMatMan.translate(manMat, *camPos);
 		manMatMan.rotate(manMat, camRot->z, manVec3.create(NULL, 0, 0, 1));
 		manMatMan.rotate(manMat, camRot->y, manVec3.create(NULL, 0, 1, 0));
 		manMatMan.rotate(manMat, camRot->x, manVec3.create(NULL, 1, 0, 0));
+		manMatMan.translate(manMat, *camPos);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
 		manShader.bind(shader);

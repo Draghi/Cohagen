@@ -1,5 +1,7 @@
 #include "Mat4.h"
 
+#include <math.h>
+
 static Mat4 create(Mat4 *const mat,
             scalar el00, scalar el10, scalar el20, scalar el30, 
             scalar el01, scalar el11, scalar el21, scalar el31,
@@ -296,4 +298,86 @@ static void getMat4Data(const Mat4 *const matrix, scalar *const data)
     }
 }
 
-const Mat4Manager manMat4 = {create, createLeading, createFromVec4, createFromMat4, sum, sub, postMulScalar, preMulScalar, mul, postMulVec4, preMulVec4, inverse, getMat4Data};
+static Mat4 affScale(const Mat4 *const matrix, const Vec3 *const scale) {
+	Mat4 dest = *matrix;
+
+	dest.data[0].x *= matrix->data[0].x*scale->x;
+	dest.data[0].y *= matrix->data[0].y*scale->x;
+	dest.data[0].z *= matrix->data[0].z*scale->x;
+	dest.data[0].w *= matrix->data[0].w*scale->x;
+
+	dest.data[1].x *= matrix->data[1].x*scale->y;
+	dest.data[1].y *= matrix->data[1].y*scale->y;
+	dest.data[1].z *= matrix->data[1].z*scale->y;
+	dest.data[1].w *= matrix->data[1].w*scale->y;
+
+	dest.data[2].x *= matrix->data[2].x*scale->z;
+	dest.data[2].y *= matrix->data[2].y*scale->z;
+	dest.data[2].z *= matrix->data[2].z*scale->z;
+	dest.data[2].w *= matrix->data[2].w*scale->z;
+
+	return dest;
+}
+
+static Mat4 affTranslate(const Mat4 *const matrix, const Vec3 *const translation) {
+	Mat4 dest = *matrix;
+
+	dest.data[3].x += matrix->data[0].x * translation->x + matrix->data[1].x * translation->y + matrix->data[2].x * translation->z;
+	dest.data[3].y += matrix->data[0].y * translation->x + matrix->data[1].y * translation->y + matrix->data[2].y * translation->z;
+	dest.data[3].z += matrix->data[0].z * translation->x + matrix->data[1].z * translation->y + matrix->data[2].z * translation->z;
+	dest.data[3].w += matrix->data[0].w * translation->x + matrix->data[1].w * translation->y + matrix->data[2].w * translation->z;
+
+	return dest;
+}
+
+static Mat4 affRotate(const Mat4 *const matrix, const scalar angle, const Vec3 *const axis) {
+	Mat4 dest = *matrix;
+
+	//Pre-calculations to streamline matrix transformation.
+	scalar aCos = (scalar) cos(angle);
+	scalar aSin = (scalar) sin(angle);
+	scalar invC = 1.0f - aCos;
+
+	scalar xx = axis->x*axis->x*invC;
+	scalar yy = axis->y*axis->y*invC;
+	scalar zz = axis->z*axis->z*invC;
+
+	scalar xy = axis->x*axis->y*invC;
+	scalar yz = axis->y*axis->z*invC;
+	scalar xz = axis->x*axis->z*invC;
+
+	scalar xsin = axis->x*aSin;
+	scalar ysin = axis->y*aSin;
+	scalar zsin = axis->z*aSin;
+
+
+	//Transform matrix by doing an explicit Vec3 multiply to each component.
+	//Explicit so we avoid the overhead of function calls. We want this to be very very fast.
+	scalar m00 = xx + aCos;
+	scalar m01 = xy + zsin;
+	scalar m02 = xz - ysin;
+	dest.data[0].x = matrix->data[0].x * m00 + matrix->data[1].x * m01 + matrix->data[2].x * m02;
+	dest.data[0].y = matrix->data[0].y * m00 + matrix->data[1].y * m01 + matrix->data[2].y * m02;
+	dest.data[0].z = matrix->data[0].z * m00 + matrix->data[1].z * m01 + matrix->data[2].z * m02;
+	dest.data[0].w = matrix->data[0].w * m00 + matrix->data[1].w * m01 + matrix->data[2].w * m02;
+
+	scalar m10 = xy - zsin;
+	scalar m11 = yy + aCos;
+	scalar m12 = yz + xsin;
+	dest.data[1].x = matrix->data[0].x * m10 + matrix->data[1].x * m11 + matrix->data[2].x * m12;
+	dest.data[1].y = matrix->data[0].y * m10 + matrix->data[1].y * m11 + matrix->data[2].y * m12;
+	dest.data[1].z = matrix->data[0].z * m10 + matrix->data[1].z * m11 + matrix->data[2].z * m12;
+	dest.data[1].w = matrix->data[0].w * m10 + matrix->data[1].w * m11 + matrix->data[2].w * m12;
+
+	scalar m20 = xz + ysin;
+	scalar m21 = yz - xsin;
+	scalar m22 = zz + aCos;
+	dest.data[2].x = matrix->data[0].x * m20 + matrix->data[1].x * m21 + matrix->data[2].x * m22;
+	dest.data[2].y = matrix->data[0].y * m20 + matrix->data[1].y * m21 + matrix->data[2].y * m22;
+	dest.data[2].z = matrix->data[0].z * m20 + matrix->data[1].z * m21 + matrix->data[2].z * m22;
+	dest.data[2].w = matrix->data[0].w * m20 + matrix->data[1].w * m21 + matrix->data[2].w * m22;
+
+	return dest;
+}
+
+const Mat4Manager manMat4 = {create, createLeading, createFromVec4, createFromMat4, sum, sub, postMulScalar, preMulScalar, mul, postMulVec4, preMulVec4, inverse, getMat4Data, affScale, affTranslate, affRotate};

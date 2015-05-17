@@ -162,6 +162,34 @@ typedef struct Mat4Manager_s {
      *  @param  data    const pointer to float, an array of floats to fill with Mat4 data.
      */
     void (*getMat4Data)(const Mat4 *const matrix, scalar *const data);
+
+    /**
+     *  Applies an affine scale transformation to the given matrix.
+     *
+     * @param matrix The matrix to apply the transformation to.
+     * @param scale The scaling to apply
+     * @return The transformed matrix
+     */
+    Mat4(* affScale)(const Mat4 *const matrix, const Vec3 *const scale);
+
+    /**
+     *  Applies an affine translation/displacement transformation to the given matrix.
+     *
+     * @param matrix The matrix to apply the transformation to.
+     * @param translation The translation to apply
+     * @return The transformed matrix
+     */
+    Mat4(* affTranslate)(const Mat4 *const matrix, const Vec3 *const translation);
+
+    /**
+     *  Applies an affine rotation to the given matrix.
+     *
+     *  @param matrix The matrix to apply the transformation to.
+     *  @param angle The angle in radians to roate by.
+     *  @param axis The normalised axis to rotate around.
+     */
+    Mat4(* affRotate)(const Mat4 *const matrix, const scalar angle, const Vec3 *const axis);
+
 } Mat4Manager;
 
 // Mat4 createMat4(        scalar el00, scalar el10, scalar el20, scalar el30, 

@@ -158,55 +158,7 @@ static Mat4* pop(MatrixManager* manager) {
  * @param axis The axis to rotate around (should be normalized)
  */
 static void rotate(MatrixManager* manager, scalar angle, Vec3 axis) {
-	Mat4 src = *peek(manager); //Copy the data onto the stack for faster read access (no dereferencing)
-	Mat4 dest = manMat4.createFromMat4(NULL, &src);
-
-	//Pre-calculations to streamline matrix transformation.
-	scalar aCos = (scalar) cos(angle);
-	scalar aSin = (scalar) sin(angle);
-	scalar invC = 1.0f - aCos;
-
-	scalar xx = axis.x*axis.x*invC;
-	scalar yy = axis.y*axis.y*invC;
-	scalar zz = axis.z*axis.z*invC;
-
-	scalar xy = axis.x*axis.y*invC;
-	scalar yz = axis.y*axis.z*invC;
-	scalar xz = axis.x*axis.z*invC;
-
-	scalar xsin = axis.x*aSin;
-	scalar ysin = axis.y*aSin;
-	scalar zsin = axis.z*aSin;
-
-
-	//Transform matrix by doing an explicit Vec3 multiply to each component.
-	//Explicit so we avoid the overhead of function calls. We want this to be very very fast.
-	scalar m00 = xx + aCos;
-	scalar m01 = xy + zsin;
-	scalar m02 = xz - ysin;
-	dest.data[0].x = src.data[0].x * m00 + src.data[0].y * m01 + src.data[0].z * m02;
-	dest.data[1].x = src.data[1].x * m00 + src.data[1].y * m01 + src.data[1].z * m02;
-	dest.data[2].x = src.data[2].x * m00 + src.data[2].y * m01 + src.data[2].z * m02;
-	dest.data[3].x = src.data[3].x * m00 + src.data[3].y * m01 + src.data[3].z * m02;
-
-	scalar m10 = xy - zsin;
-	scalar m11 = yy + aCos;
-	scalar m12 = yz + xsin;
-	dest.data[0].y = src.data[0].x * m10 + src.data[0].y * m11 + src.data[0].z * m12;
-	dest.data[1].y = src.data[1].x * m10 + src.data[1].y * m11 + src.data[1].z * m12;
-	dest.data[2].y = src.data[2].x * m10 + src.data[2].y * m11 + src.data[2].z * m12;
-	dest.data[3].y = src.data[3].x * m10 + src.data[3].y * m11 + src.data[3].z * m12;
-
-	scalar m20 = xz + ysin;
-	scalar m21 = yz - xsin;
-	scalar m22 = zz + aCos;
-	dest.data[0].z = src.data[0].x * m20 + src.data[0].y * m21 + src.data[0].z * m22;
-	dest.data[1].z = src.data[1].x * m20 + src.data[1].y * m21 + src.data[1].z * m22;
-	dest.data[2].z = src.data[2].x * m20 + src.data[2].y * m21 + src.data[2].z * m22;
-	dest.data[3].z = src.data[3].x * m20 + src.data[3].y * m21 + src.data[3].z * m22;
-
-	//Apply the matrix transformation to the matrix
-	(*peek(manager)) = dest;
+	*peek(manager) = manMat4.affRotate(peek(manager), angle, &axis);
 }
 
 /**
@@ -214,11 +166,7 @@ static void rotate(MatrixManager* manager, scalar angle, Vec3 axis) {
  * @param translation The vector containing how far to translate the matrix by along each axis.
  */
 static void translate(MatrixManager* manager, Vec3 translation) {
-	Mat4* src = peek(manager); //Copy the data onto the stack for faster read access (no dereferencing)
-
-	src->data[3].x += src->data[0].x * translation.x + src->data[0].y * translation.y + src->data[0].z * translation.z;
-	src->data[3].y += src->data[1].x * translation.x + src->data[1].y * translation.y + src->data[1].z * translation.z;
-	src->data[3].z += src->data[2].x * translation.x + src->data[2].y * translation.y + src->data[2].z * translation.z;
+	*peek(manager) = manMat4.affTranslate(peek(manager), &translation);
 }
 
 /**
@@ -226,25 +174,7 @@ static void translate(MatrixManager* manager, Vec3 translation) {
  * @param scale The vector containing how much each axis should be scaled by.
  */
 static void scale(MatrixManager* manager, Vec3 scale) {
-	Mat4 dest = *peek(manager); //Copy the data onto the stack for faster read access (no dereferencing)
-
-	dest.data[0].x *= scale.x;
-	dest.data[0].y *= scale.x;
-	dest.data[0].z *= scale.x;
-	dest.data[0].w *= scale.x;
-
-	dest.data[1].x *= scale.y;
-	dest.data[1].y *= scale.y;
-	dest.data[1].z *= scale.y;
-	dest.data[1].w *= scale.y;
-
-	dest.data[2].x *= scale.z;
-	dest.data[2].y *= scale.z;
-	dest.data[2].z *= scale.z;
-	dest.data[2].w *= scale.z;
-
-	//Apply the matrix transformation to the matrix
-	(*peek(manager)) = dest;
+	*peek(manager) = manMat4.affScale(peek(manager), &scale);
 }
 
 /**
