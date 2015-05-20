@@ -48,7 +48,16 @@ typedef struct ShaderManager_s {
      *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
      *  @param  matrix          const pointer to const Mat4, matrix to bind.
      */
-    void(* bindUniformMat4)(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
+    void (*bindUniformMat4)(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
+
+    /**
+     *  Bind an integer value to a uniform in the given shader.
+     *
+     *  @param  shader          const pointer to const Shader, shader to find uniform in.
+     *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
+     *  @param  intToBind       int, integer value to bind to the uniform in the shader.
+     */
+    void (*bindUniformInt)(const Shader *const shader, const char *uniformName, int intToBind);
 } ShaderManager;
 
 extern const ShaderManager manShader;

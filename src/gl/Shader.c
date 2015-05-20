@@ -11,32 +11,6 @@ static void unbind();
 static Shader *newFromGroup(const char *const path, const char *const baseFileName);
 static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
 
-// void createShader(Shader *const shader, int numShaders, ...) {
-//     shader->bind = bind;
-//     shader->unbind = unbind;
-
-//     // Hand-off argument list to another function.
-//     DynamicArray shaderList;
-//     newDynamicArray(&shaderList, 8, sizeof(GLuint));
-
-//     va_list argptr;
-//     va_start(argptr, numShaders);
-
-//     for (int i = 0; i < numShaders; ++i) {
-//         GLuint *temp = (GLuint *) calloc(1, sizeof(GLuint));
-//         *temp = va_arg(argptr, GLuint);
-//         shaderList.append(&shaderList, temp);
-//     }
-
-//     va_end(argptr);
-
-//     //shader->program = shaderBuilder.linkProgram(numShaders, &shaderList);
-
-//     // Clean up shaderList
-//     freeDynamicArrayContents(&shaderList);
-//     deleteDynamicArray(&shaderList);
-// }
-
 static void bind(const Shader *const shader) {
     glUseProgram(shader->program);
 }
@@ -53,16 +27,26 @@ static Shader *newFromGroup(const char *const path, const char *const baseFileNa
     return newShader;
 }
 
-static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix){
-	// Get matrix data
+static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix) {
+	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
 	glUseProgram(shader->program);
 	scalar *data = malloc(16 * sizeof(scalar));
 	manMat4.getMat4Data(matrix, data);
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, data);
+	// glUseProgram(0);
 
 	free(data);
 }
 
-const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4};
+static void bindUniformInt(const Shader *const shader, const char *uniformName, int intToBind) {
+	// Get uniform location
+	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
+
+	glUseProgram(shader->program);
+	glUniform1i(uniformLocation, intToBind);
+	glUseProgram(0);
+}
+
+const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt};
