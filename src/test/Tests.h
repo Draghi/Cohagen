@@ -3,5 +3,6 @@
 
 void runGameLoopTest();
 void runPhysicsGLFWTest();
+void runShipMotionTest();
 
 #endif

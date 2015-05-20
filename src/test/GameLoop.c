@@ -128,18 +128,18 @@ static void onRender(GameLoop* self, float frameDelta) {
 		manMatMan.translate(manMat, *camPos);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
-		manShader.bind(shader);
 		manTex.bind(tex, GL_TEXTURE_2D, 0);
 			manMatMan.push(manMat);
 				manVAO.bind(vao);
 					manShader.bindUniformMat4(shader, "projectionMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_PROJECTION));
 					manShader.bindUniformMat4(shader, "viewMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_VIEW));
 					manShader.bindUniformMat4(shader, "modelMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_MODEL));
-					manVAO.draw(vao);
+					manShader.bind(shader);
+						manVAO.draw(vao);
+					manShader.unbind();
 				manVAO.unbind();
 			manMatMan.pop(manMat);
 		manTex.unbind(tex, GL_TEXTURE_2D);
-		manShader.unbind();
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(manMat);
 }
