@@ -31,14 +31,15 @@ static int bindUniformMat4(const Shader *const shader, const char *uniformName, 
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
-	glUseProgram(shader->program);
-	scalar *data = malloc(16 * sizeof(scalar));
-	manMat4.getMat4Data(matrix, data);
-	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, data);
-	// glUseProgram(0);
+	if (uniformLocation != -1) {
+		glUseProgram(shader->program);
+			scalar *data = malloc(16 * sizeof(scalar));
+			manMat4.getMat4Data(matrix, data);
+			glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, data);
+		glUseProgram(0);
 
-	free(data);
-	glUseProgram(0);
+		free(data);
+	}	
 	return 1;
 }
 
@@ -48,7 +49,7 @@ static int bindUniformInt(const Shader *const shader, const char *uniformName, i
 
 	if (uniformLocation != -1) {
 		glUseProgram(shader->program);
-		glUniform1i(uniformLocation, intToBind);
+			glUniform1i(uniformLocation, intToBind);
 		glUseProgram(0);
 	}
 
@@ -61,7 +62,7 @@ static int bindUniformFloat(const Shader *const shader, const char *uniformName,
 
 	if (uniformLocation != -1) {
 		glUseProgram(shader->program);
-		glUniform1f(uniformLocation, floatToBind);
+			glUniform1f(uniformLocation, floatToBind);
 		glUseProgram(0);
 	}
 
