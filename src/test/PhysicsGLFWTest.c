@@ -97,8 +97,10 @@ static void onInitOpenGL(GameLoop* self) {
 	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj");
 	data->shaderPassThru	= manShader.newFromGroup("./data/shaders/", "passThru");
 
-	glUseProgram(data->shaderHouse->program);
-	glUniform1i(glGetUniformLocation(data->shaderHouse->program, "tex"), 0);
+	// glUseProgram(data->shaderHouse->program);
+	// glUniform1i(glGetUniformLocation(data->shaderHouse->program, "tex"), 0);
+	// glUseProgram(0);
+	manShader.bindUniformInt(data->shaderHouse, "tex", 0);
 
 	((InternalData *)self->extraData)->skybox = manSkybox.new(	"./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
 																"./data/texture/purplenebula_top.bmp", "./data/texture/purplenebula_top.bmp",
