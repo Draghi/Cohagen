@@ -201,30 +201,28 @@ static void onRender(GameLoop* self, float frameDelta) {
 		manShader.unbind();
 
 		manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);
-			manShader.bind(data->shaderHouse);
 			manTex.bind(data->texTown, GL_TEXTURE_2D, 0);
 				manMatMan.push(data->manMat);
 					manVAO.bind(data->vaoTown);
 						manShader.bindUniformMat4(data->shaderHouse, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-						manVAO.draw(data->vaoTown);
-						// manVAO.draw(data->skybox->vao);
-						// glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
+						manShader.bind(data->shaderHouse);
+							manVAO.draw(data->vaoTown);
+						manShader.unbind();
 					manVAO.unbind();
 				manMatMan.pop(data->manMat);
 			manTex.unbind(data->texTown, GL_TEXTURE_2D);
-			manShader.unbind();
 
-			manShader.bind(data->shaderPassThru);
 			manMatMan.push(data->manMat);
 				manMatMan.translate(data->manMat, data->particle->position);
 				manVAO.bind(data->vaoSphere);
 					manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 					manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 					manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
-					manVAO.draw(data->vaoSphere);
-					//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
+					manShader.bind(data->shaderPassThru);
+						manVAO.draw(data->vaoSphere);
+					manShader.unbind();
 				manVAO.unbind();
 			manMatMan.pop(data->manMat);
 
