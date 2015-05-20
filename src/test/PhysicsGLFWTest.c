@@ -62,7 +62,7 @@ typedef struct InternalData_s {
 	Vec3 *anchor;
 } InternalData;
 
-void onCreate(GameLoop* self) {
+static void onCreate(GameLoop* self) {
 	self->extraData = malloc(sizeof(InternalData));
 	((InternalData*)self->extraData)->camPos = malloc(sizeof(Vec3));
 	((InternalData*)self->extraData)->camRot = malloc(sizeof(Vec3));
@@ -74,12 +74,12 @@ void onCreate(GameLoop* self) {
 	((InternalData *)self->extraData)->manMat = manMatMan.new();
 }
 
-void onInitWindow(GameLoop* self) {
+static void onInitWindow(GameLoop* self) {
 	manWin.setSize(self->primaryWindow, 800, 600);
 	manWin.centerWindow(self->primaryWindow);
 }
 
-void onInitOpenGL(GameLoop* self) {
+static void onInitOpenGL(GameLoop* self) {
 	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 	glClearDepth(1.0f);
 
@@ -106,7 +106,7 @@ void onInitOpenGL(GameLoop* self) {
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
-void onInitMisc(GameLoop* self) {
+static void onInitMisc(GameLoop* self) {
 	InternalData* data = self->extraData;
 
 	manVec3.create(data->camPos, 0,0,0);
@@ -130,7 +130,7 @@ void onInitMisc(GameLoop* self) {
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
 }
 
-void onUpdate(GameLoop* self, float tickDelta) {
+static void onUpdate(GameLoop* self, float tickDelta) {
 	InternalData* data = self->extraData;
 
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
@@ -180,7 +180,7 @@ void onUpdate(GameLoop* self, float tickDelta) {
 	manParticle.integrate(data->particle, tickDelta);
 }
 
-void onRender(GameLoop* self, float frameDelta) {
+static void onRender(GameLoop* self, float frameDelta) {
 	InternalData* data = self->extraData;
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -231,7 +231,7 @@ void onRender(GameLoop* self, float frameDelta) {
 	manMatMan.pop(data->manMat);
 }
 
-void onClose(GameLoop* self) {
+static void onClose(GameLoop* self) {
 	InternalData* data = self->extraData;
 
 	// manTex.delete(data->texTown);
@@ -249,6 +249,6 @@ void onClose(GameLoop* self) {
 	manVAO.delete(data->vaoSphere);
 }
 
-void onDestroy(GameLoop* self) {
+static void onDestroy(GameLoop* self) {
 	free(self->extraData);
 }
