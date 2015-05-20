@@ -9,7 +9,7 @@
 static void bind(const Shader *const shader);
 static void unbind();
 static Shader *newFromGroup(const char *const path, const char *const baseFileName);
-static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
+static int bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix);
 
 static void bind(const Shader *const shader) {
     glUseProgram(shader->program);
@@ -27,7 +27,7 @@ static Shader *newFromGroup(const char *const path, const char *const baseFileNa
     return newShader;
 }
 
-static void bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix) {
+static int bindUniformMat4(const Shader *const shader, const char *uniformName, const Mat4 *const matrix) {
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -38,15 +38,35 @@ static void bindUniformMat4(const Shader *const shader, const char *uniformName,
 	// glUseProgram(0);
 
 	free(data);
+	glUseProgram(0);
+	return 1;
 }
 
-static void bindUniformInt(const Shader *const shader, const char *uniformName, int intToBind) {
+static int bindUniformInt(const Shader *const shader, const char *uniformName, int intToBind) {
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
-	glUseProgram(shader->program);
-	glUniform1i(uniformLocation, intToBind);
-	glUseProgram(0);
+	if (uniformLocation != -1) {
+		glUseProgram(shader->program);
+		glUniform1i(uniformLocation, intToBind);
+		glUseProgram(0);
+	}
+
+	return uniformLocation;
 }
 
-const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt};
+static int bindUniformFloat(const Shader *const shader, const char *uniformName, float floatToBind) {
+	// Get uniform location
+	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
+
+	if (uniformLocation != -1) {
+		glUseProgram(shader->program);
+		glUniform1f(uniformLocation, floatToBind);
+		glUseProgram(0);
+	}
+
+	return uniformLocation;
+}
+
+
+const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat};
