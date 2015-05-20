@@ -39,8 +39,9 @@ static int bindUniformMat4(const Shader *const shader, const char *uniformName, 
 		glUseProgram(0);
 
 		free(data);
-	}	
-	return 1;
+	}
+
+	return uniformLocation;
 }
 
 static int bindUniformInt(const Shader *const shader, const char *uniformName, int intToBind) {
