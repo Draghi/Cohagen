@@ -148,12 +148,12 @@ static void onInitMisc(GameLoop* self) {
 	data->cubeCollider = makeCube();
 
 	data->pfRegist = manForceRegistry.new();
-	data->sfGen = manAnchoredSpringForceGenerator.new(data->springAnchor, 2.0f, 0.8f, 0.0f);
+	data->sfGen = manAnchoredSpringForceGenerator.new(data->springAnchor, 2.0f, 0, 0.0f);
 	data->gfGen = manGravityForceGenerator.new(data->gravityVec);
 
 	for(int i = 0; i<data->particleCount; i++) {
 		data->particles[i] = manParticle.new();
-		manParticle.setPositionXYZ(data->particles[i], i*1.25, 0, 0);
+		manParticle.setPositionXYZ(data->particles[i], i*1.25, 0.6, 0);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->sfGen->forceGenerator);
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
