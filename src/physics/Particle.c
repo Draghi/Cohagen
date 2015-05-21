@@ -13,7 +13,7 @@ static void addForce(Particle *const particle, const Vec3 *const force);
 static Particle *new() {
 	Particle *particle = calloc(1, sizeof(Particle));
 
-	particle->damping = 0.1f;
+	particle->damping = 0.8f;
 	particle->inverseMass = 1.0f;
 
 	return particle;
@@ -26,16 +26,6 @@ static void delete(Particle *particle) {
 static void integrate(Particle *const particle, scalar frameTime) {
 	assert(frameTime > 0.0);
 
-	// printf("%f \n", frameTime);
-
-	// printf("Velocity: %f %f %f\n", particle->velocity.x, particle->velocity.y, particle->velocity.z);
-	// printf("Position: %f %f %f\n", particle->position.x, particle->position.y, particle->position.z);
-	// printf("Acceleration: %f %f %f\n", particle->acceleration.x, particle->acceleration.y, particle->acceleration.z);
-
-	// Update position
-	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
-	particle->position = manVec3.sum(&(particle->position), &positionModifier);
-
 	// Determine acceleration from force
 	Vec3 accelerationDueToForce = manVec3.postMulScalar(&(particle->forceAccum), particle->inverseMass);
 	particle->acceleration = manVec3.sum(&(particle->acceleration), &accelerationDueToForce);
@@ -44,11 +34,19 @@ static void integrate(Particle *const particle, scalar frameTime) {
 	Vec3 velocityModifer = manVec3.postMulScalar(&(particle->acceleration), frameTime);
 	particle->velocity = manVec3.sum(&(particle->velocity), &velocityModifer);
 
+	// Update position
+	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
+	particle->position = manVec3.sum(&(particle->position), &positionModifier);
+
 	// Apply drag
 	particle->velocity = manVec3.postMulScalar(&(particle->velocity), pow(particle->damping, frameTime));
 
 	// Clear forces
 	manParticle.clearForceAccumulator(particle);
+
+	particle->acceleration.x = 0;
+	particle->acceleration.y = 0;
+	particle->acceleration.z = 0;
 }
 
 static void clearForceAccumulator(Particle *const particle) {
