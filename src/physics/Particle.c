@@ -26,22 +26,16 @@ static void delete(Particle *particle) {
 static void integrate(Particle *const particle, scalar frameTime) {
 	assert(frameTime > 0.0);
 
-	// printf("%f \n", frameTime);
-
-	// printf("Velocity: %f %f %f\n", particle->velocity.x, particle->velocity.y, particle->velocity.z);
-	// printf("Position: %f %f %f\n", particle->position.x, particle->position.y, particle->position.z);
-	// printf("Acceleration: %f %f %f\n", particle->acceleration.x, particle->acceleration.y, particle->acceleration.z);
-
 	// Update position
 	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
 	particle->position = manVec3.sum(&(particle->position), &positionModifier);
 
 	// Determine acceleration from force
 	Vec3 accelerationDueToForce = manVec3.postMulScalar(&(particle->forceAccum), particle->inverseMass);
-	particle->acceleration = manVec3.sum(&(particle->acceleration), &accelerationDueToForce);
+	accelerationDueToForce = manVec3.sum(&(particle->acceleration), &accelerationDueToForce);
 
 	// Update velocity from acceleration
-	Vec3 velocityModifer = manVec3.postMulScalar(&(particle->acceleration), frameTime);
+	Vec3 velocityModifer = manVec3.postMulScalar(&accelerationDueToForce, frameTime);
 	particle->velocity = manVec3.sum(&(particle->velocity), &velocityModifer);
 
 	// Apply drag
