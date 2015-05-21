@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "col/CollisionDetection.h"
+#include "col/CollisionResponse.h"
 
 GameLoop* gameloop;
 
@@ -132,7 +133,7 @@ static void onInitOpenGL(GameLoop* self) {
 
 	// Create and register AnchoredSpringForceGenerator
 	manVec3.create(anchor, 0.0f, 1.0f, 0.0f);
-	anchoredSpringFG = manAnchoredSpringForceGenerator.new(anchor, 2.00f, 0, 0.0f);
+	anchoredSpringFG = manAnchoredSpringForceGenerator.new(anchor, 2.00f, 0.2f, 0.0f);
 	manForceRegistry.add(particleForceRegistry, particle, &(anchoredSpringFG->forceGenerator));
 
 }
@@ -158,8 +159,6 @@ static void onInitMisc(GameLoop* self) {
 }
 
 static void onUpdate(GameLoop* self, float tickDelta) {
-	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
-
 	float rate = 20.0f;
 
 	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
@@ -192,7 +191,26 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			camPos->z += rate*sin(camRot->y)*tickDelta;
 		}
 	} else {
-		rate *= 20;
+		//Rotate Up
+		if(manKeyboard.isDown(self->primaryWindow, KEY_I))
+			cube1->rotation->x +=  rate;
+		//Rotate left
+		if(manKeyboard.isDown(self->primaryWindow, KEY_J))
+			cube1->rotation->y +=  rate;
+		//Rotate right
+		if(manKeyboard.isDown(self->primaryWindow, KEY_L))
+			cube1->rotation->y -=  rate;
+		//Rotate Down
+		if(manKeyboard.isDown(self->primaryWindow, KEY_K))
+			cube1->rotation->x -=  rate;
+		//Roll CW
+		if(manKeyboard.isDown(self->primaryWindow, KEY_U))
+			cube1->rotation->z +=  rate;
+		//Roll CCW
+		if(manKeyboard.isDown(self->primaryWindow, KEY_O))
+			cube1->rotation->z -=  rate;
+
+		rate *= 5;
 		Vec3 movement = {0,0,0};
 		//Forward
 		if(manKeyboard.isDown(self->primaryWindow, KEY_W))
@@ -215,28 +233,11 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 
 		manParticle.addForce(particle2, &movement);
 
-		//Rotate Up
-		if(manKeyboard.isDown(self->primaryWindow, KEY_I))
-			cube1->rotation->x +=  rate;
-		//Rotate left
-		if(manKeyboard.isDown(self->primaryWindow, KEY_J))
-			cube1->rotation->y +=  rate;
-		//Rotate right
-		if(manKeyboard.isDown(self->primaryWindow, KEY_L))
-			cube1->rotation->y -=  rate;
-		//Rotate Down
-		if(manKeyboard.isDown(self->primaryWindow, KEY_K))
-			cube1->rotation->x -=  rate;
-		//Roll CW
-		if(manKeyboard.isDown(self->primaryWindow, KEY_U))
-			cube1->rotation->z +=  rate;
-		//Roll CCW
-		if(manKeyboard.isDown(self->primaryWindow, KEY_O))
-			cube1->rotation->z -=  rate;
+		//Stop
+		if(manKeyboard.isDown(self->primaryWindow, KEY_SPACE))
+			*cube1->velocity = manVec3.create(NULL, 0,0,0);
 
 	}
-
-	particle2->velocity = manVec3.create(NULL, 0,0,0);
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(particleForceRegistry, tickDelta);
@@ -252,13 +253,10 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			Vec3 translation = manVec3.preMulScalar(info.distance/2, &info.axis);
 
 			*cube1->position = manVec3.sum(cube1->position, &translation);
-			particle2->velocity = manVec3.sum(&particle2->velocity, &translation);
-
 			translation = manVec3.invert(&translation);
-
-			particle->velocity = manVec3.sum(&particle->velocity, &translation);
 			*cube2->position = manVec3.sum(cube2->position, &translation);
 
+			momentumCollisionResponse(cube1->velocity, cube2->velocity, *cube1->velocity, *cube2->velocity, 1/particle2->inverseMass, 1/particle->inverseMass);
 		}
 	}
 }
@@ -302,6 +300,7 @@ static void drawVAO(VAO* vao, Shader* sha, MatrixManager* mats, Vec3* pos, Vec3*
 }
 
 static void onRender(GameLoop* self, float frameDelta) {
+	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);

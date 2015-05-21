@@ -6,5 +6,6 @@ void runPhysicsGLFWTest();
 void runSATTest();
 void runCollisionTest();
 void runPhysCollisionTest();
+void runNewtonsCradle();
 
 #endif
