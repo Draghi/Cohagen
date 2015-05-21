@@ -3,5 +3,8 @@
 
 void runGameLoopTest();
 void runPhysicsGLFWTest();
+void runSATTest();
+void runCollisionTest();
+void runPhysCollisionTest();
 
 #endif
