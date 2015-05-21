@@ -17,14 +17,14 @@
 
 GameLoop* gameloop;
 
-void onCreate(GameLoop* self);
-void onInitWindow(GameLoop* self);
-void onInitOpenGL(GameLoop* self);
-void onInitMisc(GameLoop* self);
-void onUpdate(GameLoop* self, float tickDelta);
-void onRender(GameLoop* self, float frameDelta);
-void onClose(GameLoop* self);
-void onDestroy(GameLoop* self);
+static void onCreate(GameLoop* self);
+static void onInitWindow(GameLoop* self);
+static void onInitOpenGL(GameLoop* self);
+static void onInitMisc(GameLoop* self);
+static void onUpdate(GameLoop* self, float tickDelta);
+static void onRender(GameLoop* self, float frameDelta);
+static void onClose(GameLoop* self);
+static void onDestroy(GameLoop* self);
 
 void runGameLoopTest() {
 	gameloop = manGameLoop.new(&onCreate, &onInitWindow, &onInitOpenGL, &onInitMisc, &onUpdate, &onRender, &onClose, &onDestroy, 1/120.0, 1/60.0);
@@ -39,19 +39,19 @@ Vec3* camPos;
 Vec3* camRot;
 MatrixManager* manMat;
 
-void onCreate(GameLoop* self) {
+static void onCreate(GameLoop* self) {
 
 	camPos = malloc(sizeof(Vec3));
 	camRot = malloc(sizeof(Vec3));
 	manMat = manMatMan.new();
 }
 
-void onInitWindow(GameLoop* self) {
+static void onInitWindow(GameLoop* self) {
 	manWin.setSize(self->primaryWindow, 800, 600);
 	manWin.centerWindow(self->primaryWindow);
 }
 
-void onInitOpenGL(GameLoop* self) {
+static void onInitOpenGL(GameLoop* self) {
 	glClearColor(0.8f, 0.8f, 0.8f, 1.0f);
 	glClearDepth(1.0f);
 
@@ -68,7 +68,7 @@ void onInitOpenGL(GameLoop* self) {
 	glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);
 }
 
-void onInitMisc(GameLoop* self) {
+static void onInitMisc(GameLoop* self) {
 	manVec3.create(camPos, 0,0,0);
 	manVec3.create(camRot, 0,0,0);
 
@@ -80,7 +80,7 @@ void onInitMisc(GameLoop* self) {
 	manMatMan.pushIdentity(manMat);
 }
 
-void onUpdate(GameLoop* self, float tickDelta) {
+static void onUpdate(GameLoop* self, float tickDelta) {
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
 	float rate = 0.2f;
@@ -117,7 +117,7 @@ void onUpdate(GameLoop* self, float tickDelta) {
 	}
 }
 
-void onRender(GameLoop* self, float frameDelta) {
+static void onRender(GameLoop* self, float frameDelta) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
@@ -144,12 +144,12 @@ void onRender(GameLoop* self, float frameDelta) {
 	manMatMan.pop(manMat);
 }
 
-void onClose(GameLoop* self) {
+static void onClose(GameLoop* self) {
 	free(tex);
 	free(shader);
 }
 
-void onDestroy(GameLoop* self) {
+static void onDestroy(GameLoop* self) {
 	manMatMan.delete(manMat);
 	free(manMat);
 	free(camPos);
