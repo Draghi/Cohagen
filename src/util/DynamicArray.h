@@ -61,7 +61,7 @@ typedef struct DynamicArrayManager_s {
      *  This function will crash the program if two elements of the array point to the
      *  same location in memory or any pointer points to stack memory.
      *
-     *  @params     array   const pointer to Dynamic Array, array to free contents of.
+     *  @param  array   const pointer to Dynamic Array, array to free contents of.
      */
     void (*freeContents)(DynamicArray *const array);
 

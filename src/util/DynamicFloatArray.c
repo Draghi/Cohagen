@@ -13,7 +13,6 @@ static void     appendDynamicFloatArrayElement(DynamicFloatArray *array, float e
  *
  *  @param  array               pointer to DynamicArray, address of new array.
  *  @param  initialCapacity     unsigned int, initial size of array in memory.
- *  @param  elementSize         unsigned int, size of each element in the array.
  */
 void newDynamicFloatArray(DynamicFloatArray *const array, unsigned int initialCapacity) {
     array->size = 0;
