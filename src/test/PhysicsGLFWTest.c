@@ -135,32 +135,32 @@ void onUpdate(GameLoop* self, float tickDelta) {
 
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
-	float rate = 0.2f;
+	float rate = 1.0f;
 
 	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
-		rate = 0.005f;
+		rate = 0.5f;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		data->camPos->x +=  rate*cos(data->camRot->y-1.57079632679);
-		data->camPos->z +=  rate*sin(data->camRot->y-1.57079632679);
+		data->camPos->x +=  rate*cos(data->camRot->y-1.57079632679)*tickDelta;
+		data->camPos->z +=  rate*sin(data->camRot->y-1.57079632679)*tickDelta;
 		data->camPos->y += -rate*sin(data->camRot->x);
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		data->camPos->x +=  rate*cos(data->camRot->y+1.57079632679);
-		data->camPos->z +=  rate*sin(data->camRot->y+1.57079632679);
-		data->camPos->y +=  rate*sin(data->camRot->x);
+		data->camPos->x +=  rate*cos(data->camRot->y+1.57079632679)*tickDelta;
+		data->camPos->z +=  rate*sin(data->camRot->y+1.57079632679)*tickDelta;
+		data->camPos->y +=  rate*sin(data->camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		data->camPos->x += -rate*cos(data->camRot->y);
-		data->camPos->z += -rate*sin(data->camRot->y);
+		data->camPos->x += -rate*cos(data->camRot->y)*tickDelta;
+		data->camPos->z += -rate*sin(data->camRot->y)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		data->camPos->x += rate*cos(data->camRot->y);
-		data->camPos->z += rate*sin(data->camRot->y);
+		data->camPos->x += rate*cos(data->camRot->y)*tickDelta;
+		data->camPos->z += rate*sin(data->camRot->y)*tickDelta;
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -207,8 +207,6 @@ void onRender(GameLoop* self, float frameDelta) {
 						manShader.bindUniformMat4(data->shaderHouse, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 						manShader.bindUniformMat4(data->shaderHouse, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
 						manVAO.draw(data->vaoTown);
-						// manVAO.draw(data->skybox->vao);
-						// glDrawElements(GL_TRIANGLES, data->iCountTown, GL_UNSIGNED_INT, 0);
 					manVAO.unbind();
 				manMatMan.pop(data->manMat);
 			manTex.unbind(data->texTown, GL_TEXTURE_2D);
@@ -222,7 +220,6 @@ void onRender(GameLoop* self, float frameDelta) {
 					manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
 					manShader.bindUniformMat4(data->shaderPassThru, "modelMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_MODEL));
 					manVAO.draw(data->vaoSphere);
-					//glDrawElements(GL_TRIANGLES, data->iCountSphere, GL_UNSIGNED_INT, 0);
 				manVAO.unbind();
 			manMatMan.pop(data->manMat);
 
