@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+
 #include "Skybox.h"
 
 static VAO *genSkyboxQuad()
@@ -37,13 +40,19 @@ static Texture *genSkyboxTexture(	const char *const front, const char *back,
 
 	tex = manTex.new();
 
-	if (fileUtil.loadFile(front, &fFront) == FILE_SUCCEEDED &&
-		fileUtil.loadFile(back, &fBack) == FILE_SUCCEEDED &&
-		fileUtil.loadFile(top, &fTop) == FILE_SUCCEEDED &&
-		fileUtil.loadFile(bottom, &fBottom) == FILE_SUCCEEDED &&
-		fileUtil.loadFile(left, &fRight) == FILE_SUCCEEDED &&
-		fileUtil.loadFile(right, &fLeft) == FILE_SUCCEEDED )
-	{				
+	if (fileUtil.loadFile(front, &fFront) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", front);
+	} else if (fileUtil.loadFile(back, &fBack) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", back);
+	} else if (fileUtil.loadFile(top, &fTop) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", top);
+	} else if (fileUtil.loadFile(bottom, &fBottom) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", bottom);
+	} else if (fileUtil.loadFile(left, &fLeft) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", left);
+	} else if (fileUtil.loadFile(right, &fRight) != FILE_SUCCEEDED) {
+		printf("Failed to open skybox texture %s\n", right);
+	} else {			
 		bmpFront = manBitmap.new(fFront.data, fFront.size);
 		bmpBack = manBitmap.new(fBack.data, fBack.size);
 		bmpTop = manBitmap.new(fTop.data, fTop.size);
@@ -52,7 +61,6 @@ static Texture *genSkyboxTexture(	const char *const front, const char *back,
 		bmpRight = manBitmap.new(fRight.data, fRight.size);
 
 		if (manTex.bind(tex, GL_TEXTURE_CUBE_MAP, 0) != false) {
-
 			manTex.imageToTarget(tex, 0, (uint8_t *)bmpRight->pixels, GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpRight->width, bmpRight->height);
 			manTex.imageToTarget(tex, 0, (uint8_t *)bmpLeft->pixels, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpLeft->width, bmpLeft->height);
 			manTex.imageToTarget(tex, 0, (uint8_t *)bmpTop->pixels, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpTop->width, bmpTop->height);
@@ -81,25 +89,25 @@ static Texture *genSkyboxTexture(	const char *const front, const char *back,
 		manBitmap.delete(bmpBottom);
 		manBitmap.delete(bmpLeft);
 		manBitmap.delete(bmpRight);
-	}
 
-	if (fFront.data != NULL) {
-		free(fFront.data);
-	}
-	if (fBack.data != NULL) {
-		free(fBack.data);
-	}
-	if (fTop.data != NULL) {
-		free(fTop.data);
-	}
-	if (fBottom.data != NULL) {
-		free(fBottom.data);
-	}
-	if (fLeft.data != NULL) {
-		free(fLeft.data);
-	}
-	if (fRight.data != NULL) {
-		free(fRight.data);
+		if (fFront.data != NULL) {
+			free(fFront.data);
+		}
+		if (fBack.data != NULL) {
+			free(fBack.data);
+		}
+		if (fTop.data != NULL) {
+			free(fTop.data);
+		}
+		if (fBottom.data != NULL) {
+			free(fBottom.data);
+		}
+		if (fLeft.data != NULL) {
+			free(fLeft.data);
+		}
+		if (fRight.data != NULL) {
+			free(fRight.data);
+		}
 	}
 
 	return tex;
@@ -107,8 +115,7 @@ static Texture *genSkyboxTexture(	const char *const front, const char *back,
 
 static Skybox *new( const char *const front, const char *const back,
 					const char *const top, const char *const bottom,
-					const char *const left, const char *const right)
-{
+					const char *const left, const char *const right) {
 	Skybox *skybox = malloc(sizeof(Skybox));
 
 	skybox->vao = genSkyboxQuad();
@@ -117,11 +124,47 @@ static Skybox *new( const char *const front, const char *const back,
 	return skybox;
 }
 
-static void draw(const Skybox *const skybox, const Shader *shader, const char *cubemapShaderName) {
+static Skybox *newFromGroup(const char *const path, const char *const baseName) {
+	unsigned int baseStrLen = strlen(baseName);
+	unsigned int pathStrLen = strlen(path);
+
+	// +1 for NULL terminating character
+	char *frontStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_front.bmp") + 1));
+	sprintf(frontStr, "%s%s_front.bmp", path, baseName);
+
+	char *backStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_back.bmp") + 1));
+	sprintf(backStr, "%s%s_back.bmp", path, baseName);
+
+	char *leftStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_left.bmp") + 1));
+	sprintf(leftStr, "%s%s_left.bmp", path, baseName);
+
+	char *rightStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_right.bmp") + 1));
+	sprintf(rightStr, "%s%s_right.bmp", path, baseName);
+
+	char *topStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_top.bmp") + 1));
+	sprintf(topStr, "%s%s_top.bmp", path, baseName);
+
+	char *bottomStr = malloc(sizeof(char) * (baseStrLen + pathStrLen + sizeof("_bottom.bmp") + 1));
+	sprintf(bottomStr, "%s%s_bottom.bmp", path, baseName);
+
+	Skybox *skybox = new(frontStr, backStr, topStr, bottomStr, leftStr, rightStr);
+
+	free(frontStr);
+	free(backStr);
+	free(leftStr);
+	free(rightStr);
+	free(topStr);
+	free(bottomStr);
+
+	return skybox;
+}
+
+static void draw(const Skybox *const skybox, const Shader *const shader, const char *const cubemapShaderName) {
 	glDepthMask(GL_FALSE);
-	
+
+	manShader.bindUniformFloat(shader, cubemapShaderName, skybox->tex->slotID);	
+
 	manShader.bind(shader);
-	glUniform1f(glGetUniformLocation(shader->program, cubemapShaderName), skybox->tex->slotID);
 		manVAO.bind(skybox->vao);
 			manTex.bind(skybox->tex, GL_TEXTURE_CUBE_MAP, 0);
 				manVAO.draw(skybox->vao);
@@ -132,4 +175,4 @@ static void draw(const Skybox *const skybox, const Shader *shader, const char *c
 	glDepthMask(GL_TRUE);
 }
 
-const SkyboxManager manSkybox = {new, draw};
+const SkyboxManager manSkybox = {new, newFromGroup, draw};
