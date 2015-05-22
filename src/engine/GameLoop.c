@@ -48,7 +48,7 @@ static void doOnDestroy(GameLoop* gameloop) {
 /*
  * Manager Functions
  */
-static GameLoop* new(NewCallback* onNew, InitWindowCallback* onInitWindow, InitOpenGLCallback* onInitOpenGL, InitMiscCallback* onInitMisc, UpdateCallback* onUpdate, RenderCallback* onRender, CloseCallback* onClose, DestroyCallback* onDestroy, double targetFrameTime, double targetTickTime){
+static GameLoop* new(NewCallback* onNew, InitWindowCallback* onInitWindow, InitOpenGLCallback* onInitOpenGL, InitMiscCallback* onInitMisc, UpdateCallback* onUpdate, RenderCallback* onRender, CloseCallback* onClose, DestroyCallback* onDestroy, double targetTickTime, double targetFrameTime){
 	GameLoop* gameloop = malloc(sizeof(GameLoop));
 
 	gameloop->onNew = onNew;
@@ -67,6 +67,14 @@ static GameLoop* new(NewCallback* onNew, InitWindowCallback* onInitWindow, InitO
 	gameloop->targetTickTime = targetTickTime;
 
 	gameloop->extraData = NULL;
+
+	gameloop->frameStartTime = manWin.getMilliseconds();
+	gameloop->frameCount = 0;
+	gameloop->fps = 0;
+
+	gameloop->tickStartTime = manWin.getMilliseconds();
+	gameloop->tickCount = 0;
+	gameloop->tps = 0;
 
 	doOnNew(gameloop);
 
@@ -93,9 +101,25 @@ static void enterGameLoop(GameLoop* gameloop) {
 
 			doOnUpdate(gameloop);
 			manWin.update(gameloop->primaryWindow);
+
+			gameloop->tickCount++;
+			double currentTime = manWin.getMilliseconds();
+			if (currentTime-gameloop->tickStartTime >= 1000) {
+				gameloop->tps = (double)gameloop->tickCount*((currentTime-gameloop->tickStartTime)/1000.0);
+				gameloop->tickStartTime = currentTime;
+				gameloop->tickCount = 0;
+			}
 		}
 
 		manWin.swapBuffers(gameloop->primaryWindow);
+
+		gameloop->frameCount++;
+		double currentTime = manWin.getMilliseconds();
+		if (currentTime-gameloop->frameStartTime >= 1000) {
+			gameloop->fps = (double)gameloop->frameCount*((currentTime-gameloop->frameStartTime)/1000.0);
+			gameloop->frameStartTime = currentTime;
+			gameloop->frameCount = 0;
+		}
 	}
 
 	doOnClose(gameloop);

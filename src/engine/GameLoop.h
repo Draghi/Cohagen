@@ -54,6 +54,16 @@ typedef struct GameLoop_s {
 	/** The target time in ms a tick should take to update. May be changed at runtime. **/
 	double targetTickTime;
 
+	/** FPS **/
+	double frameStartTime;
+	int frameCount;
+	double fps;
+
+	/** TPS **/
+	double tickStartTime;
+	int tickCount;
+	double tps;
+
 	/** An anchor point for a loop's extra data. Must be manually freed if used.**/
 	void* extraData;
 } GameLoop;
@@ -75,7 +85,7 @@ typedef struct GameLoopManager_s {
 	 *
 	 * @return The newly constructed gameloop.
 	 */
-	GameLoop*(* new)(NewCallback* onNew, InitWindowCallback* onInitWindow, InitOpenGLCallback* onInitOpenGL, InitMiscCallback* onInitMisc, UpdateCallback* onUpdate, RenderCallback* onRender, CloseCallback* onClose, DestroyCallback* onDestroy, double targetFrameTime, double targetTickTime);
+	GameLoop*(* new)(NewCallback* onNew, InitWindowCallback* onInitWindow, InitOpenGLCallback* onInitOpenGL, InitMiscCallback* onInitMisc, UpdateCallback* onUpdate, RenderCallback* onRender, CloseCallback* onClose, DestroyCallback* onDestroy, double targetTickTime, double targetFrameTime);
 
 	/**
 	 * Causes the current thread to enter the given game loop.
