@@ -9,7 +9,6 @@
 #include "physics/AnchoredSpringForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "gl/ShaderLoader.h"
-#include "gl/VAO.h"
 #include "util/OGLUtil.h"
 #include "util/ObjLoader.h"
 
@@ -92,7 +91,7 @@ static void onCreate(GameLoop* self) {
 	self->extraData = malloc(sizeof(NewtonsCradleData));
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	data->particleCount = 5;
+	data->particleCount = 20;
 	data->particles = malloc(sizeof(Particle*)*data->particleCount);
 	data->cubes = malloc(sizeof(PhysicsInfo*)*data->particleCount);
 
@@ -260,12 +259,12 @@ static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, 
 	}
 
 	if(manKeyboard.isDown(window, KEY_J)) {
-		Vec3 force = {rate*20, 0, 0};
+		Vec3 force = {rate*10, 0, 0};
 		manParticle.addForce(particles[0], &force);
 	}
 
 	if(manKeyboard.isDown(window, KEY_L)) {
-		Vec3 force = {-rate*20, 0, 0};
+		Vec3 force = {-rate*10, 0, 0};
 		manParticle.addForce(particles[0], &force);
 	}
 
@@ -276,16 +275,30 @@ static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, 
 	for(int i = 0; i < particleCount; i++)
 		manParticle.integrate(particles[i], tickDelta);
 
-	int i = 0;
-	bool flag = true;
-	while(flag) {
-		flag = false;
-		for(int i = 0; i < particleCount; i++) {
-			for(int j = i+1; j < particleCount; j++) {
+	for(int i = 0; i < particleCount; i++) {
+		for(int j = i+1; j < particleCount; j++) {
+			if (manColDetection.checkStaticBroadphase(cubes[i], cubes[j])) {
+				CollisionResult info = manColDetection.checkStaticNarrowphase(cubes[i], cubes[j]);
+				if (info.isColliding) {
+					//flag = true;
+					Vec3 translation = manVec3.preMulScalar(info.distance/2, &info.axis);
+
+					*cubes[i]->position = manVec3.sum(cubes[i]->position, &translation);
+					translation = manVec3.invert(&translation);
+					*cubes[j]->position = manVec3.sum(cubes[j]->position, &translation);
+
+					momentumCollisionResponse(cubes[i]->velocity, cubes[j]->velocity, *cubes[i]->velocity, *cubes[j]->velocity, 1/particles[i]->inverseMass, 1/particles[j]->inverseMass);
+				}
+			}
+		}
+	}
+
+	for(int i = particleCount-1; i >= 0; i--) {
+			for(int j = i-1; j >= 0; j--) {
 				if (manColDetection.checkStaticBroadphase(cubes[i], cubes[j])) {
 					CollisionResult info = manColDetection.checkStaticNarrowphase(cubes[i], cubes[j]);
 					if (info.isColliding) {
-						flag = true;
+						//flag = true;
 						Vec3 translation = manVec3.preMulScalar(info.distance/2, &info.axis);
 
 						*cubes[i]->position = manVec3.sum(cubes[i]->position, &translation);
@@ -297,17 +310,17 @@ static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, 
 				}
 			}
 		}
-
-		if (i>9)
-			flag = false;
-
-		i++;
-	}
 }
 
 static void onUpdate(GameLoop* self, float tickDelta) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 	update(tickDelta, self->primaryWindow, data->camPos, data->camRot, data->pfRegist, data->particleCount, data->cubes, data->particles);
+
+	char title[80];
+
+	sprintf(title, "Cohagen - FPS: %f, TPS: %f", self->fps, self->tps);
+
+	manWin.setTitle(self->primaryWindow, title);
 }
 
 static void bindMatricies(Shader* sha, MatrixManager* mats) {
