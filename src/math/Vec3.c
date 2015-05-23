@@ -1,6 +1,7 @@
 #include "Vec3.h"
 
 #include <math.h>
+#include <assert.h>
 
 static scalar magnitude(const Vec3 *const vec);
 
@@ -106,16 +107,21 @@ static Vec3 cross(const Vec3 *const v1, const Vec3 *const v2) {
 }
 
 static Vec3 normalize(const Vec3 *const vec) {
+    assert(vec != NULL && "Vector is NULL!");
     scalar magnitude = manVec3.magnitude(vec);
 
-    return (
-        manVec3.create(
-            NULL,
-            vec->x / magnitude,
-            vec->y / magnitude,
-            vec->z / magnitude
-        )
-    );
+    if (magnitude == 0) {
+        return *vec;
+    } else {
+        return (
+            manVec3.create(
+                NULL,
+                vec->x / magnitude,
+                vec->y / magnitude,
+                vec->z / magnitude
+            )
+        );
+    }
 }
 
 static scalar magnitude(const Vec3 *const vec) {
