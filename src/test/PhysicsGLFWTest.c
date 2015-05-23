@@ -102,10 +102,10 @@ static void onInitOpenGL(GameLoop* self) {
 	// glUseProgram(0);
 	manShader.bindUniformInt(data->shaderHouse, "tex", 0);
 
-	((InternalData *)self->extraData)->skybox = manSkybox.new(	"./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
-																"./data/texture/purplenebula_top.bmp", "./data/texture/purplenebula_top.bmp",
-																"./data/texture/purplenebula_left.bmp", "./data/texture/purplenebula_right.bmp");
-	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
+	((InternalData *)self->extraData)->skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");//manSkybox.new(	"./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
+																// "./data/texture/purplenebula_top.bmp", "./data/texture/purplenebula_top.bmp",
+																// "./data/texture/purplenebula_left.bmp", "./data/texture/purplenebula_right.bmp");
+	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");	
 }
 
 static void onInitMisc(GameLoop* self) {
@@ -128,7 +128,7 @@ static void onInitMisc(GameLoop* self) {
 
 	// Create and register AnchoredSpringForceGenerator
 	manVec3.create(data->anchor, 0.0f, 1.0f, 0.0f);
-	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 2.00f, 1, 0.0f);
+	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 6.00f, 0, 0.0f);
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
 }
 
@@ -197,7 +197,7 @@ static void onRender(GameLoop* self, float frameDelta) {
 		manShader.bind(data->skyboxShader);
 			manShader.bindUniformMat4(data->skyboxShader, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 			manShader.bindUniformMat4(data->skyboxShader, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));
-			manSkybox.draw(data->skybox, data->skyboxShader, "cubeTexture");
+			manSkybox.draw(data->skybox, data->skyboxShader, "cubeTexture");			
 		manShader.unbind();
 
 		manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);
