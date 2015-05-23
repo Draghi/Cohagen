@@ -45,6 +45,8 @@ typedef struct ShaderManager_s {
     /**
      *  Bind a Mat4 to a uniform in the given shader.
      *
+     *  @pre    Appropriate Shader must be bound before method invocation.
+     *
      *  @param  shader          const pointer to const Shader, shader to find uniform in.
      *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
      *  @param  matrix          const pointer to const Mat4, matrix to bind.
@@ -55,6 +57,8 @@ typedef struct ShaderManager_s {
     /**
      *  Bind an integer value to a uniform in the given shader.
      *
+     *  @pre    Appropriate Shader must be bound before method invocation.
+     *
      *  @param  shader          const pointer to const Shader, shader to find uniform in.
      *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
      *  @param  intToBind       int, integer value to bind to the uniform in the shader.
@@ -64,6 +68,8 @@ typedef struct ShaderManager_s {
 
     /**
      *  Bind a float value to a uniform in the given shader.
+     *
+     *  @pre    Appropriate Shader must be bound before method invocation.
      *
      *  @param  shader          const pointer to const Shader, shader to find uniform in.
      *  @param  uniformName     pointer to const char, C-style string, name of uniform in shader to bind to.
