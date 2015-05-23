@@ -83,32 +83,32 @@ static void onInitMisc(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
-	float rate = 0.2f;
+	float rate = 5.0f;
 
 	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
-		rate = 0.005f;
+		rate = 1.0f;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		camPos->x +=  rate*cos(camRot->y-1.57079632679);
-		camPos->z +=  rate*sin(camRot->y-1.57079632679);
-		camPos->y += -rate*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y-1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y-1.57079632679)*tickDelta;
+		camPos->y += -rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		camPos->x +=  rate*cos(camRot->y+1.57079632679);
-		camPos->z +=  rate*sin(camRot->y+1.57079632679);
-		camPos->y +=  rate*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y+1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y+1.57079632679)*tickDelta;
+		camPos->y +=  rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		camPos->x += -rate*cos(camRot->y);
-		camPos->z += -rate*sin(camRot->y);
+		camPos->x += -rate*cos(camRot->y)*tickDelta;
+		camPos->z += -rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		camPos->x += rate*cos(camRot->y);
-		camPos->z += rate*sin(camRot->y);
+		camPos->x += rate*cos(camRot->y)*tickDelta;
+		camPos->z += rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -122,9 +122,9 @@ static void onRender(GameLoop* self, float frameDelta) {
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.push(manMat);
-		manMatMan.rotate(manMat, camRot->z, manVec3.create(NULL, 0, 0, 1));
-		manMatMan.rotate(manMat, camRot->y, manVec3.create(NULL, 0, 1, 0));
 		manMatMan.rotate(manMat, camRot->x, manVec3.create(NULL, 1, 0, 0));
+		manMatMan.rotate(manMat, camRot->y, manVec3.create(NULL, 0, 1, 0));
+		manMatMan.rotate(manMat, camRot->z, manVec3.create(NULL, 0, 0, 1));
 		manMatMan.translate(manMat, *camPos);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);

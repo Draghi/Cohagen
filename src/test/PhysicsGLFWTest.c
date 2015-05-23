@@ -132,16 +132,16 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
-	float rate = 1.0f;
+	float rate = 5.0f;
 
 	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
-		rate = 0.5f;
+		rate = 1.0f;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
 		data->camPos->x +=  rate*cos(data->camRot->y-1.57079632679)*tickDelta;
 		data->camPos->z +=  rate*sin(data->camRot->y-1.57079632679)*tickDelta;
-		data->camPos->y += -rate*sin(data->camRot->x);
+		data->camPos->y += -rate*sin(data->camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
