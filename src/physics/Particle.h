@@ -123,9 +123,17 @@ typedef struct ParticleManager_s {
 	 * 	@pre 	Mass given is not zero.
 	 *
 	 * 	@param 	particle 	const pointer to Particle, particle to set the mass of.
-	 * 	@param 	mass 		float, 	mass of the particle.
+	 * 	@param 	mass 		scalar, mass of the particle.
 	 */
-	void (*setMass)(Particle *const particle, float mass);
+	void (*setMass)(Particle *const particle, scalar mass);
+
+	/** 
+	 *	Set the inverse mass of the particle.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to set the mass of.
+	 * 	@param 	invMass 	scalar, inverse mass of the particle.
+	 */
+	void (*setInverseMass)(Particle *const particle, scalar invMass);
 
 	/**
 	 *	Set the velocity of the given particle.
@@ -163,6 +171,14 @@ typedef struct ParticleManager_s {
 	 */
 	void (*setDamping)(Particle *const particle, float damping);
 
+	/** 
+	 *	Get the damping of the particle.
+	 *
+	 * 	@param 	particle 	const pointer to Particle, particle to get damping of.
+	 * 	@return 			float, damping value of the particle.
+	 */
+	float (*getDamping)(Particle *const particle);
+	
 	/**
 	 *	Set the position of the given particle.
 	 *

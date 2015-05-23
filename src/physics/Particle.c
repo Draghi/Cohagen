@@ -9,6 +9,7 @@ static void delete(Particle *particle);
 static void integrate(Particle *const particle, scalar frameTime);
 static void clearForceAccumulator(Particle *const particle);
 static void addForce(Particle *const particle, const Vec3 *const force);
+static bool hasFiniteMass(Particle *const particle);
 
 static Particle *new() {
 	Particle *particle = calloc(1, sizeof(Particle));
@@ -54,23 +55,25 @@ static void addForce(Particle *const particle, const Vec3 *const force) {
 }
 
 static scalar getMass(Particle *const particle) {
-	return (1 / particle->inverseMass);
+	if (hasFiniteMass(particle)) {
+		return (1 / particle->inverseMass);
+	} else {
+		return (SCALAR_MAX_VAL);
+	}
 }
 
 static bool hasFiniteMass(Particle *const particle) {
-	bool result = false;
-
-	if (particle->inverseMass != 0) {
-		result = true;
-	}
-
-	return result;
+	return (particle->inverseMass >= 0.0f);
 }
 
-static void setMass(Particle *const particle, float mass) {
+static void setMass(Particle *const particle, scalar mass) {
 	if (mass != 0) {
 		particle->inverseMass = ((scalar)1.0 / mass);
 	}
+}
+
+static void setInverseMass(Particle *const particle, scalar inverseMass) {
+	particle->inverseMass = inverseMass;
 }
 
 static void setVelocity(Particle *const particle, const Vec3 *const velocity) {
@@ -93,6 +96,10 @@ static void setDamping(Particle *const particle, float damping) {
 	particle->damping = damping;	
 }
 
+static float getDamping(Particle *const particle) {
+	return (particle->damping);	
+}
+
 static void setPositionXYZ(Particle *const particle, float x, float y, float z) {
 	particle->position.x = x;
 	particle->position.y = y;
@@ -111,4 +118,4 @@ static Vec3 getPosition(const Particle *const particle, Vec3 *const vector) {
 	return pos;
 }
 
-const ParticleManager manParticle = {new, delete, integrate, clearForceAccumulator, addForce, getMass, hasFiniteMass, setMass, setVelocity, setVelocityXYZ, setAccelerationXYZ, setDamping, setPositionXYZ, getPosition};
+const ParticleManager manParticle = {new, delete, integrate, clearForceAccumulator, addForce, getMass, hasFiniteMass, setMass, setInverseMass, setVelocity, setVelocityXYZ, setAccelerationXYZ, setDamping, getDamping, setPositionXYZ, getPosition};
