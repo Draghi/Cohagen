@@ -450,4 +450,75 @@ static VAO *genVAOFromFile(const char *const filename) {
     return vao;
 }
 
-const ObjLoader objLoader = {loadObj, genVAOFromFile};
+static PhysicsInfo* loadCollisionMesh(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
+    // Setup data structures for receiving information
+    DynamicFloatArray vertices;
+    DynamicFloatArray normals;
+
+    newDynamicFloatArray(&vertices, 3);
+    newDynamicFloatArray(&normals, 3);
+
+    // Load information
+    loadObj(filename, &vertices, &normals, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+    DynamicArray* verts = manDynamicArray.new(vertices.size/3, sizeof(Vec3));
+    DynamicArray* norms = manDynamicArray.new(normals.size/3, sizeof(Vec3));
+
+    for(int i = 0; i < verts->capacity; i++) {
+    	Vec3 vert = manVec3.create(NULL, vertices.get(&vertices, i*3), vertices.get(&vertices, i*3+1), vertices.get(&vertices, i*3+2));
+    	manDynamicArray.append(verts, &vert);
+    }
+
+    for(int i = 0; i < norms->capacity; i++) {
+    	Vec3 norm = manVec3.create(NULL, normals.get(&normals, i*3), normals.get(&normals, i*3+1), normals.get(&normals, i*3+2));
+    	manDynamicArray.append(norms, &norm);
+    }
+
+    DynamicArray* optiNorms = manDynamicArray.new(1, sizeof(Vec3));
+    for(int i = 0; i < norms->size; i++) {
+    	bool flag = true;
+    	Vec3 norm1 = manVec3.create(NULL, normals.get(&normals, i*3), normals.get(&normals, i*3+1), normals.get(&normals, i*3+2));
+
+    	for(int j = i+1; j < norms->size; j++) {
+        	Vec3 norm2 = manVec3.create(NULL, normals.get(&normals, j*3), normals.get(&normals, j*3+1), normals.get(&normals, j*3+2));
+
+        	if ((norm1.x == norm2.x) && (norm1.y == norm2.y) && (norm1.z == norm2.z)) {
+        		flag = false;
+        		break;
+        	} else if ((norm1.x == -norm2.x) && (norm1.y == -norm2.y) && (norm1.z == -norm2.z)) {
+            	flag = false;
+            	break;
+        	}
+    	}
+
+    	if (flag)
+    		manDynamicArray.append(optiNorms, &norm1);
+    }
+
+    manDynamicArray.delete(norms);
+    deleteDynamicFloatArray(&vertices);
+    deleteDynamicFloatArray(&normals);
+
+    Vec3 center = manVec3.create(NULL, 0,0,0);
+    scalar radius = 0;
+    for(int i = 0; i < verts->size; i++) {
+    	Vec3* vert = (Vec3*)manDynamicArray.get(verts, i);
+    	Vec3 dispVec = manVec3.sub(vert, &center);
+    	scalar dist = manVec3.magnitude(&dispVec);
+    	if (dist>radius)
+    		radius = dist;
+    }
+
+
+    PhysicsInfo* result = manPhysObj.new(position, rotation, scale, velocity);
+    ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(verts->size, (Vec3*)verts->contents, optiNorms->size, (Vec3*)optiNorms->contents);
+    result->nPhase.type = COL_TYPE_SIMPLE_MESH;
+    manPhysObj.attachNarrowphaseSimpleMesh(result, colMesh);
+    manPhysObj.setBroadphase(result, &center, radius);
+
+    return result;
+}
+
+
+
+const ObjLoader objLoader = {loadObj, genVAOFromFile, loadCollisionMesh};

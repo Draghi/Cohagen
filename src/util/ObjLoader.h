@@ -10,6 +10,7 @@
 #include "gl/VBO.h"
 #include "lib/ogl.h"
 #include "gl/EAB.h"
+#include "col/PhysicsObject.h"
 
 /**
  *  Singleton used for loading .obj files.
@@ -48,6 +49,19 @@ typedef struct ObjLoader_s {
      *  @return                     pointer to VAO, VAO generated.
      */
     VAO *(*genVAOFromFile)(const char *const filename);
+
+    /**
+     * Loads a simple collision mesh from a obj file.
+     * Calculates the broadphase params as well.
+     *
+     * @param filename const pointer to const char, path to file.
+     * @param position The vec3 to be used for positioning.
+     * @param rotation The vec3 to be used for rotation.
+     * @param scale The vec3 to be used for scaling.
+     * @param velocity The vec3 to be used for velocity.
+     * @return
+     */
+    PhysicsInfo*(* loadCollisionMesh)(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity);
 
 } ObjLoader;
 
