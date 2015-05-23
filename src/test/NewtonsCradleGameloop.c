@@ -31,28 +31,6 @@ void runNewtonsCradle() {
 	manGameLoop.delete(gameloop);
 }
 
-static ColliderSimpleMesh* makeCube() {
-	const int vCount = 8;
-	const int nCount = 3;
-
-	Vec3 *verts = malloc(sizeof(Vec3)*vCount);
-	verts[0] = manVec3.create(NULL, -0.5, -0.5, -0.5);
-	verts[1] = manVec3.create(NULL,  0.5, -0.5, -0.5);
-	verts[2] = manVec3.create(NULL, -0.5,  0.5, -0.5);
-	verts[3] = manVec3.create(NULL,  0.5,  0.5, -0.5);
-	verts[4] = manVec3.create(NULL, -0.5, -0.5,  0.5);
-	verts[5] = manVec3.create(NULL,  0.5, -0.5,  0.5);
-	verts[6] = manVec3.create(NULL, -0.5,  0.5,  0.5);
-	verts[7] = manVec3.create(NULL,  0.5,  0.5,  0.5);
-
-	Vec3 *norms = malloc(sizeof(Vec3)*nCount);
-	norms[0] = manVec3.create(NULL,  0,  0,  1);
-	norms[1] = manVec3.create(NULL,  0,  1,  0);
-	norms[2] = manVec3.create(NULL,  1,  0,  0);
-
-
-	return manColMesh.newSimpleMesh(vCount, verts, nCount, norms);
-}
 typedef struct NewtonsCradleData_s {
 	//Particle Related
 	int particleCount;
@@ -64,7 +42,7 @@ typedef struct NewtonsCradleData_s {
 	Vec3* springAnchor;
 
 	//Collision Related
-	ColliderSimpleMesh* cubeCollider;
+	PhysicsInfo* baseCollider;
 	PhysicsInfo** cubes;
 
 	//Rendering related
@@ -144,22 +122,25 @@ static void onInitMisc(GameLoop* self) {
 	manVec3.create(data->gravityVec, 0, -9.8, 0);
 	manVec3.create(data->springAnchor, 0, 10, 0);
 
-	data->cubeCollider = makeCube();
+	data->baseCollider = objLoader.loadCollisionMesh("./data/models/cube.obj", NULL, NULL, NULL, NULL);
 
 	data->pfRegist = manForceRegistry.new();
-	data->sfGen = manAnchoredSpringForceGenerator.new(data->springAnchor, 2.0f, 0, 0.0f);
+	data->sfGen = manAnchoredSpringForceGenerator.new(data->springAnchor, 2.0f, 0.8, 0.0f);
 	data->gfGen = manGravityForceGenerator.new(data->gravityVec);
 
 	for(int i = 0; i<data->particleCount; i++) {
 		data->particles[i] = manParticle.new();
-		manParticle.setPositionXYZ(data->particles[i], i*1.25, 0.6, 0);
+		manParticle.setPositionXYZ(data->particles[i], i*1.25 - (data->particleCount*1.25)/2.0, 0, 0);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->sfGen->forceGenerator);
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
 
 		data->cubes[i] = manPhysObj.new(&data->particles[i]->position, NULL, NULL, &data->particles[i]->velocity);
-		manPhysObj.setBroadphase(data->cubes[i], NULL, 1);
-		manPhysObj.attachNarrowphaseSimpleMesh(data->cubes[i], data->cubeCollider);
+		data->cubes[i]->bPhase = data->baseCollider->bPhase;
+		data->cubes[i]->nPhase = data->baseCollider->nPhase;
+
+		//manPhysObj.setBroadphase(data->cubes[i], NULL, 1);
+		//manPhysObj.attachNarrowphaseSimpleMesh(data->cubes[i], data->cubeCollider);
 	}
 
 	manVec3.create(data->camPos, 0,0,0);
@@ -204,8 +185,13 @@ static void onClose(GameLoop* self) {
 	manGravityForceGenerator.delete(data->gfGen);
 	manForceRegistry.delete(data->pfRegist);
 
-	manColMesh.deleteSimpleMesh(data->cubeCollider);
-	free(data->cubeCollider);
+	manColMesh.deleteSimpleMesh(data->baseCollider->nPhase.collider);
+
+	free(data->baseCollider->position);
+	free(data->baseCollider->rotation);
+	free(data->baseCollider->scale);
+	free(data->baseCollider->velocity);
+	free(data->baseCollider);
 }
 
 static void onDestroy(GameLoop* self) {

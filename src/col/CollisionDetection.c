@@ -9,14 +9,6 @@
 
 static CollisionResult noCollision = {{0,0,0}, 0, false, false};
 
-static bool fastSphereVsSphere(ColliderSphere* bf1, ColliderSphere* bf2) {
-	Vec3 disp = manVec3.sub(&bf2->center, &bf1->center);
-	scalar sqrDist = disp.x * disp.x + disp.y * disp.y + disp.z * disp.z;
-	sqrDist -= bf1->radius*bf1->radius + bf2->radius*bf2->radius;
-
-	return sqrDist<= 0;
-}
-
 static CollisionResult satOverlapCollision(SATOverlap* overlap) {
 	CollisionResult result;
 
@@ -28,6 +20,116 @@ static CollisionResult satOverlapCollision(SATOverlap* overlap) {
 	result.isMatch = overlap->isExactMatch;
 
 	return result;
+}
+
+static bool doSimpleMeshvsSimpleMesh(SATOverlap* result, ColliderSimpleMesh* mesh1, ColliderSimpleMesh* mesh2) {
+	for(int i = 0; i < mesh1->nCount; i++) {
+		SATProjection mesh1Proj, mesh2Proj;
+		mesh1Proj.axis = mesh1->norms[i];
+		mesh1Proj.min = SCALAR_MAX_VAL;
+		mesh1Proj.max = SCALAR_MIN_VAL;
+
+		mesh2Proj.axis = mesh1->norms[i];
+		mesh2Proj.min = SCALAR_MAX_VAL;
+		mesh2Proj.max = SCALAR_MIN_VAL;
+
+		sat.projectMesh(&mesh1Proj, mesh1);
+		sat.projectMesh(&mesh2Proj, mesh2);
+
+		SATOverlap overlap = sat.overlap(&mesh1Proj, &mesh2Proj);
+
+		if(!overlap.isTouching) {
+			*result = overlap;
+			return false;
+		} else {
+			if (fabs(overlap.push) < fabs(result->push)) {
+				*result = overlap;
+			}
+		}
+	}
+
+	return true;
+}
+
+static bool doSimpleMeshvsSphere(SATOverlap* result, ColliderSimpleMesh* mesh, ColliderSphere* sphere) {
+	for(int i = 0; i < mesh->nCount; i++) {
+		SATProjection sphereProj, meshProj;
+		sphereProj.axis = mesh->norms[i];
+		sphereProj.min = SCALAR_MAX_VAL;
+		sphereProj.max = SCALAR_MIN_VAL;
+
+		meshProj.axis = mesh->norms[i];
+		meshProj.min = SCALAR_MAX_VAL;
+		meshProj.max = SCALAR_MIN_VAL;
+
+		sat.projectSphere(&sphereProj, sphere);
+		sat.projectMesh(&meshProj, mesh);
+
+		SATOverlap overlap = sat.overlap(&sphereProj, &meshProj);
+		if(!overlap.isTouching) {
+			*result = overlap;
+			return false;
+		} else {
+			if (fabs(overlap.push) < fabs(result->push)) {
+				*result = overlap;
+			}
+		}
+	}
+
+	return true;
+}
+
+static bool doSpherevsSimpleMesh(SATOverlap* result, ColliderSphere* sphere, ColliderSimpleMesh* mesh) {
+	int axisCount = mesh->vCount;
+	Vec3* axis = malloc(sizeof(Vec3)*axisCount);
+
+	int j = 0;
+	for(int i = 0; i < axisCount; i++) {
+		Vec3 displacement = manVec3.sub(&mesh->verts[i], &sphere->center);
+		//Only add actual axis we need to test.
+		//Points matching the center have been picked up by the previous loop and don't need to be re-tested.
+		if (manVec3.magnitude(&displacement) > 0) {
+			axis[j] = manVec3.normalize(&displacement);
+			j++;
+		}
+	}
+
+	axisCount = j;
+
+	for(int i = 0; i < axisCount; i++) {
+		SATProjection sphereProj, meshProj;
+		sphereProj.axis = axis[i];
+		sphereProj.min = SCALAR_MAX_VAL;
+		sphereProj.max = SCALAR_MIN_VAL;
+
+		meshProj.axis = axis[i];
+		meshProj.min = SCALAR_MAX_VAL;
+		meshProj.max = SCALAR_MIN_VAL;
+
+		sat.projectSphere(&sphereProj, sphere);
+		sat.projectMesh(&meshProj, mesh);
+
+		SATOverlap overlap = sat.overlap(&meshProj, &meshProj);
+
+		if(!overlap.isTouching) {
+			*result = overlap;
+			return false;
+		} else {
+			if (fabs(overlap.push) < fabs(result->push)) {
+				*result = overlap;
+			}
+		}
+	}
+
+	return true;
+}
+
+static bool fastSphereVsSphere(ColliderSphere* bf1, ColliderSphere* bf2) {
+	Vec3 disp = manVec3.sub(&bf2->center, &bf1->center);
+	scalar sqrDist = disp.x * disp.x + disp.y * disp.y + disp.z * disp.z;
+	sqrDist -= bf1->radius*bf1->radius + bf2->radius*bf2->radius;
+
+	return sqrDist<= 0;
 }
 
 static CollisionResult sphereVsSphere(ColliderSphere* sphere1, ColliderSphere* sphere2) {
@@ -54,140 +156,44 @@ static CollisionResult sphereVsSphere(ColliderSphere* sphere1, ColliderSphere* s
 }
 
 static CollisionResult simpleMeshVsSimpleMesh(ColliderSimpleMesh* mesh1, ColliderSimpleMesh* mesh2) {
-	bool flag = true;
-	SATOverlap min;
-	min.push = SCALAR_MAX_VAL;
-	for(int i = 0; i < mesh1->nCount; i++) {
-		SATProjection mesh1Proj, mesh2Proj;
-		mesh1Proj.axis = mesh1->norms[i];
-		mesh1Proj.min = SCALAR_MAX_VAL;
-		mesh1Proj.max = SCALAR_MIN_VAL;
+	SATOverlap overlap;
+	overlap.push = SCALAR_MAX_VAL;
 
-		mesh2Proj.axis = mesh1->norms[i];
-		mesh2Proj.min = SCALAR_MAX_VAL;
-		mesh2Proj.max = SCALAR_MIN_VAL;
+	if (doSimpleMeshvsSimpleMesh(&overlap, mesh1, mesh2)) {
+		SATOverlap overlap2;
+		overlap2.push = SCALAR_MAX_VAL;
 
-		sat.projectMesh(&mesh1Proj, mesh1);
-		sat.projectMesh(&mesh2Proj, mesh2);
-
-		SATOverlap overlap = sat.overlap(&mesh1Proj, &mesh2Proj);
-		flag = flag && overlap.isTouching;
-
-		if(!flag) {
-			min = overlap;
-			break;
+		if (doSimpleMeshvsSimpleMesh(&overlap2, mesh2, mesh1)) {
+			overlap2.push = -overlap2.push;
+			if (overlap2.push<overlap.push) {
+				overlap = overlap2;
+			}
 		} else {
-			if (fabs(overlap.push) < fabs(min.push)) {
-				min = overlap;
-			}
+			overlap2.push = -overlap2.push;
+			overlap = overlap2;
 		}
 	}
 
-	if (flag) {
-		for(int i = 0; i < mesh1->nCount; i++) {
-			SATProjection mesh1Proj, mesh2Proj;
-			mesh1Proj.axis = mesh2->norms[i];
-			mesh1Proj.min = SCALAR_MAX_VAL;
-			mesh1Proj.max = SCALAR_MIN_VAL;
-
-			mesh2Proj.axis = mesh2->norms[i];
-			mesh2Proj.min = SCALAR_MAX_VAL;
-			mesh2Proj.max = SCALAR_MIN_VAL;
-
-			sat.projectMesh(&mesh1Proj, mesh1);
-			sat.projectMesh(&mesh2Proj, mesh2);
-
-			SATOverlap overlap = sat.overlap(&mesh1Proj, &mesh2Proj);
-			flag = flag && overlap.isTouching;
-
-			if(!flag) {
-				min = overlap;
-				break;
-			} else {
-				if (fabs(overlap.push) < fabs(min.push)) {
-					min = overlap;
-				}
-			}
-		}
-	}
-
-	return satOverlapCollision(&min);
+	return satOverlapCollision(&overlap);
 }
 
 static CollisionResult sphereVsSimpleMesh(ColliderSphere* sphere, ColliderSimpleMesh* mesh) {
-	bool flag = true;
+	SATOverlap overlap;
+	overlap.push = SCALAR_MAX_VAL;
+	if (doSimpleMeshvsSphere(&overlap, mesh, sphere)) {
+		SATOverlap overlap2;
+		overlap2.push = SCALAR_MAX_VAL;
 
-	SATOverlap min;
-	min.push = SCALAR_MAX_VAL;
-	for(int i = 0; i < mesh->nCount; i++) {
-		SATProjection sphereProj, meshProj;
-		sphereProj.axis = mesh->norms[i];
-		sphereProj.min = SCALAR_MAX_VAL;
-		sphereProj.max = SCALAR_MIN_VAL;
-
-		meshProj.axis = mesh->norms[i];
-		meshProj.min = SCALAR_MAX_VAL;
-		meshProj.max = SCALAR_MIN_VAL;
-
-		sat.projectSphere(&sphereProj, sphere);
-		sat.projectMesh(&meshProj, mesh);
-
-		SATOverlap overlap = sat.overlap(&sphereProj, &meshProj);
-		flag = flag && overlap.isOverlaping;
-
-		if(!flag)
-			break;
-		else {
-			if (fabs(overlap.push) < fabs(min.push)) {
-				min = overlap;
+		if (doSpherevsSimpleMesh(&overlap2, sphere, mesh)) {
+			if (overlap2.push<overlap.push) {
+				overlap = overlap2;
 			}
+		} else {
+			overlap = overlap2;
 		}
 	}
 
-	if (flag) {
-		int axisCount = mesh->vCount;
-		Vec3* axis = malloc(sizeof(Vec3)*axisCount);
-
-		int j = 0;
-		for(int i = 0; i < axisCount; i++) {
-			Vec3 displacement = manVec3.sub(&mesh->verts[i], &sphere->center);
-			//Only add actual axis we need to test.
-			//Points matching the center have been picked up by the previous loop and don't need to be re-tested.
-			if (manVec3.magnitude(&displacement) > 0) {
-				axis[j] = manVec3.normalize(&displacement);
-				j++;
-			}
-		}
-
-		axisCount = j;
-
-		for(int i = 0; i < axisCount; i++) {
-			SATProjection sphereProj, meshProj;
-			sphereProj.axis = axis[i];
-			sphereProj.min = SCALAR_MAX_VAL;
-			sphereProj.max = SCALAR_MIN_VAL;
-
-			meshProj.axis = axis[i];
-			meshProj.min = SCALAR_MAX_VAL;
-			meshProj.max = SCALAR_MIN_VAL;
-
-			sat.projectSphere(&sphereProj, sphere);
-			sat.projectMesh(&meshProj, mesh);
-
-			SATOverlap overlap = sat.overlap(&sphereProj, &meshProj);
-			flag = flag && overlap.isOverlaping;
-
-			if(!flag)
-				break;
-			else {
-				if (fabs(overlap.push) < fabs(min.push)) {
-					min = overlap;
-				}
-			}
-		}
-	}
-
-	return satOverlapCollision(&min);
+	return satOverlapCollision(&overlap);
 }
 
 bool checkStaticBroadphase(PhysicsInfo* obj1, PhysicsInfo* obj2) {
