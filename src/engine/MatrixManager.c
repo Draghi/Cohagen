@@ -197,6 +197,18 @@ static void clear(MatrixManager* manager) {
 }
 
 static void delete(MatrixManager* manager) {
+	for(int i = 0; i < MATRIX_MODE_COUNT; i++) {
+		manager->matMode = i;
+
+		Mat4* ptr = pop(manager);
+		while(ptr!=NULL) {
+			free(ptr);
+			ptr = pop(manager);
+		}
+
+		manStack.delete(manager->stacks[i]);
+		free(manager->stacks[i]);
+	}
 
 }
 

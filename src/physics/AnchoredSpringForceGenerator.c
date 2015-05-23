@@ -26,22 +26,6 @@ static void delete(AnchoredSpringForceGenerator *forceGenerator) {
 	free(forceGenerator);
 }
 
-static scalar calcPushForce(scalar force, scalar momentum) {
-	scalar res = 0;
-
-	if (force < 0) {
-		if (force<momentum) {
-			res = force;
-		}
-	} else {
-		if (force>momentum) {
-			res = force;
-		}
-	}
-
-	return res;
-}
-
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
 	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
 	AnchoredSpringForceGenerator *fg = (AnchoredSpringForceGenerator *) pfg->self;
@@ -75,11 +59,6 @@ static void updateForce(void *const self, Particle *const particle, scalar frame
 
 	Vec3 force = manVec3.preMulScalar(-fg->springConstant*(distance-fg->restLength), &direction);
 	force = manVec3.sub(&force, &damp);
-
-	Vec3 pMom = manVec3.preMulScalar(manParticle.getMass(particle), &pVel);
-	force.x = calcPushForce(force.x, pMom.x);
-	force.y = calcPushForce(force.y, pMom.y);
-	force.z = calcPushForce(force.z, pMom.z);
 
 	manParticle.addForce(particle, &force);
 }

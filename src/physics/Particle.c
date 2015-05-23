@@ -13,7 +13,7 @@ static void addForce(Particle *const particle, const Vec3 *const force);
 static Particle *new() {
 	Particle *particle = calloc(1, sizeof(Particle));
 
-	particle->damping = 0.1f;
+	particle->damping = 0.8f;
 	particle->inverseMass = 1.0f;
 
 	return particle;

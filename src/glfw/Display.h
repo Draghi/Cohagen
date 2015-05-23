@@ -230,6 +230,12 @@ typedef struct WindowManager_s {
 	 * 	@return 		int, heightd of the framebuffer.
 	 */
 	int (* getFramebufferHeight)(Window *window);
+
+	/**
+     * Returns the milliseconds since GLFW was started.
+	 * @return
+	 */
+	double(* getMilliseconds)();
 } WindowManager;
 
 extern const WindowManager manWin;

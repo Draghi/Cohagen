@@ -23,7 +23,7 @@ typedef struct ShaderManager_s {
     /**
      *  Bind the shader program.
      *
-     *  @params     shader  pointer to Shader object to bind.
+     *  @param     shader  pointer to Shader object to bind.
      */
     void (*bind)(const Shader *const);
 

@@ -31,7 +31,7 @@ typedef struct QuatManager_s {
      *  returned as the return-value of the function. Optionally, the first argument
      *  may contain a pointer to a Quaternion to fill up with the constructed data.
      *
-     *  @params     quat    const pointer to Quat, Quaternion to set-up or NULL.
+     *  @param     quat    const pointer to Quat, Quaternion to set-up or NULL.
      *  @param      axis    Vec3, rotation axis.
      *  @param      scalar  scalar, scalar component
      *  @return             Quat, constructed from given components.

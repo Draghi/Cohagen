@@ -12,7 +12,6 @@ static void     appendDynamicIntArrayElement(DynamicIntArray *array, int element
  *
  *  @param  array               pointer to DynamicArray, address of new array.
  *  @param  initialCapacity     unsigned int, initial size of array in memory.
- *  @param  elementSize         unsigned int, size of each element in the array.
  */
 void newDynamicIntArray(DynamicIntArray *const array, unsigned int initialCapacity) {
     array->size = 0;

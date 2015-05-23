@@ -220,4 +220,8 @@ static int getFramebufferHeight(Window *window)
 	return height;
 }
 
-const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMonitorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow,getFramebufferWidth,getFramebufferHeight};
+static double getMilliseconds() {
+	return glfwGetTime()*1000.0f;
+}
+
+const WindowManager manWin = {isOpen,makeContextCurrent,new,delete,openWindow,update,swapBuffers,close,getDisplaySize,getMonitorSize,setPosition,setSize,setTitle,getDisplayWidth,getDisplayHeight,getMonitorWidth,getMonitorHeight,getSize,getPos,getX,getY,getWidth,getHeight,centerWindow,getFramebufferWidth,getFramebufferHeight,getMilliseconds};
