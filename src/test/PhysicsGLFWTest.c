@@ -116,14 +116,16 @@ static void onInitMisc(GameLoop* self) {
 	manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);
 	manMatMan.pushIdentity(data->manMat);
 
+	manParticle.setDamping(data->particle, 0.8f);
+
 	// Create and register GravityForceGenerator
 	manVec3.create(data->gravity, 0.0f, -9.8f, 0.0f);
 	((InternalData *)self->extraData)->gravityFG = manGravityForceGenerator.new(data->gravity);
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->gravityFG->forceGenerator));
 
 	// Create and register AnchoredSpringForceGenerator
-	manVec3.create(data->anchor, 0.0f, 1.0f, 0.0f);
-	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 6.00f, 0, 0.0f);
+	manVec3.create(data->anchor, 0.0f, 0.0f, 0.0f);
+	((InternalData *)self->extraData)->anchoredSpringFG = manAnchoredSpringForceGenerator.new(data->anchor, 10.00f, 0.8f, 3.0f);
 	manForceRegistry.add(data->particleForceRegistry, data->particle, &(data->anchoredSpringFG->forceGenerator));
 }
 
@@ -165,10 +167,9 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 		data->camRot->y += manMouse.getDX(self->primaryWindow)/100;
 	}
 
-	//printf("%f %f %f\n", manParticle.getPosition(data->particle, NULL).x, manParticle.getPosition(data->particle, NULL).y, manParticle.getPosition(data->particle, NULL).z);
-	data->anchor->x = -data->camPos->x;
-	data->anchor->y = -data->camPos->y;
-	data->anchor->z = -data->camPos->z;
+	// data->anchor->x = -data->camPos->x;
+	// data->anchor->y = -data->camPos->y;
+	// data->anchor->z = -data->camPos->z;
 
 	// Update forces acting on particle
 	manForceRegistry.updateForces(data->particleForceRegistry, tickDelta);
