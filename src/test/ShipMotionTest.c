@@ -11,7 +11,6 @@
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
 #include "engine/MatrixManager.h"
-#include "engine/Skybox.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -39,7 +38,6 @@ Texture* tex;
 Vec3* camPos;
 Vec3* camRot;
 MatrixManager* manMat;
-Skybox *skybox;
 
 static void onCreate(GameLoop* self) {
 
@@ -66,11 +64,8 @@ static void onInitOpenGL(GameLoop* self) {
 	shader = manShader.newFromGroup("./data/shaders/", "house");
 	tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
-	// skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");
-
-	// glUseProgram(shader->program);
-	// glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);
-	manShader.bindUniformInt(shader, "tex", 0);
+	glUseProgram(shader->program);
+	glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);
 }
 
 static void onInitMisc(GameLoop* self) {
@@ -88,32 +83,32 @@ static void onInitMisc(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	glViewport(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow));
 
-	float rate = 0.2f;
+	float rate = 5.0f;
 
 	if (manKeyboard.isDown(self->primaryWindow, KEY_LSHIFT)) {
-		rate = 0.005f;
+		rate = 1.0f;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		camPos->x +=  rate*cos(camRot->y-1.57079632679);
-		camPos->z +=  rate*sin(camRot->y-1.57079632679);
-		camPos->y += -rate*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y-1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y-1.57079632679)*tickDelta;
+		camPos->y += -rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		camPos->x +=  rate*cos(camRot->y+1.57079632679);
-		camPos->z +=  rate*sin(camRot->y+1.57079632679);
-		camPos->y +=  rate*sin(camRot->x);
+		camPos->x +=  rate*cos(camRot->y+1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y+1.57079632679)*tickDelta;
+		camPos->y +=  rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		camPos->x += -rate*cos(camRot->y);
-		camPos->z += -rate*sin(camRot->y);
+		camPos->x += -rate*cos(camRot->y)*tickDelta;
+		camPos->z += -rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		camPos->x += rate*cos(camRot->y);
-		camPos->z += rate*sin(camRot->y);
+		camPos->x += rate*cos(camRot->y)*tickDelta;
+		camPos->z += rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
@@ -127,24 +122,24 @@ static void onRender(GameLoop* self, float frameDelta) {
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.push(manMat);
-		manMatMan.rotate(manMat, camRot->z, manVec3.create(NULL, 0, 0, 1));
-		manMatMan.rotate(manMat, camRot->y, manVec3.create(NULL, 0, 1, 0));
 		manMatMan.rotate(manMat, camRot->x, manVec3.create(NULL, 1, 0, 0));
+		manMatMan.rotate(manMat, camRot->y, manVec3.create(NULL, 0, 1, 0));
+		manMatMan.rotate(manMat, camRot->z, manVec3.create(NULL, 0, 0, 1));
 		manMatMan.translate(manMat, *camPos);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
-		manTex.bind(tex, GL_TEXTURE_2D, 0);
-			manMatMan.push(manMat);
-				manVAO.bind(vao);
-					manShader.bindUniformMat4(shader, "projectionMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_PROJECTION));
-					manShader.bindUniformMat4(shader, "viewMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_VIEW));
-					manShader.bindUniformMat4(shader, "modelMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_MODEL));
-					manShader.bind(shader);
+		manShader.bind(shader);
+			manTex.bind(tex, GL_TEXTURE_2D, 0);
+				manMatMan.push(manMat);
+					manVAO.bind(vao);
+						manShader.bindUniformMat4(shader, "projectionMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_PROJECTION));
+						manShader.bindUniformMat4(shader, "viewMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_VIEW));
+						manShader.bindUniformMat4(shader, "modelMatrix", manMatMan.peekStack(manMat, MATRIX_MODE_MODEL));
 						manVAO.draw(vao);
-					manShader.unbind();
-				manVAO.unbind();
-			manMatMan.pop(manMat);
-		manTex.unbind(tex, GL_TEXTURE_2D);
+					manVAO.unbind();
+				manMatMan.pop(manMat);
+			manTex.unbind(tex, GL_TEXTURE_2D);
+		manShader.unbind();
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(manMat);
 }
