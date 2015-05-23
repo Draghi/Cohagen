@@ -16,6 +16,10 @@ static Particle *new() {
 
 	particle->damping = 0.8f;
 	particle->inverseMass = 1.0f;
+	particle->position = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	particle->velocity = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	particle->acceleration = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	particle->forceAccum = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
 
 	return particle;
 }
@@ -26,6 +30,7 @@ static void delete(Particle *particle) {
 
 static void integrate(Particle *const particle, scalar frameTime) {
 	assert(frameTime > 0.0);
+
 
 	// Update position
 	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
