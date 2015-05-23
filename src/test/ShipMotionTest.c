@@ -11,6 +11,7 @@
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
 #include "engine/MatrixManager.h"
+#include "engine/Skybox.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -38,6 +39,7 @@ Texture* tex;
 Vec3* camPos;
 Vec3* camRot;
 MatrixManager* manMat;
+Skybox *skybox;
 
 static void onCreate(GameLoop* self) {
 
@@ -63,6 +65,8 @@ static void onInitOpenGL(GameLoop* self) {
 	vao    = objLoader.genVAOFromFile("./data/models/town.obj");
 	shader = manShader.newFromGroup("./data/shaders/", "house");
 	tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
+
+	// skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");
 
 	// glUseProgram(shader->program);
 	// glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);
