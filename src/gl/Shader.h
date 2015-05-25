@@ -87,7 +87,7 @@ typedef struct ShaderManager_s {
      * @param scal				Specifies the new value to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformScalar)(Glint location, Scalar scal);
+    void (*bindUniformScalar)(GLint location, const scalar scal);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -96,7 +96,7 @@ typedef struct ShaderManager_s {
      * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformVec2)(GLint location, Vec2 vec);
+    void (*bindUniformVec2)(GLint location, const Vec2 const* vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -105,7 +105,7 @@ typedef struct ShaderManager_s {
      * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformVec3)(GLint location, Vec3 vec);
+    void (*bindUniformVec3)(GLint location, const Vec3 const* vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -114,7 +114,7 @@ typedef struct ShaderManager_s {
      * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformVec4)(GLint location, Vec4 vec);
+    void (*bindUniformVec4)(GLint location, const Vec4 const* vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
