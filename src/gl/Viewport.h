@@ -18,70 +18,80 @@ typedef struct ViewportManager_s {
 	/**
 	 * Makes a call to the function glViewport
 	 *
-	 * @param viewport pointer to Viewport object being bound
+	 * @param viewport 			pointer to Viewport object being bound
 	 */
-	void (*makeActive)(const Viewport *const);
+	void (*makeActive)(const Viewport *const viewport);
 
 	/**
 	 * Getter for x
 	 *
+	 * @param viewport			pointer to viewport object
 	 * @returns x
 	 */
-	float (*GetX)();
+	float (*GetX)(const Viewport *const viewport);
 
 	/**
 	 * Setter for x
 	 *
-	 * @param newX		float value to set x
+	 * @param viewport			pointer to viewport object
+	 * @param newX				float value to set x
 	 * @returns void
 	 */
-	void (*SetX)(float newX);
+	void (*SetX)(const Viewport *const viewport, float newX);
 
 	/**
 	 * Getter for y
 	 *
+	 * @param viewport			pointer to viewport object
 	 * @returns y
 	 */
-	float (*GetY)();
+	float (*GetY)(const Viewport *const viewport);
 
 	/**
 	 * Setter for y
 	 *
-	 * @param newY		float value to set y
+	 * @param viewport			pointer to viewport object
+	 * @param newY				float value to set y
 	 * @returns void
 	 */
-	void (*SetY)(float newY);
+	void (*SetY)(const Viewport *const viewport, float newY);
 
 	/**
 	 * Getter for height
 	 *
+	 * @param viewport			pointer to viewport object
 	 * @returns height
 	 */
-	float (*GetHeight)();
+	float (*GetHeight)(const Viewport *const viewport);
 
 	/**
 	 * Setter for height
 	 *
-	 * @param newHeight		float value to set height
+	 * @param viewport			pointer to viewport object
+	 * @param newHeight			float value to set height
 	 * @returns void
 	 */
-	void (*SetHeight)(float newHeight);
+	void (*SetHeight)(const Viewport *const viewport, float newHeight);
 
 	/**
 	 * Getter for width
 	 *
+	 * @param viewport			pointer to viewport object
 	 * @returns width
 	 */
-	float (*GetWidth)();
+	float (*GetWidth)(const Viewport *const viewport);
 
 	/**
 	 * Setter for width
 	 *
-	 * @param newWidth		float value to set width
+	 * @param viewport			pointer to viewport object
+	 * @param newWidth			float value to set width
 	 * @returns void
 	 */
-	void (*SetWidth)(float newWidth);
+	void (*SetWidth)(const Viewport *const viewport, float newWidth);
 
 } ViewportManager;
+
+extern const ViewportManager manViewport;
 
 #endif

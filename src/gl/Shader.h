@@ -28,9 +28,9 @@ typedef struct ShaderManager_s {
     /**
      *  Bind the shader program.
      *
-     *  @param     shader  pointer to Shader object to bind.
+     *  @param shader  			pointer to Shader object to bind.
      */
-    void (*bind)(const Shader *const);
+    void (*bind)(const Shader *const shader);
 
     /**
      *  Unbind the shader program.
