@@ -10,7 +10,8 @@
  *  Shader object.
  */
 typedef struct Shader_s {
-    /**
+
+	/**
      *  GL linked program object.
      */
     GLuint program;
