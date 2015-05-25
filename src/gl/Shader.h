@@ -5,6 +5,9 @@
 
 #include "lib/ogl.h"
 #include "math/Mat4.h"
+#include "math/Vec2.h"
+#include "math/Vec3.h"
+#include "math/Vec4.h"
 
 /**
  *  Shader object.
