@@ -20,6 +20,7 @@ typedef struct Shader_s {
  *  Class to manage the use of Shader objects.
  */
 typedef struct ShaderManager_s {
+
     /**
      *  Bind the shader program.
      *
@@ -77,6 +78,115 @@ typedef struct ShaderManager_s {
      *  @returns                int, return value of "glGetUniformLocation", if -1, uniformName was not found.
      */
     int (*bindUniformFloat)(const Shader *const shader, const char *uniformName, float floatToBind);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param scal				Specifies the new value to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformScalar)(Glint location, Scalar scal);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param vec				Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformVec2)(GLint location, Vec2 vec);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param vec				Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformVec3)(GLint location, Vec3 vec);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param vec				Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformVec4)(GLint location, Vec4 vec);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0				Specifies the new value to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformInt1)(GLint location, GLint v0);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1			Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformInt2)(GLint location, GLint v0, GLint v1);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1, v2		Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformInt3)(GLint location, GLint v0, GLint v1, GLint v2);
+
+    /**
+     * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1, v2, v3	Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+     */
+    void (*bindUniformInt4)(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+
+    /**
+	 * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0				Specifies the new value to be used for the specified uniform variable.
+     * @returns void
+	 */
+	void (*bindUniformUInt1)(GLint location, GLuint v0);
+
+	/**
+	 * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1			Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+	 */
+	void (*bindUniformUInt2)(GLint location, GLuint v0, GLuint v1);
+
+	/**
+	 * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1, v2		Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+	 */
+	void (*bindUniformUInt3)(GLint location, GLuint v0, GLuint v1, GLuint v2);
+
+	/**
+	 * Specify the value of a uniform variable for the current program object.
+     *
+     * @param location			Specifies the location of the uniform variable to be modified.
+     * @param v0, v1, v2, v3	Specifies the new values to be used for the specified uniform variable.
+     * @returns void
+	 */
+	void (*bindUniformUInt4)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
+
 } ShaderManager;
 
 extern const ShaderManager manShader;
