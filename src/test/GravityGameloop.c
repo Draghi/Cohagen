@@ -89,7 +89,7 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	data->cubeVAO = objLoader.genVAOFromFile("./data/models/cube.obj");
+	data->cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj");
 	data->cubeShader = manShader.newFromGroup("./data/shaders/", "passThru");
 
 	/** @todo: Add method to shader manager **/
@@ -111,17 +111,18 @@ static void onInitOpenGL(GameLoop* self) {
 static void onInitMisc(GameLoop* self) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	data->baseCollider = objLoader.loadCollisionMesh("./data/models/cube.obj", NULL, NULL, NULL, NULL);
+	data->baseCollider = objLoader.loadCollisionMesh("./data/models/meteor.col.obj", NULL, NULL, NULL, NULL);
 
 	data->pfRegist = manForceRegistry.new();
 	Particle* gravParticle = manParticle.new();
-	manParticle.setMass(gravParticle, 100000000000);
+	manParticle.setMass(gravParticle, 10618583169100);
 	manParticle.setPositionXYZ(gravParticle, 0, 10, 0);
 	data->gfGen = manAnchoredGravityForceGenerator.new(gravParticle);
 
 	for(int i = 0; i<data->particleCount; i++) {
 		data->particles[i] = manParticle.new();
-		manParticle.setPositionXYZ(data->particles[i], i*1.25 - (data->particleCount*1.75)/2.0, 0, 0);
+		manParticle.setPositionXYZ(data->particles[i], 2*i*data->baseCollider->bPhase.radius - (data->particleCount*2*data->baseCollider->bPhase.radius)/2.0, 0, 0);
+		manParticle.setMass(data->particles[i], 10618583169100);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
 
@@ -129,12 +130,17 @@ static void onInitMisc(GameLoop* self) {
 		data->cubes[i]->bPhase = data->baseCollider->bPhase;
 		data->cubes[i]->nPhase = data->baseCollider->nPhase;
 	}
+
+	data->gfGen->gravityAnchor = data->particles[data->particleCount/2];
+
+
 	manVec3.create(data->camPos, 0,0,0);
 	manVec3.create(data->camRot, 0,0,0);
 
+
 	data->manMat = manMatMan.new();
 	manMatMan.setMode(data->manMat, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(data->manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 100);
+	manMatMan.pushPerspective(data->manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 2000);
 	manMatMan.setMode(data->manMat, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(data->manMat);
 	manMatMan.setMode(data->manMat, MATRIX_MODE_MODEL);

@@ -127,7 +127,9 @@ static bool doSpherevsSimpleMesh(SATOverlap* result, ColliderSphere* sphere, Col
 static bool fastSphereVsSphere(ColliderSphere* bf1, ColliderSphere* bf2) {
 	Vec3 disp = manVec3.sub(&bf2->center, &bf1->center);
 	scalar sqrDist = disp.x * disp.x + disp.y * disp.y + disp.z * disp.z;
-	sqrDist -= bf1->radius*bf1->radius + bf2->radius*bf2->radius;
+	scalar rad = bf1->radius+bf2->radius;
+
+	sqrDist -= rad*rad;
 
 	return sqrDist<= 0;
 }
