@@ -58,3 +58,5 @@ static void setWidth(Viewport *const viewport, float newWidth){
 	viewport->width = newWidth;
 }
 
+const ViewportManager manViewport = {makeActive, getX, setX, getY, setY, getHeight, setHeight, getWidth, setWidth};
+
