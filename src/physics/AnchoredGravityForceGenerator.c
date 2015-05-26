@@ -2,7 +2,7 @@
 
 #include "AnchoredGravityForceGenerator.h"
 
-static const scalar GRAVITATIONAL_CONSTANT = 6.67384e-11;
+static const scalar GRAVITATIONAL_CONSTANT = 6.67384e-11; //6.67384 * 10^-11
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime);
 
@@ -21,7 +21,7 @@ static AnchoredGravityForceGenerator* new(Particle *gravityAnchor) {
 }
 
 static void delete(AnchoredGravityForceGenerator *anchoredGravityForceGenerator) {
-	//free(gravityForceGenerator);
+	//Do nothing
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
