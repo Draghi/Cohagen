@@ -450,7 +450,7 @@ static VAO *genVAOFromFile(const char *const filename) {
     return vao;
 }
 
-static PhysicsInfo* loadCollisionMesh(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
+static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
     // Setup data structures for receiving information
     DynamicFloatArray vertices;
     DynamicFloatArray normals;
@@ -510,11 +510,11 @@ static PhysicsInfo* loadCollisionMesh(const char *const filename, Vec3* position
     }
 
 
-    PhysicsInfo* result = manPhysObj.new(position, rotation, scale, velocity);
+    PhysicsCollider* result = manPhysCollider.new(position, rotation, scale, velocity);
     ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(verts->size, (Vec3*)verts->contents, optiNorms->size, (Vec3*)optiNorms->contents);
     result->nPhase.type = COL_TYPE_SIMPLE_MESH;
-    manPhysObj.attachNarrowphaseSimpleMesh(result, colMesh);
-    manPhysObj.setBroadphase(result, &center, radius);
+    manPhysCollider.attachNarrowphaseSimpleMesh(result, colMesh);
+    manPhysCollider.setBroadphase(result, &center, radius);
 
     return result;
 }

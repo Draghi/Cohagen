@@ -1,10 +1,10 @@
 #ifndef COH_COLLISIONDETECTION_H
 #define COH_COLLISIONDETECTION_H
 
+#include <src/col/PhysicsCollider.h>
 #include <stdbool.h>
 #include "math/Vec3.h"
 #include "col/CollisionMesh.h"
-#include "col/PhysicsObject.h"
 
 typedef struct CollisionResult_s {
 	Vec3 axis;
@@ -16,8 +16,8 @@ typedef struct CollisionResult_s {
 } CollisionResult;
 
 typedef struct CollisionDetectionManager_s {
-	bool(* checkStaticBroadphase)(PhysicsInfo* obj1, PhysicsInfo* obj2);
-	CollisionResult(* checkStaticNarrowphase)(PhysicsInfo* obj1, PhysicsInfo* obj2);
+	bool(* checkStaticBroadphase)(PhysicsCollider* obj1, PhysicsCollider* obj2);
+	CollisionResult(* checkStaticNarrowphase)(PhysicsCollider* obj1, PhysicsCollider* obj2);
 } CollisionDetectionManager;
 
 extern const CollisionDetectionManager manColDetection;

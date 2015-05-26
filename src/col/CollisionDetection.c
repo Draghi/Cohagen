@@ -198,7 +198,7 @@ static CollisionResult sphereVsSimpleMesh(ColliderSphere* sphere, ColliderSimple
 	return satOverlapCollision(&overlap);
 }
 
-bool checkStaticBroadphase(PhysicsInfo* obj1, PhysicsInfo* obj2) {
+bool checkStaticBroadphase(PhysicsCollider* obj1, PhysicsCollider* obj2) {
 	Mat4 m1 = manColMesh.makeTransformationMatrix(obj1->position, obj1->rotation, obj1->scale);
 	Mat4 m2 = manColMesh.makeTransformationMatrix(obj2->position, obj2->rotation, obj2->scale);
 
@@ -210,7 +210,7 @@ bool checkStaticBroadphase(PhysicsInfo* obj1, PhysicsInfo* obj2) {
 	return fastSphereVsSphere(&bf1, &bf2);
 }
 
-CollisionResult checkStaticNarrowphase(PhysicsInfo* obj1, PhysicsInfo* obj2) {
+CollisionResult checkStaticNarrowphase(PhysicsCollider* obj1, PhysicsCollider* obj2) {
 	Mat4 m1 = manColMesh.makeTransformationMatrix(obj1->position, obj1->rotation, obj1->scale);
 	Mat4 m2 = manColMesh.makeTransformationMatrix(obj2->position, obj2->rotation, obj2->scale);
 

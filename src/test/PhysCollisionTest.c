@@ -45,8 +45,8 @@ Vec3 *camRot;
 MatrixManager *manMat;
 
 ColliderSimpleMesh* cubeCollider;
-PhysicsInfo* cube1;
-PhysicsInfo* cube2;
+PhysicsCollider* cube1;
+PhysicsCollider* cube2;
 
 VAO *cubeVAO;
 
@@ -149,13 +149,13 @@ static void onInitMisc(GameLoop* self) {
 	manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
 	manMatMan.pushIdentity(manMat);
 
-	cube1 = manPhysObj.new(&particle2->position, NULL, NULL, &particle2->velocity);
-	manPhysObj.setBroadphase(cube1, NULL, 1);
-	manPhysObj.attachNarrowphaseSimpleMesh(cube1, cubeCollider);
+	cube1 = manPhysCollider.new(&particle2->position, NULL, NULL, &particle2->velocity);
+	manPhysCollider.setBroadphase(cube1, NULL, 1);
+	manPhysCollider.attachNarrowphaseSimpleMesh(cube1, cubeCollider);
 
-	cube2 = manPhysObj.new(&particle->position, NULL, NULL, &particle->velocity);
-	manPhysObj.setBroadphase(cube2, NULL, 1);
-	manPhysObj.attachNarrowphaseSimpleMesh(cube2, cubeCollider);
+	cube2 = manPhysCollider.new(&particle->position, NULL, NULL, &particle->velocity);
+	manPhysCollider.setBroadphase(cube2, NULL, 1);
+	manPhysCollider.attachNarrowphaseSimpleMesh(cube2, cubeCollider);
 }
 
 static void onUpdate(GameLoop* self, float tickDelta) {
