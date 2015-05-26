@@ -1,7 +1,7 @@
 #ifndef COH_COLLISIONDETECTION_H
 #define COH_COLLISIONDETECTION_H
 
-#include <src/col/PhysicsCollider.h>
+#include "col/PhysicsCollider.h"
 #include <stdbool.h>
 #include "math/Vec3.h"
 #include "col/CollisionMesh.h"

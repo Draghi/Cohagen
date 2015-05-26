@@ -1,4 +1,4 @@
-#include <src/col/PhysicsCollider.h>
+#include "col/PhysicsCollider.h"
 
 static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
 	PhysicsCollider* result = malloc(sizeof(PhysicsCollider));
