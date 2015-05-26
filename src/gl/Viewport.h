@@ -28,7 +28,7 @@ typedef struct ViewportManager_s {
 	 * @param viewport			pointer to viewport object
 	 * @returns x
 	 */
-	float (*GetX)(const Viewport *const viewport);
+	float (*getX)(const Viewport *const viewport);
 
 	/**
 	 * Setter for x
@@ -37,7 +37,7 @@ typedef struct ViewportManager_s {
 	 * @param newX				float value to set x
 	 * @returns void
 	 */
-	void (*SetX)(const Viewport *const viewport, float newX);
+	void (*setX)(Viewport *const viewport, float newX);
 
 	/**
 	 * Getter for y
@@ -45,7 +45,7 @@ typedef struct ViewportManager_s {
 	 * @param viewport			pointer to viewport object
 	 * @returns y
 	 */
-	float (*GetY)(const Viewport *const viewport);
+	float (*getY)(const Viewport *const viewport);
 
 	/**
 	 * Setter for y
@@ -54,7 +54,7 @@ typedef struct ViewportManager_s {
 	 * @param newY				float value to set y
 	 * @returns void
 	 */
-	void (*SetY)(const Viewport *const viewport, float newY);
+	void (*setY)(Viewport *const viewport, float newY);
 
 	/**
 	 * Getter for height
@@ -62,7 +62,7 @@ typedef struct ViewportManager_s {
 	 * @param viewport			pointer to viewport object
 	 * @returns height
 	 */
-	float (*GetHeight)(const Viewport *const viewport);
+	float (*getHeight)(const Viewport *const viewport);
 
 	/**
 	 * Setter for height
@@ -71,7 +71,7 @@ typedef struct ViewportManager_s {
 	 * @param newHeight			float value to set height
 	 * @returns void
 	 */
-	void (*SetHeight)(const Viewport *const viewport, float newHeight);
+	void (*setHeight)(Viewport *const viewport, float newHeight);
 
 	/**
 	 * Getter for width
@@ -79,7 +79,7 @@ typedef struct ViewportManager_s {
 	 * @param viewport			pointer to viewport object
 	 * @returns width
 	 */
-	float (*GetWidth)(const Viewport *const viewport);
+	float (*getWidth)(const Viewport *const viewport);
 
 	/**
 	 * Setter for width
@@ -88,7 +88,7 @@ typedef struct ViewportManager_s {
 	 * @param newWidth			float value to set width
 	 * @returns void
 	 */
-	void (*SetWidth)(const Viewport *const viewport, float newWidth);
+	void (*setWidth)(Viewport *const viewport, float newWidth);
 
 } ViewportManager;
 
