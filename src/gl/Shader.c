@@ -164,4 +164,4 @@ void bindUniformUInt4(const Shader *const shader, const char *uniformName, GLuin
 
 }
 
-const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat};
+const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4};
