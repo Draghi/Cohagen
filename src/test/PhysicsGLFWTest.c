@@ -10,12 +10,12 @@
 #include "util/ObjLoader.h"
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
-#include "engine/MatrixManager.h"
+#include "render/MatrixManager.h"
 #include "physics/Particle.h"
 #include "physics/GravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "physics/AnchoredSpringForceGenerator.h"
-#include "engine/Skybox.h"
+#include "render/Skybox.h"
 
 #include <stdio.h>
 #include <math.h>

@@ -1,8 +1,8 @@
 #include "Tests.h"
 
 #include "engine/GameLoop.h"
-#include "engine/Skybox.h"
-#include "engine/MatrixManager.h"
+#include "render/Skybox.h"
+#include "render/MatrixManager.h"
 #include "col/CollisionDetection.h"
 #include "col/CollisionResponse.h"
 #include "physics/AnchoredGravityForceGenerator.h"

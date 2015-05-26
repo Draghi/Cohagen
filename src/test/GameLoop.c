@@ -10,7 +10,7 @@
 #include "util/ObjLoader.h"
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
-#include "engine/MatrixManager.h"
+#include "render/MatrixManager.h"
 
 #include <stdio.h>
 #include <math.h>
