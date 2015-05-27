@@ -114,19 +114,19 @@ static void onInitMisc(GameLoop* self) {
 	data->baseCollider = objLoader.loadCollisionMesh("./data/models/meteor.col.obj", NULL, NULL, NULL, NULL);
 
 	data->pfRegist = manForceRegistry.new();
-	Particle* gravParticle = manParticle.new();
+	Particle* gravParticle = manParticle.new(NULL, NULL, NULL, NULL);
 	manParticle.setMass(gravParticle, 10618583169100);
 	manParticle.setPositionXYZ(gravParticle, 0, 10, 0);
 	data->gfGen = manAnchoredGravityForceGenerator.new(gravParticle);
 
 	for(int i = 0; i<data->particleCount; i++) {
-		data->particles[i] = manParticle.new();
+		data->particles[i] = manParticle.new(NULL, NULL, NULL, NULL);
 		manParticle.setPositionXYZ(data->particles[i], 2*i*data->baseCollider->bPhase.radius - (data->particleCount*2*data->baseCollider->bPhase.radius)/2.0, 0, 0);
 		manParticle.setMass(data->particles[i], 10618583169100);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
 
-		data->cubes[i] = manPhysCollider.new(&data->particles[i]->position, NULL, NULL, &data->particles[i]->velocity);
+		data->cubes[i] = manPhysCollider.new(data->particles[i]->position, NULL, NULL, data->particles[i]->velocity);
 		data->cubes[i]->bPhase = data->baseCollider->bPhase;
 		data->cubes[i]->nPhase = data->baseCollider->nPhase;
 	}

@@ -13,17 +13,17 @@ typedef struct Particle_s {
 	/**
 	 *	Position of particle in world space.
 	 */
-	Vec3 	position;
+	Vec3* 	position;
 
 	/**
 	 *	Linear velocity of particle in world space.
 	 */
-	Vec3 	velocity;
+	Vec3* 	velocity;
 
 	/**
 	 *	Acceleration of particle.
 	 */
-	Vec3 	acceleration;
+	Vec3* 	acceleration;
 
 	/**
 	 *	Damping to apply to motion.
@@ -46,7 +46,7 @@ typedef struct Particle_s {
 	 *	Resultant force to apply to an object at each step.
 	 * 	Value is reset after each integration step.
 	 */
-	Vec3 	forceAccum;
+	Vec3* 	forceAccum;
 } Particle;
 
 typedef struct ParticleManager_s {
@@ -64,7 +64,7 @@ typedef struct ParticleManager_s {
 	 *
 	 * 	@returns 	pointer to Particle, the address of the Particle object on the heap.
 	 */
-	Particle *(*new)();
+	Particle *(*new)(Vec3* position, Vec3* velocity, Vec3* acceleration, Vec3* force);
 
 	/**
 	 *	Frees all memory associated with the given Particle object.

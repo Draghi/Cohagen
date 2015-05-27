@@ -92,8 +92,8 @@ static void onCreate(GameLoop* self) {
 
 	cubeCollider = makeCube();
 
-	particle = manParticle.new();
-	particle2 = manParticle.new();
+	particle = manParticle.new(NULL, NULL, NULL, NULL);
+	particle2 = manParticle.new(NULL, NULL, NULL, NULL);
 	particleForceRegistry = manForceRegistry.new();
 	gravity = malloc(sizeof(Vec3));
 	anchor = malloc(sizeof(Vec3));
@@ -149,11 +149,11 @@ static void onInitMisc(GameLoop* self) {
 	manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
 	manMatMan.pushIdentity(manMat);
 
-	cube1 = manPhysCollider.new(&particle2->position, NULL, NULL, &particle2->velocity);
+	cube1 = manPhysCollider.new(particle2->position, NULL, NULL, particle2->velocity);
 	manPhysCollider.setBroadphase(cube1, NULL, 1);
 	manPhysCollider.attachNarrowphaseSimpleMesh(cube1, cubeCollider);
 
-	cube2 = manPhysCollider.new(&particle->position, NULL, NULL, &particle->velocity);
+	cube2 = manPhysCollider.new(particle->position, NULL, NULL, particle->velocity);
 	manPhysCollider.setBroadphase(cube2, NULL, 1);
 	manPhysCollider.attachNarrowphaseSimpleMesh(cube2, cubeCollider);
 }

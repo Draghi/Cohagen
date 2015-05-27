@@ -129,13 +129,13 @@ static void onInitMisc(GameLoop* self) {
 	data->gfGen = manGravityForceGenerator.new(data->gravityVec);
 
 	for(int i = 0; i<data->particleCount; i++) {
-		data->particles[i] = manParticle.new();
+		data->particles[i] = manParticle.new(NULL, NULL, NULL, NULL);
 		manParticle.setPositionXYZ(data->particles[i], i*1.25 - (data->particleCount*1.25)/2.0, 0, 0);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->sfGen->forceGenerator);
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
 
-		data->cubes[i] = manPhysCollider.new(&data->particles[i]->position, NULL, NULL, &data->particles[i]->velocity);
+		data->cubes[i] = manPhysCollider.new(data->particles[i]->position, NULL, NULL, data->particles[i]->velocity);
 		data->cubes[i]->bPhase = data->baseCollider->bPhase;
 		data->cubes[i]->nPhase = data->baseCollider->nPhase;
 
