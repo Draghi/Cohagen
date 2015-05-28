@@ -3,6 +3,8 @@
 #include "engine/GameLoop.h"
 #include "render/Skybox.h"
 #include "render/MatrixManager.h"
+#include "render/RenderObject.h"
+#include "render/Renderer.h"
 #include "col/CollisionDetection.h"
 #include "col/CollisionResponse.h"
 #include "physics/AnchoredGravityForceGenerator.h"
@@ -48,16 +50,15 @@ typedef struct NewtonsCradleData_s {
 
 	//Cube Rendering
 	Shader *cubeShader;
-	VAO *cubeVAO;
+	RenderObject **cubeModel;
 
 	//Skybox Rendering
 	Skybox *skybox;
 	Shader *skyboxShader;
 
 	//Village Rendering
-	VAO *villageVAO;
+	RenderObject* villageModel;
 	Shader *villageShader;
-	Texture *villageTexture;
 
 } NewtonsCradleData;
 
@@ -68,6 +69,7 @@ static void onCreate(GameLoop* self) {
 	data->particleCount = 20;
 	data->particles = malloc(sizeof(Particle*)*data->particleCount);
 	data->cubes = malloc(sizeof(PhysicsCollider*)*data->particleCount);
+	data->cubeModel = malloc(sizeof(RenderObject*)*data->particleCount);
 
 	data->camPos = malloc(sizeof(Vec3));
 	data->camRot = malloc(sizeof(Vec3));
@@ -89,8 +91,7 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	data->cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj");
-	data->cubeShader = manShader.newFromGroup("./data/shaders/", "passThru");
+	data->cubeShader = manShader.newFromGroup("./data/shaders/", "passThruAlt");
 
 	/** @todo: Add method to shader manager **/
 	glUseProgram(data->cubeShader->program);
@@ -101,11 +102,11 @@ static void onInitOpenGL(GameLoop* self) {
 							     "./data/texture/purplenebula_left.bmp",  "./data/texture/purplenebula_right.bmp");
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 
-
-	data->villageVAO     = objLoader.genVAOFromFile("./data/models/town.obj");
-	data->villageShader  = manShader.newFromGroup("./data/shaders/", "house");
-	data->villageTexture = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
-
+	data->villageShader  = manShader.newFromGroup("./data/shaders/", "houseAlt");
+	data->villageModel = manRenderObj.new(NULL, NULL, NULL);
+	manRenderObj.setModel(data->villageModel, objLoader.genVAOFromFile("./data/models/town.obj"));
+	manRenderObj.addTexture(data->villageModel, textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR));
+	data->villageModel->rotation->y = 0.785398163;
 }
 
 static void onInitMisc(GameLoop* self) {
@@ -119,6 +120,7 @@ static void onInitMisc(GameLoop* self) {
 	manParticle.setPositionXYZ(gravParticle, 0, 10, 0);
 	data->gfGen = manAnchoredGravityForceGenerator.new(gravParticle);
 
+	VAO* cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj");
 	for(int i = 0; i<data->particleCount; i++) {
 		data->particles[i] = manParticle.new(NULL, NULL, NULL, NULL);
 		manParticle.setPositionXYZ(data->particles[i], 2*i*data->baseCollider->bPhase.radius - (data->particleCount*2*data->baseCollider->bPhase.radius)/2.0, 0, 0);
@@ -129,6 +131,9 @@ static void onInitMisc(GameLoop* self) {
 		data->cubes[i] = manPhysCollider.new(data->particles[i]->position, NULL, NULL, data->particles[i]->velocity);
 		data->cubes[i]->bPhase = data->baseCollider->bPhase;
 		data->cubes[i]->nPhase = data->baseCollider->nPhase;
+
+		data->cubeModel[i] = manRenderObj.new(data->cubes[i]->position, data->cubes[i]->rotation, data->cubes[i]->scale);
+		manRenderObj.setModel(data->cubeModel[i], cubeVAO);
 	}
 
 	data->gfGen->gravityAnchor = data->particles[data->particleCount/2];
@@ -150,12 +155,12 @@ static void onInitMisc(GameLoop* self) {
 static void onClose(GameLoop* self) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	free(data->cubeVAO);
+	//free(data->cubeVAO);
 	free(data->cubeShader);
 
-	free(data->villageVAO);
+	//free(data->villageVAO);
 	free(data->villageShader);
-	free(data->villageTexture);
+	//free(data->villageTexture);
 
 	/**@todo: Add skybox delete function. **/
 	free(data->skybox->tex);
@@ -307,27 +312,7 @@ static void setupCamera(MatrixManager* mats, Vec3* camPos, Vec3* camRot) {
 	manMatMan.translate(mats, *camPos);
 }
 
-static void drawVAO(VAO* vao, Shader* sha, MatrixManager* mats, Vec3* pos, Vec3* rot, Vec3* scale) {
-	manMatMan.push(mats);
-		if (pos!=NULL)
-			manMatMan.translate(mats, *pos);
-
-		if (scale!=NULL)
-		manMatMan.scale(mats, *scale);
-
-		if (rot!=NULL) {
-			manMatMan.rotate(mats, rot->x, xAxis);
-			manMatMan.rotate(mats, rot->y, yAxis);
-			manMatMan.rotate(mats, rot->z, zAxis);
-		}
-
-		bindMatricies(sha, mats);
-
-		manVAO.draw(vao);
-	manMatMan.pop(mats);
-}
-
-static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3* camPos, Vec3* camRot, Skybox* skybox, Shader* skyboxShader, VAO* villageVAO, Shader* villageShader, Texture* villageTexture, VAO* cubeVAO, Shader* cubeShader, int particleCount, PhysicsCollider** cubes) {
+static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3* camPos, Vec3* camRot, Skybox* skybox, Shader* skyboxShader, Shader* villageShader, RenderObject* villageModel, Shader* cubeShader, int particleCount, RenderObject** cubes) {
 	glViewport(0, 0, manWin.getFramebufferWidth(window), manWin.getFramebufferHeight(window));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -338,17 +323,11 @@ static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3
 		renderSkybox(manMat, skyboxShader, skybox);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
-		manShader.bind(villageShader);
-			manTex.bind(villageTexture, GL_TEXTURE_2D, 0);
-				drawVAO(villageVAO, villageShader, manMat, NULL, NULL, NULL);
-			manTex.unbind(villageTexture, 0);
-		manShader.unbind();
+		manRenderer.renderModel(villageModel, villageShader, manMat);
 
 		manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
-		manShader.bind(cubeShader);
-			for(int i = 0; i <particleCount; i++)
-				drawVAO(cubeVAO, cubeShader, manMat, cubes[i]->position, cubes[i]->rotation, cubes[i]->scale);
-		manShader.unbind();
+		for(int i = 0; i <particleCount; i++)
+			manRenderer.renderModel(cubes[i], cubeShader, manMat);
 
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(manMat);
@@ -356,5 +335,5 @@ static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3
 
 static void onRender(GameLoop* self, float frameDelta) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
-	render(frameDelta, self->primaryWindow, data->manMat, data->camPos, data->camRot, data->skybox, data->skyboxShader, data->villageVAO, data->villageShader, data->villageTexture, data->cubeVAO, data->cubeShader, data->particleCount, data->cubes);
+	render(frameDelta, self->primaryWindow, data->manMat, data->camPos, data->camRot, data->skybox, data->skyboxShader, data->villageShader, data->villageModel, data->cubeShader, data->particleCount, data->cubeModel);
 }
