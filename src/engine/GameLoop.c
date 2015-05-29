@@ -100,7 +100,6 @@ static void enterGameLoop(GameLoop* gameloop) {
 			gameloop->timeAccumulator -= gameloop->targetTickTime;
 
 			doOnUpdate(gameloop);
-			manWin.update(gameloop->primaryWindow);
 
 			gameloop->tickCount++;
 			double currentTime = manWin.getMilliseconds();
@@ -110,6 +109,7 @@ static void enterGameLoop(GameLoop* gameloop) {
 				gameloop->tickCount = 0;
 			}
 		}
+		manWin.update(gameloop->primaryWindow);
 
 		manWin.swapBuffers(gameloop->primaryWindow);
 
