@@ -1,6 +1,6 @@
 #include "ParticleForceGenerator.h"
 
-ParticleForceGenerator *new(void *const self, void (*updateForce)(void *const self, Particle *const particle, scalar frameTime)) {
+static ParticleForceGenerator *new(void *const self, void (*updateForce)(void *const self, Particle *const particle, scalar frameTime)) {
 	ParticleForceGenerator *fg = malloc(sizeof(ParticleForceGenerator));
 
 	fg->self = self;
@@ -9,7 +9,7 @@ ParticleForceGenerator *new(void *const self, void (*updateForce)(void *const se
 	return fg;
 }
 
-void delete(ParticleForceGenerator *forceGenerator) {
+static void delete(ParticleForceGenerator *forceGenerator) {
 	free(forceGenerator);
 }
 
