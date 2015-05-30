@@ -10,12 +10,12 @@
 #include "util/ObjLoader.h"
 #include "util/TextureUtil.h"
 #include "util/OGLUtil.h"
-#include "engine/MatrixManager.h"
+#include "render/MatrixManager.h"
 #include "physics/Particle.h"
 #include "physics/GravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "physics/AnchoredSpringForceGenerator.h"
-#include "engine/Skybox.h"
+#include "render/Skybox.h"
 
 #include <stdio.h>
 #include <math.h>
@@ -67,7 +67,7 @@ static void onCreate(GameLoop* self) {
 	((InternalData*)self->extraData)->camPos = malloc(sizeof(Vec3));
 	((InternalData*)self->extraData)->camRot = malloc(sizeof(Vec3));
 
-	((InternalData *)self->extraData)->particle = manParticle.new();
+	((InternalData *)self->extraData)->particle = manParticle.new(NULL, NULL, NULL, NULL);
 	((InternalData *)self->extraData)->particleForceRegistry = manForceRegistry.new();
 	((InternalData *)self->extraData)->gravity = malloc(sizeof(Vec3));
 	((InternalData *)self->extraData)->anchor = malloc(sizeof(Vec3));
@@ -213,7 +213,7 @@ static void onRender(GameLoop* self, float frameDelta) {
 
 			manMatMan.push(data->manMat);
 				manShader.bind(data->shaderPassThru);
-					manMatMan.translate(data->manMat, data->particle->position);
+					manMatMan.translate(data->manMat, *data->particle->position);
 					manVAO.bind(data->vaoSphere);
 						manShader.bindUniformMat4(data->shaderPassThru, "projectionMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_PROJECTION));
 						manShader.bindUniformMat4(data->shaderPassThru, "viewMatrix", manMatMan.peekStack(data->manMat, MATRIX_MODE_VIEW));

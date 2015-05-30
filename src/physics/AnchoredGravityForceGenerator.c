@@ -2,7 +2,7 @@
 
 #include "AnchoredGravityForceGenerator.h"
 
-static const scalar GRAVITATIONAL_CONSTANT = 6.67384e-11;
+static const scalar GRAVITATIONAL_CONSTANT = 6.67384e-11; //6.67384 * 10^-11
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime);
 
@@ -21,14 +21,14 @@ static AnchoredGravityForceGenerator* new(Particle *gravityAnchor) {
 }
 
 static void delete(AnchoredGravityForceGenerator *anchoredGravityForceGenerator) {
-	//free(gravityForceGenerator);
+	//Do nothing
 }
 
 static void updateForce(void *const self, Particle *const particle, scalar frameTime) {
 	ParticleForceGenerator *pfg = (ParticleForceGenerator *) self;
 	AnchoredGravityForceGenerator *fg = (AnchoredGravityForceGenerator *) pfg->self;
 
-	Vec3 diff = manVec3.sub(&particle->position, &fg->gravityAnchor->position);
+	Vec3 diff = manVec3.sub(particle->position, fg->gravityAnchor->position);
 	scalar mag = manVec3.magnitude(&diff);
 	if (mag != 0) {
 		Vec3 dir = manVec3.create(NULL, diff.x/mag, diff.y/mag, diff.z/mag);

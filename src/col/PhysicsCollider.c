@@ -1,7 +1,7 @@
-#include "PhysicsObject.h"
+#include "col/PhysicsCollider.h"
 
-static PhysicsInfo* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
-	PhysicsInfo* result = malloc(sizeof(PhysicsInfo));
+static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
+	PhysicsCollider* result = malloc(sizeof(PhysicsCollider));
 
 	if (position != NULL)
 		result->position = position;
@@ -39,7 +39,7 @@ static PhysicsInfo* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* veloc
 	return result;
 }
 
-static void setBroadphase(PhysicsInfo* target, Vec3* offset, scalar radius) {
+static void setBroadphase(PhysicsCollider* target, Vec3* offset, scalar radius) {
 	if (offset != NULL)
 		target->bPhase.center = *offset;
 	else {
@@ -49,7 +49,7 @@ static void setBroadphase(PhysicsInfo* target, Vec3* offset, scalar radius) {
 	target->bPhase.radius = radius;
 }
 
-static void attachNarrowphaseSphere(PhysicsInfo* target, Vec3* offset, scalar radius) {
+static void attachNarrowphaseSphere(PhysicsCollider* target, Vec3* offset, scalar radius) {
 	target->nPhase.type = COL_TYPE_SPHERE;
 
 	if (target->nPhase.collider == NULL)
@@ -59,14 +59,14 @@ static void attachNarrowphaseSphere(PhysicsInfo* target, Vec3* offset, scalar ra
 	((ColliderSphere*)target->nPhase.collider)->radius = radius;
 }
 
-static void attachNarrowphaseSimpleMesh(PhysicsInfo* target, ColliderSimpleMesh* mesh) {
+static void attachNarrowphaseSimpleMesh(PhysicsCollider* target, ColliderSimpleMesh* mesh) {
 	target->nPhase.type = COL_TYPE_SIMPLE_MESH;
 	target->nPhase.collider = mesh;
 }
 
-static void attachNarrowphaseComplexMesh(PhysicsInfo* target, ColliderComplexMesh* mesh) {
+static void attachNarrowphaseComplexMesh(PhysicsCollider* target, ColliderComplexMesh* mesh) {
 	target->nPhase.type = COL_TYPE_COMPLEX_MESH;
 	target->nPhase.collider = mesh;
 }
 
-const PhysicsObjectManager manPhysObj = {new, setBroadphase, attachNarrowphaseSphere, attachNarrowphaseSimpleMesh, attachNarrowphaseComplexMesh};
+const PhysicsColliderManager manPhysCollider = {new, setBroadphase, attachNarrowphaseSphere, attachNarrowphaseSimpleMesh, attachNarrowphaseComplexMesh};

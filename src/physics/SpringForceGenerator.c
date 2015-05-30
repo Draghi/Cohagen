@@ -29,8 +29,8 @@ static void updateForce(void *const self, Particle *const particle, scalar frame
 	SpringForceGenerator *fg = (SpringForceGenerator *) pfg->self;
 
 	// Force of the spring | f = -k(magnitude(vectorOfSpring) - restLength)*normalize(vectorOfSpring)
-	Vec3 force = manVec3.createFromVec3(NULL, &(particle->position));
-	force = manVec3.sub(&force, &(fg->other->position));
+	Vec3 force = manVec3.createFromVec3(NULL, (particle->position));
+	force = manVec3.sub(&force, (fg->other->position));
 
 	scalar magnitude = manVec3.magnitude(&force);
 	magnitude = fabs(magnitude - fg->restLength);

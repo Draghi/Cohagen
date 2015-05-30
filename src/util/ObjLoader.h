@@ -1,6 +1,7 @@
 #ifndef UTIL_OBJLOADER_H
 #define UTIL_OBJLOADER_H
 
+#include "col/PhysicsCollider.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -10,7 +11,6 @@
 #include "gl/VBO.h"
 #include "lib/ogl.h"
 #include "gl/EAB.h"
-#include "col/PhysicsObject.h"
 
 /**
  *  Singleton used for loading .obj files.
@@ -61,7 +61,7 @@ typedef struct ObjLoader_s {
      * @param velocity The vec3 to be used for velocity.
      * @return
      */
-    PhysicsInfo*(* loadCollisionMesh)(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity);
+    PhysicsCollider*(* loadCollisionMesh)(const char *const filename, Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity);
 
 } ObjLoader;
 

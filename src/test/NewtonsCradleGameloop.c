@@ -1,8 +1,8 @@
 #include "Tests.h"
 
 #include "engine/GameLoop.h"
-#include "engine/Skybox.h"
-#include "engine/MatrixManager.h"
+#include "render/Skybox.h"
+#include "render/MatrixManager.h"
 #include "col/CollisionDetection.h"
 #include "col/CollisionResponse.h"
 #include "physics/GravityForceGenerator.h"
@@ -42,8 +42,8 @@ typedef struct NewtonsCradleData_s {
 	Vec3* springAnchor;
 
 	//Collision Related
-	PhysicsInfo* baseCollider;
-	PhysicsInfo** cubes;
+	PhysicsCollider* baseCollider;
+	PhysicsCollider** cubes;
 
 	//Rendering related
 	MatrixManager *manMat;
@@ -71,7 +71,7 @@ static void onCreate(GameLoop* self) {
 
 	data->particleCount = 20;
 	data->particles = malloc(sizeof(Particle*)*data->particleCount);
-	data->cubes = malloc(sizeof(PhysicsInfo*)*data->particleCount);
+	data->cubes = malloc(sizeof(PhysicsCollider*)*data->particleCount);
 
 	data->gravityVec = malloc(sizeof(Vec3));
 
@@ -129,13 +129,13 @@ static void onInitMisc(GameLoop* self) {
 	data->gfGen = manGravityForceGenerator.new(data->gravityVec);
 
 	for(int i = 0; i<data->particleCount; i++) {
-		data->particles[i] = manParticle.new();
+		data->particles[i] = manParticle.new(NULL, NULL, NULL, NULL);
 		manParticle.setPositionXYZ(data->particles[i], i*1.25 - (data->particleCount*1.25)/2.0, 0, 0);
 
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->sfGen->forceGenerator);
 		manForceRegistry.add(data->pfRegist, data->particles[i], &data->gfGen->forceGenerator);
 
-		data->cubes[i] = manPhysObj.new(&data->particles[i]->position, NULL, NULL, &data->particles[i]->velocity);
+		data->cubes[i] = manPhysCollider.new(data->particles[i]->position, NULL, NULL, data->particles[i]->velocity);
 		data->cubes[i]->bPhase = data->baseCollider->bPhase;
 		data->cubes[i]->nPhase = data->baseCollider->nPhase;
 
@@ -210,7 +210,7 @@ static void onDestroy(GameLoop* self) {
 // Game-logic //
 ////////////////
 
-static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, ParticleForceRegistry* pfRegist, int particleCount, PhysicsInfo** cubes, Particle** particles) {
+static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, ParticleForceRegistry* pfRegist, int particleCount, PhysicsCollider** cubes, Particle** particles) {
 	float rate = 20.0f;
 
 	if (manKeyboard.isDown(window, KEY_LSHIFT)) {
@@ -353,7 +353,7 @@ static void drawVAO(VAO* vao, Shader* sha, MatrixManager* mats, Vec3* pos, Vec3*
 	manMatMan.pop(mats);
 }
 
-static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3* camPos, Vec3* camRot, Skybox* skybox, Shader* skyboxShader, VAO* villageVAO, Shader* villageShader, Texture* villageTexture, VAO* cubeVAO, Shader* cubeShader, int particleCount, PhysicsInfo** cubes) {
+static void render(float frameDelta, Window* window, MatrixManager* manMat, Vec3* camPos, Vec3* camRot, Skybox* skybox, Shader* skyboxShader, VAO* villageVAO, Shader* villageShader, Texture* villageTexture, VAO* cubeVAO, Shader* cubeShader, int particleCount, PhysicsCollider** cubes) {
 	glViewport(0, 0, manWin.getFramebufferWidth(window), manWin.getFramebufferHeight(window));
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

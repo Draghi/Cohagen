@@ -87,10 +87,10 @@ typedef struct ShaderManager_s {
      * Specify the value of a uniform variable for the current program object.
      *
      * @param location			Specifies the location of the uniform variable to be modified.
-     * @param scal				Specifies the new value to be used for the specified uniform variable.
+     * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformScalar)(GLint location, const scalar scal);
+    void (*bindUniformVec2)(const Shader *const shader, const char *uniformName, const Vec2 *const vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -99,7 +99,7 @@ typedef struct ShaderManager_s {
      * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformVec2)(GLint location, const Vec2 *const vec);
+    void (*bindUniformVec3)(const Shader *const shader, const char *uniformName, const Vec3 *const vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -108,25 +108,7 @@ typedef struct ShaderManager_s {
      * @param vec				Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformVec3)(GLint location, const Vec3 *const vec);
-
-    /**
-     * Specify the value of a uniform variable for the current program object.
-     *
-     * @param location			Specifies the location of the uniform variable to be modified.
-     * @param vec				Specifies the new values to be used for the specified uniform variable.
-     * @returns void
-     */
-    void (*bindUniformVec4)(GLint location, const Vec4 *const vec);
-
-    /**
-     * Specify the value of a uniform variable for the current program object.
-     *
-     * @param location			Specifies the location of the uniform variable to be modified.
-     * @param v0				Specifies the new value to be used for the specified uniform variable.
-     * @returns void
-     */
-    void (*bindUniformInt1)(GLint location, GLint v0);
+    void (*bindUniformVec4)(const Shader *const shader, const char *uniformName, const Vec4 *const vec);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -135,7 +117,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1			Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformInt2)(GLint location, GLint v0, GLint v1);
+    void (*bindUniformInt2)(const Shader *const shader, const char *uniformName, GLint v0, GLint v1);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -144,7 +126,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1, v2		Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformInt3)(GLint location, GLint v0, GLint v1, GLint v2);
+    void (*bindUniformInt3)(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2);
 
     /**
      * Specify the value of a uniform variable for the current program object.
@@ -153,7 +135,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1, v2, v3	Specifies the new values to be used for the specified uniform variable.
      * @returns void
      */
-    void (*bindUniformInt4)(GLint location, GLint v0, GLint v1, GLint v2, GLint v3);
+    void (*bindUniformInt4)(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2, GLint v3);
 
     /**
 	 * Specify the value of a uniform variable for the current program object.
@@ -162,7 +144,7 @@ typedef struct ShaderManager_s {
      * @param v0				Specifies the new value to be used for the specified uniform variable.
      * @returns void
 	 */
-	void (*bindUniformUInt1)(GLint location, GLuint v0);
+	void (*bindUniformUInt1)(const Shader *const shader, const char *uniformName, GLuint v0);
 
 	/**
 	 * Specify the value of a uniform variable for the current program object.
@@ -171,7 +153,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1			Specifies the new values to be used for the specified uniform variable.
      * @returns void
 	 */
-	void (*bindUniformUInt2)(GLint location, GLuint v0, GLuint v1);
+	void (*bindUniformUInt2)(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1);
 
 	/**
 	 * Specify the value of a uniform variable for the current program object.
@@ -180,7 +162,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1, v2		Specifies the new values to be used for the specified uniform variable.
      * @returns void
 	 */
-	void (*bindUniformUInt3)(GLint location, GLuint v0, GLuint v1, GLuint v2);
+	void (*bindUniformUInt3)(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2);
 
 	/**
 	 * Specify the value of a uniform variable for the current program object.
@@ -189,7 +171,7 @@ typedef struct ShaderManager_s {
      * @param v0, v1, v2, v3	Specifies the new values to be used for the specified uniform variable.
      * @returns void
 	 */
-	void (*bindUniformUInt4)(GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
+	void (*bindUniformUInt4)(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
 
 } ShaderManager;
 

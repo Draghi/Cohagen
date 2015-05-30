@@ -4,22 +4,46 @@
 
 #include "Particle.h"
 
-static Particle *new();
+static Particle *new(Vec3* position, Vec3* velocity, Vec3* acceleration, Vec3* force);
 static void delete(Particle *particle);
 static void integrate(Particle *const particle, scalar frameTime);
 static void clearForceAccumulator(Particle *const particle);
 static void addForce(Particle *const particle, const Vec3 *const force);
 static bool hasFiniteMass(Particle *const particle);
 
-static Particle *new() {
-	Particle *particle = calloc(1, sizeof(Particle));
+static Particle *new(Vec3* position, Vec3* velocity, Vec3* acceleration, Vec3* force) {
+	Particle *particle = malloc(sizeof(Particle));
+
+	if (position != NULL)
+		particle->position = position;
+	else {
+		particle->position = malloc(sizeof(Vec3));
+		manVec3.create(particle->position, 0, 0, 0);
+	}
+
+	if (acceleration != NULL)
+		particle->acceleration = acceleration;
+	else {
+		particle->acceleration = malloc(sizeof(Vec3));
+		manVec3.create(particle->acceleration, 0, 0, 0);
+	}
+
+	if (velocity != NULL)
+		particle->velocity = velocity;
+	else {
+		particle->velocity = malloc(sizeof(Vec3));
+		manVec3.create(particle->velocity, 0, 0, 0);
+	}
+
+	if (force != NULL)
+		particle->forceAccum = force;
+	else {
+		particle->forceAccum = malloc(sizeof(Vec3));
+		manVec3.create(particle->forceAccum, 0, 0, 0);
+	}
 
 	particle->damping = 0.8f;
 	particle->inverseMass = 1.0f;
-	particle->position = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
-	particle->velocity = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
-	particle->acceleration = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
-	particle->forceAccum = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
 
 	return particle;
 }
@@ -33,30 +57,30 @@ static void integrate(Particle *const particle, scalar frameTime) {
 
 
 	// Update position
-	Vec3 positionModifier = manVec3.postMulScalar(&(particle->velocity), frameTime);
-	particle->position = manVec3.sum(&(particle->position), &positionModifier);
+	Vec3 positionModifier = manVec3.postMulScalar(particle->velocity, frameTime);
+	*particle->position = manVec3.sum(particle->position, &positionModifier);
 
 	// Determine acceleration from force
-	Vec3 accelerationDueToForce = manVec3.postMulScalar(&(particle->forceAccum), particle->inverseMass);
-	accelerationDueToForce = manVec3.sum(&(particle->acceleration), &accelerationDueToForce);
+	Vec3 accelerationDueToForce = manVec3.postMulScalar(particle->forceAccum, particle->inverseMass);
+	accelerationDueToForce = manVec3.sum(particle->acceleration, &accelerationDueToForce);
 
 	// Update velocity from acceleration
 	Vec3 velocityModifer = manVec3.postMulScalar(&accelerationDueToForce, frameTime);
-	particle->velocity = manVec3.sum(&(particle->velocity), &velocityModifer);
+	*particle->velocity = manVec3.sum(particle->velocity, &velocityModifer);
 
 	// Apply drag
-	particle->velocity = manVec3.postMulScalar(&(particle->velocity), pow(particle->damping, frameTime));
+	*particle->velocity = manVec3.postMulScalar(particle->velocity, pow(particle->damping, frameTime));
 
 	// Clear forces
 	manParticle.clearForceAccumulator(particle);
 }
 
 static void clearForceAccumulator(Particle *const particle) {
-	particle->forceAccum = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
+	*particle->forceAccum = manVec3.create(NULL, 0.0f, 0.0f, 0.0f);
 }
 
 static void addForce(Particle *const particle, const Vec3 *const force) {
-	particle->forceAccum = manVec3.sum(&(particle->forceAccum), force);	
+	*particle->forceAccum = manVec3.sum(particle->forceAccum, force);
 }
 
 static scalar getMass(Particle *const particle) {
@@ -82,19 +106,19 @@ static void setInverseMass(Particle *const particle, scalar inverseMass) {
 }
 
 static void setVelocity(Particle *const particle, const Vec3 *const velocity) {
-	particle->velocity = *velocity;
+	*particle->velocity = *velocity;
 }
 
 static void setVelocityXYZ(Particle *const particle, float x, float y, float z) {
-	particle->velocity.x = x;
-	particle->velocity.y = y;
-	particle->velocity.z = z;
+	particle->velocity->x = x;
+	particle->velocity->y = y;
+	particle->velocity->z = z;
 }
 
 static void setAccelerationXYZ(Particle *const particle, float x, float y, float z) {
-	particle->acceleration.x = x;
-	particle->acceleration.y = y;
-	particle->acceleration.z = z;
+	particle->acceleration->x = x;
+	particle->acceleration->y = y;
+	particle->acceleration->z = z;
 }
 
 static void setDamping(Particle *const particle, float damping) {
@@ -106,13 +130,13 @@ static float getDamping(Particle *const particle) {
 }
 
 static void setPositionXYZ(Particle *const particle, float x, float y, float z) {
-	particle->position.x = x;
-	particle->position.y = y;
-	particle->position.z = z;	
+	particle->position->x = x;
+	particle->position->y = y;
+	particle->position->z = z;
 }
 
 static Vec3 getPosition(const Particle *const particle, Vec3 *const vector) {
-	Vec3 pos = manVec3.createFromVec3(NULL, &particle->position);
+	Vec3 pos = manVec3.createFromVec3(NULL, particle->position);
 
 	if (vector != NULL) {
 		vector->x = pos.x;
