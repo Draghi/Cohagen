@@ -1,6 +1,7 @@
 #include "ObjLoader.h"
 
 #include "util/DynamicArray.h"
+#include "col/SAT.h"
 
 /*
  *  Number of characters we expect to read from any single line in an .obj file.
@@ -479,13 +480,15 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
     	bool flag = true;
     	Vec3 norm1 = manVec3.create(NULL, normals.get(&normals, i*3), normals.get(&normals, i*3+1), normals.get(&normals, i*3+2));
 
-    	for(int j = i+1; j < norms->size; j++) {
-        	Vec3 norm2 = manVec3.create(NULL, normals.get(&normals, j*3), normals.get(&normals, j*3+1), normals.get(&normals, j*3+2));
+    	for(int j = 0; j < optiNorms->size; j++) {
+        	Vec3 norm2 = manVec3.createFromVec3(NULL, (Vec3*)manDynamicArray.get(optiNorms, j));
 
         	if ((norm1.x == norm2.x) && (norm1.y == norm2.y) && (norm1.z == norm2.z)) {
         		flag = false;
         		break;
-        	} else if ((norm1.x == -norm2.x) && (norm1.y == -norm2.y) && (norm1.z == -norm2.z)) {
+        	}
+
+        	if ((norm1.x == -norm2.x) && (norm1.y == -norm2.y) && (norm1.z == -norm2.z)) {
             	flag = false;
             	break;
         	}
@@ -495,14 +498,52 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
     		manDynamicArray.append(optiNorms, &norm1);
     }
 
+    SATMesh tmpMesh;
+    tmpMesh.nCount = optiNorms->size;
+    tmpMesh.norms = (Vec3*)optiNorms->contents;
+    tmpMesh.vCount = verts->size;
+    tmpMesh.verts = (Vec3*)verts->contents;
+
+    DynamicArray* optiVerts = manDynamicArray.new(1, sizeof(Vec3));
+    for(int i = 0; i < optiNorms->size; i++) {
+    	SATProjection proj;
+    	proj.axis = manVec3.createFromVec3(NULL, (Vec3*)manDynamicArray.get(optiNorms, i));
+    	proj.max = SCALAR_MIN_VAL;
+        proj.min = SCALAR_MAX_VAL;
+
+       	sat.projectMesh(&proj, &tmpMesh);
+       	bool flagMin = true;
+       	bool flagMax = true;
+
+       	for(int j = 0; j < optiVerts->size; j++) {
+           	Vec3* vert = (Vec3*)manDynamicArray.get(optiVerts, j);
+
+           	if ((vert->x == proj.pntMin.x) && (vert->y == proj.pntMin.y) && (vert->z == proj.pntMin.z))
+           		flagMin = false;
+
+           	if ((vert->x == proj.pntMax.x) && (vert->y == proj.pntMax.y) && (vert->z == proj.pntMax.z))
+           		flagMax = false;
+       	}
+
+       	if (flagMin)
+       		manDynamicArray.append(optiVerts, &proj.pntMin);
+
+       	if (flagMax)
+       		manDynamicArray.append(optiVerts, &proj.pntMax);
+    }
+
+    printf("[Collision Mesh Loader] Reduced normals by: %d\n", norms->size-optiNorms->size);
+    printf("[Collision Mesh Loader] Reduced verts by: %d\n", verts->size-optiVerts->size);
+
+    manDynamicArray.delete(verts);
     manDynamicArray.delete(norms);
     deleteDynamicFloatArray(&vertices);
     deleteDynamicFloatArray(&normals);
 
     Vec3 center = manVec3.create(NULL, 0,0,0);
     scalar radius = 0;
-    for(int i = 0; i < verts->size; i++) {
-    	Vec3* vert = (Vec3*)manDynamicArray.get(verts, i);
+    for(int i = 0; i < optiVerts->size; i++) {
+    	Vec3* vert = (Vec3*)manDynamicArray.get(optiVerts, i);
     	Vec3 dispVec = manVec3.sub(vert, &center);
     	scalar dist = manVec3.magnitude(&dispVec);
     	if (dist>radius)
@@ -511,7 +552,7 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
 
 
     PhysicsCollider* result = manPhysCollider.new(position, rotation, scale, velocity);
-    ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(verts->size, (Vec3*)verts->contents, optiNorms->size, (Vec3*)optiNorms->contents);
+    ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(optiVerts->size, (Vec3*)optiVerts->contents, optiNorms->size, (Vec3*)optiNorms->contents);
     result->nPhase.type = COL_TYPE_SIMPLE_MESH;
     manPhysCollider.attachNarrowphaseSimpleMesh(result, colMesh);
     manPhysCollider.setBroadphase(result, &center, radius);
