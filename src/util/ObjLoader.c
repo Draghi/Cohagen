@@ -415,7 +415,7 @@ static void setupBuffers(VBO *vbo, GLuint ibo, VBO *positionVBO, VBO *normalVBO,
     deleteDynamicIntArray(&tIndices);
 }
 
-static VAO *genVAOFromFile(const char *const filename) {
+static VAO *genVAOFromFile(const char *const filename, int vertexLocation, int normalLocation, int texcoordLocation) {
     // GLuint vao, ibo;
     GLuint ibo;
     VAO *vao = manVAO.new();
@@ -435,13 +435,13 @@ static VAO *genVAOFromFile(const char *const filename) {
 
     // Let VAO know where data is in vbo
     // position
-    manVAO.attachVBO(vao, positionVBO, 0, GL_FLOAT);    
+    manVAO.attachVBO(vao, positionVBO, vertexLocation, GL_FLOAT);
 
     // normal
-    manVAO.attachVBO(vao, normalVBO, 1, GL_FLOAT);
+    manVAO.attachVBO(vao, normalVBO, normalLocation, GL_FLOAT);
 
     // texCoord
-    manVAO.attachVBO(vao, texCoordVBO, 2, GL_FLOAT);
+    manVAO.attachVBO(vao, texCoordVBO, texcoordLocation, GL_FLOAT);
 
     free(vbo);
     free(positionVBO);

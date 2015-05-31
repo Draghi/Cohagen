@@ -90,11 +90,11 @@ static void onInitOpenGL(GameLoop* self) {
 
 	InternalData* data = self->extraData;
 
-	data->vaoTown    	= objLoader.genVAOFromFile("./data/models/town.obj");
+	data->vaoTown    	= objLoader.genVAOFromFile("./data/models/town.obj", 0, 1, 2);
 	data->shaderHouse 	= manShader.newFromGroup("./data/shaders/", "house");
 	data->texTown    	= textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
-	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj");
+	data->vaoSphere 		= objLoader.genVAOFromFile("./data/models/sphere.obj", 0, 1, 2);
 	data->shaderPassThru	= manShader.newFromGroup("./data/shaders/", "passThru");
 
 	manShader.bindUniformInt(data->shaderHouse, "tex", 0);

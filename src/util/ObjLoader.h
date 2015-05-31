@@ -48,7 +48,7 @@ typedef struct ObjLoader_s {
      *                              of indices that must be drawn to draw the object.
      *  @return                     pointer to VAO, VAO generated.
      */
-    VAO *(*genVAOFromFile)(const char *const filename);
+    VAO *(*genVAOFromFile)(const char *const filename, int vertexLocation, int normalLocation, int texcoordLocation);
 
     /**
      * Loads a simple collision mesh from a obj file.

@@ -60,7 +60,7 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	vao    = objLoader.genVAOFromFile("./data/models/town.obj");
+	vao    = objLoader.genVAOFromFile("./data/models/town.obj", 0, 1, 2);
 	shader = manShader.newFromGroup("./data/shaders/", "house");
 	tex    = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 

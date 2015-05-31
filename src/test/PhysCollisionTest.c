@@ -121,7 +121,7 @@ static void onInitOpenGL(GameLoop* self) {
 							"./data/texture/purplenebula_left.bmp",  "./data/texture/purplenebula_right.bmp");
 	skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 
-	cubeVAO = objLoader.genVAOFromFile("./data/models/cube.obj");
+	cubeVAO = objLoader.genVAOFromFile("./data/models/cube.obj", 0, 1, 2);
 
 	glUseProgram(shader->program);
 	glUniform1i(glGetUniformLocation(shader->program, "tex"), 0);

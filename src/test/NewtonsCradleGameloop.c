@@ -97,7 +97,7 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_TEXTURE);
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 
-	data->cubeVAO = objLoader.genVAOFromFile("./data/models/cube.obj");
+	data->cubeVAO = objLoader.genVAOFromFile("./data/models/cube.obj", 0, 1, 2);
 	data->cubeShader = manShader.newFromGroup("./data/shaders/", "passThru");
 
 	/** @todo: Add method to shader manager **/
@@ -110,7 +110,7 @@ static void onInitOpenGL(GameLoop* self) {
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 
 
-	data->villageVAO     = objLoader.genVAOFromFile("./data/models/town.obj");
+	data->villageVAO     = objLoader.genVAOFromFile("./data/models/town.obj", 0, 1, 2);
 	data->villageShader  = manShader.newFromGroup("./data/shaders/", "house");
 	data->villageTexture = textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR);
 
