@@ -164,4 +164,12 @@ void bindUniformUInt4(const Shader *const shader, const char *uniformName, GLuin
 
 }
 
-const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4};
+static int getUniformLocation(const Shader *const shader, const char *uniformName) {
+	return glGetUniformLocation(shader->program, uniformName);
+}
+
+static int getAttribLocation(const Shader *const shader, const char *attribName) {
+	return glGetAttribLocation(shader->program, attribName);
+}
+
+const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4, getUniformLocation, getAttribLocation};
