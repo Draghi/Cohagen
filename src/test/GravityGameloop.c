@@ -73,6 +73,8 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE);
+	glEnable(GL_CLIP_DISTANCE0);
+
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 }
 
@@ -118,7 +120,7 @@ static void initVillage(GameLoop* self) {
 static void initGameObjRegist(GameLoop* self) {
 	MatrixManager* manMat = manMatMan.new();
 	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.0001, 1000);
+	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 100);
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(manMat);
 	manMatMan.setMode(manMat, MATRIX_MODE_MODEL);

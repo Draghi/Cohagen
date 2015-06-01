@@ -20,6 +20,7 @@ void main() {
 	texCoord = vTex;
 	
 	gl_Position = mvpMat * vec4(vPos, 1.0);	
+	gl_ClipDistance[0] = dot(vec4(0,0,-1,0), gl_Position);
 	
 	//Log depth calculations from:
 	//http://outerra.blogspot.com.au/2012/11/maximizing-depth-buffer-range-and.html

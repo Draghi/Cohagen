@@ -142,15 +142,36 @@ static void pushPerspective(MatrixManager* manager, scalar fov, scalar aspect, s
 		y1 = 1 / tan(0.5f * fov);
 		x0 = -1 * y1 / aspect;
 		z2 = near * oneOverDepth;
-		z3 = (-far * near) * oneOverDepth;
+		z3 = -far * near * oneOverDepth;
 		w2 = 1;
+
+
 	}
+	/* Normal projection
+	 * scalar frustumDepth = far-near;
+		scalar oneOverDepth = 1 / frustumDepth;
+
+		y1 = 1 / tan(0.5f * fov);
+		x0 = -1 * y1 / aspect;
+		z2 = (near+far) * oneOverDepth;
+		z3 = (-2*far * near) * oneOverDepth;
+		w2 = 1;
+	 */
 
 	manMat4.create(mat,
 				   x0,  0,  0,  0,
 				    0, y1,  0,  0,
 					0,  0, z2, z3,
 					0,  0, w2, 0);
+
+
+	Vec4 nv = manVec4.create(NULL, 0, 0, near, 1);
+	Vec4 fv = manVec4.create(NULL, 0, 0, far, 1);
+
+	Vec4 rn = manMat4.postMulVec4(mat, &nv);
+	Vec4 rf = manMat4.postMulVec4(mat, &fv);
+	printf("Near: %f\n", rn.z/rn.w);
+	printf("Far: %f\n", rf.z/rf.w);
 
 	manStack.push(stack, mat);
 }
