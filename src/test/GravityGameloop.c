@@ -101,8 +101,9 @@ static void initVillage(GameLoop* self) {
 
 	data->villageShader  = manShader.newFromGroup("./data/shaders/", "texLogZ");
 	manShader.bind(data->villageShader);
-		manShader.bindUniformInt(data->villageShader, "tex", 0);
-		manShader.bindUniformFloat(data->villageShader, "FCoef", 1.0/log(1000*0.01 + 1));
+	manShader.bindUniformInt(data->villageShader, "tex", 0);
+	manShader.bindUniformFloat(data->villageShader, "near", 0.001);
+		manShader.bindUniformFloat(data->villageShader, "FCoef", 2.0/log(1000/0.001));
 	manShader.unbind(data->villageShader);
 
 	data->villageModel = manRenderObj.new(NULL, NULL, NULL);
@@ -120,7 +121,7 @@ static void initVillage(GameLoop* self) {
 static void initGameObjRegist(GameLoop* self) {
 	MatrixManager* manMat = manMatMan.new();
 	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 100);
+	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.001, 1000);
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(manMat);
 	manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
