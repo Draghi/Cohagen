@@ -4,13 +4,15 @@ static const Vec3 xAxis = {1, 0, 0};
 static const Vec3 yAxis = {0, 1, 0};
 static const Vec3 zAxis = {0, 0, 1};
 
-static ColliderSimpleMesh* newSimpleMesh(int vertCount, Vec3* verts, int normCount, Vec3* norms) {
+static ColliderSimpleMesh* newSimpleMesh(int vertCount, Vec3* verts, int normCount, Vec3* norms, int* minPoints, int* maxPoints) {
 	ColliderSimpleMesh* newMesh = malloc(sizeof(ColliderSimpleMesh));
 
-	newMesh->vCount = vertCount;
-	newMesh->verts = verts;
-	newMesh->nCount = normCount;
-	newMesh->norms = norms;
+	newMesh->satMesh.vCount = vertCount;
+	newMesh->satMesh.verts = verts;
+	newMesh->satMesh.nCount = normCount;
+	newMesh->satMesh.norms = norms;
+	newMesh->minPointForAxis = minPoints;
+	newMesh->maxPointForAxis = maxPoints;
 
 	return newMesh;
 }
@@ -63,44 +65,60 @@ static void transformSphere(SATSphere* sphere, Mat4* matrix, Vec3* vScale) {
 
 static ColliderSimpleMesh copyMesh(ColliderSimpleMesh* mesh) {
 	ColliderSimpleMesh dest;
-	dest.vCount = mesh->vCount;
-	dest.verts = malloc(sizeof(Vec3)*dest.vCount);
-	for(int i = 0; i < dest.vCount; i++) {
-		dest.verts[i] = mesh->verts[i];
+	dest.satMesh.vCount = mesh->satMesh.vCount;
+	dest.satMesh.verts = malloc(sizeof(Vec3)*dest.satMesh.vCount);
+	for(int i = 0; i < dest.satMesh.vCount; i++) {
+		dest.satMesh.verts[i] = mesh->satMesh.verts[i];
 	}
 
-	dest.nCount = mesh->nCount;
-	dest.norms = malloc(sizeof(Vec3)*dest.nCount);
-	for(int i = 0; i < dest.nCount; i++) {
-		dest.norms[i] = mesh->norms[i];
+	dest.satMesh.nCount = mesh->satMesh.nCount;
+	dest.satMesh.norms = malloc(sizeof(Vec3)*dest.satMesh.nCount);
+	for(int i = 0; i < dest.satMesh.nCount; i++) {
+		dest.satMesh.norms[i] = mesh->satMesh.norms[i];
+	}
+
+	if (mesh->minPointForAxis != NULL) {
+		dest.minPointForAxis = malloc(sizeof(Vec3)*dest.satMesh.nCount);
+		for(int i = 0; i < dest.satMesh.nCount; i++) {
+			dest.minPointForAxis[i] = mesh->minPointForAxis[i];
+		}
+	}
+
+	if (mesh->maxPointForAxis != NULL) {
+		dest.maxPointForAxis = malloc(sizeof(Vec3)*dest.satMesh.nCount);
+		for(int i = 0; i < dest.satMesh.nCount; i++) {
+			dest.maxPointForAxis[i] = mesh->maxPointForAxis[i];
+		}
 	}
 
 	return dest;
 }
 
 static void transformSimpleMesh(ColliderSimpleMesh* mesh, Mat4* matrix) {
-	for(int i = 0; i < mesh->vCount; i++) {
-		Vec4 tmp = manVec4.createFromVec3(NULL, &mesh->verts[i], 1);
+	for(int i = 0; i < mesh->satMesh.vCount; i++) {
+		Vec4 tmp = manVec4.createFromVec3(NULL, &mesh->satMesh.verts[i], 1);
 		tmp = manMat4.postMulVec4(matrix, &tmp);
 
-		mesh->verts[i].x = tmp.x;
-		mesh->verts[i].y = tmp.y;
-		mesh->verts[i].z = tmp.z;
+		mesh->satMesh.verts[i].x = tmp.x;
+		mesh->satMesh.verts[i].y = tmp.y;
+		mesh->satMesh.verts[i].z = tmp.z;
 	}
 
-	for(int i = 0; i < mesh->nCount; i++) {
-		Vec4 tmp = manVec4.createFromVec3(NULL, &mesh->norms[i], 0);
+	for(int i = 0; i < mesh->satMesh.nCount; i++) {
+		Vec4 tmp = manVec4.createFromVec3(NULL, &mesh->satMesh.norms[i], 0);
 		tmp = manMat4.postMulVec4(matrix, &tmp);
 
-		mesh->norms[i].x = tmp.x;
-		mesh->norms[i].y = tmp.y;
-		mesh->norms[i].z = tmp.z;
+		mesh->satMesh.norms[i].x = tmp.x;
+		mesh->satMesh.norms[i].y = tmp.y;
+		mesh->satMesh.norms[i].z = tmp.z;
 	}
 }
 
 static void deleteSimpleMesh(ColliderSimpleMesh* mesh) {
-	free(mesh->norms);
-	free(mesh->verts);
+	free(mesh->satMesh.norms);
+	free(mesh->satMesh.verts);
+	free(mesh->minPointForAxis);
+	free(mesh->maxPointForAxis);
 }
 
 static void deleteComplexMesh(ColliderComplexMesh* mesh) {

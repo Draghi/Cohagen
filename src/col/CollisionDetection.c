@@ -23,18 +23,51 @@ static CollisionResult satOverlapCollision(SATOverlap* overlap) {
 }
 
 static bool doSimpleMeshvsSimpleMesh(SATOverlap* result, ColliderSimpleMesh* mesh1, ColliderSimpleMesh* mesh2) {
-	for(int i = 0; i < mesh1->nCount; i++) {
+	for(int i = 0; i < mesh1->satMesh.nCount; i++) {
 		SATProjection mesh1Proj, mesh2Proj;
-		mesh1Proj.axis = mesh1->norms[i];
+		mesh1Proj.axis = mesh1->satMesh.norms[i];
 		mesh1Proj.min = SCALAR_MAX_VAL;
 		mesh1Proj.max = SCALAR_MIN_VAL;
 
-		mesh2Proj.axis = mesh1->norms[i];
+		mesh2Proj.axis = mesh1->satMesh.norms[i];
 		mesh2Proj.min = SCALAR_MAX_VAL;
 		mesh2Proj.max = SCALAR_MIN_VAL;
 
-		sat.projectMesh(&mesh1Proj, mesh1);
-		sat.projectMesh(&mesh2Proj, mesh2);
+		if ((mesh1->minPointForAxis!=NULL) && (mesh1->maxPointForAxis!=NULL)) {
+			//If we know the min and max point, then we only need to project them.
+			//Significantly reduces calculation complexity.
+			sat.projectPoint(&mesh1Proj, &mesh1->satMesh.verts[mesh1->minPointForAxis[i]]);
+			sat.projectPoint(&mesh1Proj, &mesh1->satMesh.verts[mesh1->maxPointForAxis[i]]);
+		} else {
+			//If we don't have the cache data availble, then do the normal calculation.
+			sat.projectMesh(&mesh1Proj, &mesh1->satMesh);
+		}
+
+
+		if ((mesh2->minPointForAxis!=NULL) && (mesh2->maxPointForAxis!=NULL)) {
+			int j;
+			bool matchNormFlag = false;
+			for(j = 0; j < mesh2->satMesh.nCount; j++) {
+				Vec3* norm = &mesh2->satMesh.norms[j];
+				if ((mesh2Proj.axis.x == norm->x) && (mesh2Proj.axis.y == norm->y) && (mesh2Proj.axis.z == norm->z)) {
+					matchNormFlag = true;
+					break;
+				}
+			}
+
+			if (matchNormFlag) {
+				//If we know the min and max point, then we only need to project them.
+				//Significantly reduces calculation complexity.
+				sat.projectPoint(&mesh2Proj, &mesh2->satMesh.verts[mesh2->minPointForAxis[j]]);
+				sat.projectPoint(&mesh2Proj, &mesh2->satMesh.verts[mesh2->maxPointForAxis[j]]);
+			} else {
+				//If we don't have the cache data availble, then do the normal calculation.
+				sat.projectMesh(&mesh2Proj, &mesh2->satMesh);
+			}
+		} else {
+			//If we don't have the cache data availble, then do the normal calculation.
+			sat.projectMesh(&mesh2Proj, &mesh2->satMesh);
+		}
 
 		SATOverlap overlap = sat.overlap(&mesh1Proj, &mesh2Proj);
 
@@ -52,18 +85,18 @@ static bool doSimpleMeshvsSimpleMesh(SATOverlap* result, ColliderSimpleMesh* mes
 }
 
 static bool doSimpleMeshvsSphere(SATOverlap* result, ColliderSimpleMesh* mesh, ColliderSphere* sphere) {
-	for(int i = 0; i < mesh->nCount; i++) {
+	for(int i = 0; i < mesh->satMesh.nCount; i++) {
 		SATProjection sphereProj, meshProj;
-		sphereProj.axis = mesh->norms[i];
+		sphereProj.axis = mesh->satMesh.norms[i];
 		sphereProj.min = SCALAR_MAX_VAL;
 		sphereProj.max = SCALAR_MIN_VAL;
 
-		meshProj.axis = mesh->norms[i];
+		meshProj.axis = mesh->satMesh.norms[i];
 		meshProj.min = SCALAR_MAX_VAL;
 		meshProj.max = SCALAR_MIN_VAL;
 
 		sat.projectSphere(&sphereProj, sphere);
-		sat.projectMesh(&meshProj, mesh);
+		sat.projectMesh(&meshProj, &mesh->satMesh);
 
 		SATOverlap overlap = sat.overlap(&sphereProj, &meshProj);
 		if(!overlap.isTouching) {
@@ -80,12 +113,12 @@ static bool doSimpleMeshvsSphere(SATOverlap* result, ColliderSimpleMesh* mesh, C
 }
 
 static bool doSpherevsSimpleMesh(SATOverlap* result, ColliderSphere* sphere, ColliderSimpleMesh* mesh) {
-	int axisCount = mesh->vCount;
+	int axisCount = mesh->satMesh.vCount;
 	Vec3* axis = malloc(sizeof(Vec3)*axisCount);
 
 	int j = 0;
 	for(int i = 0; i < axisCount; i++) {
-		Vec3 displacement = manVec3.sub(&mesh->verts[i], &sphere->center);
+		Vec3 displacement = manVec3.sub(&mesh->satMesh.verts[i], &sphere->center);
 		//Only add actual axis we need to test.
 		//Points matching the center have been picked up by the previous loop and don't need to be re-tested.
 		if (manVec3.magnitude(&displacement) > 0) {
@@ -107,7 +140,7 @@ static bool doSpherevsSimpleMesh(SATOverlap* result, ColliderSphere* sphere, Col
 		meshProj.max = SCALAR_MIN_VAL;
 
 		sat.projectSphere(&sphereProj, sphere);
-		sat.projectMesh(&meshProj, mesh);
+		sat.projectMesh(&meshProj, &mesh->satMesh);
 
 		SATOverlap overlap = sat.overlap(&meshProj, &meshProj);
 
@@ -172,7 +205,9 @@ static CollisionResult simpleMeshVsSimpleMesh(ColliderSimpleMesh* mesh1, Collide
 			}
 		} else {
 			overlap2.push = -overlap2.push;
-			overlap = overlap2;
+			if (overlap2.push>overlap.push) {
+				overlap = overlap2;
+			}
 		}
 	}
 

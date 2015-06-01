@@ -82,7 +82,7 @@ static ColliderSimpleMesh* makeCube() {
 	norms[2] = manVec3.create(NULL,  1,  0,  0);
 
 
-	return manColMesh.newSimpleMesh(vCount, verts, nCount, norms);
+	return manColMesh.newSimpleMesh(vCount, verts, nCount, norms, NULL, NULL);
 }
 
 static void onCreate(GameLoop* self) {

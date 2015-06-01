@@ -505,6 +505,8 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
     tmpMesh.verts = (Vec3*)verts->contents;
 
     DynamicArray* optiVerts = manDynamicArray.new(1, sizeof(Vec3));
+    int* minPoints = malloc(sizeof(int)*optiNorms->size);
+    int* maxPoints = malloc(sizeof(int)*optiNorms->size);
     for(int i = 0; i < optiNorms->size; i++) {
     	SATProjection proj;
     	proj.axis = manVec3.createFromVec3(NULL, (Vec3*)manDynamicArray.get(optiNorms, i));
@@ -518,18 +520,26 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
        	for(int j = 0; j < optiVerts->size; j++) {
            	Vec3* vert = (Vec3*)manDynamicArray.get(optiVerts, j);
 
-           	if ((vert->x == proj.pntMin.x) && (vert->y == proj.pntMin.y) && (vert->z == proj.pntMin.z))
+           	if ((vert->x == proj.pntMin.x) && (vert->y == proj.pntMin.y) && (vert->z == proj.pntMin.z)) {
            		flagMin = false;
+           		minPoints[i] = j;
+           	}
 
-           	if ((vert->x == proj.pntMax.x) && (vert->y == proj.pntMax.y) && (vert->z == proj.pntMax.z))
+           	if ((vert->x == proj.pntMax.x) && (vert->y == proj.pntMax.y) && (vert->z == proj.pntMax.z)) {
            		flagMax = false;
+           		maxPoints[i] = j;
+           	}
        	}
 
-       	if (flagMin)
+       	if (flagMin) {
        		manDynamicArray.append(optiVerts, &proj.pntMin);
+       		minPoints[i] = optiVerts->size-1;
+       	}
 
-       	if (flagMax)
+       	if (flagMax) {
        		manDynamicArray.append(optiVerts, &proj.pntMax);
+       		maxPoints[i] = optiVerts->size-1;
+       	}
     }
 
     printf("[Collision Mesh Loader] Reduced normals by: %d\n", norms->size-optiNorms->size);
@@ -552,7 +562,7 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
 
 
     PhysicsCollider* result = manPhysCollider.new(position, rotation, scale, velocity);
-    ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(optiVerts->size, (Vec3*)optiVerts->contents, optiNorms->size, (Vec3*)optiNorms->contents);
+    ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(optiVerts->size, (Vec3*)optiVerts->contents, optiNorms->size, (Vec3*)optiNorms->contents, minPoints, maxPoints);
     result->nPhase.type = COL_TYPE_SIMPLE_MESH;
     manPhysCollider.attachNarrowphaseSimpleMesh(result, colMesh);
     manPhysCollider.setBroadphase(result, &center, radius);

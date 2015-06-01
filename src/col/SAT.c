@@ -6,6 +6,22 @@
 #include "math/Precision.h"
 #include "math/Vec3.h"
 
+static void satProjectPoint(SATProjection* proj, Vec3* point) {
+	scalar dp;
+
+	dp = manVec3.dot(&proj->axis, point);
+
+	if (dp<proj->min) {
+		proj->min = dp;
+		proj->pntMin = *point;
+	}
+
+	if (dp>proj->max) {
+		proj->max = dp;
+		proj->pntMax = *point;
+	}
+}
+
 static void satProjectSphere(SATProjection* proj, SATSphere* sphere) {
 	scalar dot = manVec3.dot(&proj->axis, &sphere->center);
 	proj->min = dot - fabs(sphere->radius);
@@ -131,4 +147,4 @@ static SATOverlap satOverlap(SATProjection* p1, SATProjection* p2){
 	return ol;
 }
 
-const SATManager sat = {satProjectSphere, satProjectMesh, satOverlap};
+const SATManager sat = {satProjectPoint, satProjectSphere, satProjectMesh, satOverlap};

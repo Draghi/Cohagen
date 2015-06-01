@@ -6,7 +6,11 @@
 #include "math/Vec3.h"
 
 typedef SATSphere ColliderSphere;
-typedef SATMesh ColliderSimpleMesh;
+typedef struct ColliderSimpleMesh_s {
+	SATMesh satMesh;
+	int* minPointForAxis;
+	int* maxPointForAxis;
+}ColliderSimpleMesh;
 
 typedef struct ColliderComplexMesh_s {
 	ColliderSimpleMesh* meshes;
@@ -14,7 +18,7 @@ typedef struct ColliderComplexMesh_s {
 } ColliderComplexMesh;
 
 typedef struct CollisionMeshManager_s {
-	ColliderSimpleMesh*(* newSimpleMesh)(int vertCount, Vec3* verts, int normCount, Vec3* norms);
+	ColliderSimpleMesh*(* newSimpleMesh)(int vertCount, Vec3* verts, int normCount, Vec3* norms, int* minPoints, int* maxPoints);
 	ColliderComplexMesh*(* newComplexMesh)(int subMeshCount, ColliderSimpleMesh* subMeshes);
 	ColliderSphere*(* newColliderSphere)(Vec3* centerPos, scalar radius);
 

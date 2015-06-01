@@ -101,8 +101,8 @@ static void initVillage(GameLoop* self) {
 
 	data->villageShader  = manShader.newFromGroup("./data/shaders/", "texLogZ");
 	manShader.bind(data->villageShader);
-	manShader.bindUniformInt(data->villageShader, "tex", 0);
-	manShader.bindUniformFloat(data->villageShader, "near", 0.001);
+		manShader.bindUniformInt(data->villageShader, "tex", 0);
+		manShader.bindUniformFloat(data->villageShader, "near", 0.001);
 		manShader.bindUniformFloat(data->villageShader, "FCoef", 2.0/log(1000*0.001 + 1));
 	manShader.unbind(data->villageShader);
 
