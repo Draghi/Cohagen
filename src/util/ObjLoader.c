@@ -562,9 +562,8 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
     }
 
 
-    PhysicsCollider* result = manPhysCollider.new(position, rotation, scale, velocity);
+    PhysicsCollider* result = manPhysCollider.new(position, rotation, scale, velocity, NULL);
     ColliderSimpleMesh* colMesh = manColMesh.newSimpleMesh(optiVerts->size, (Vec3*)optiVerts->contents, optiNorms->size, (Vec3*)optiNorms->contents, minPoints, maxPoints);
-    result->nPhase.type = COL_TYPE_SIMPLE_MESH;
     manPhysCollider.attachNarrowphaseSimpleMesh(result, colMesh);
     manPhysCollider.setBroadphase(result, &center, radius);
 

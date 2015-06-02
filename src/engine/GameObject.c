@@ -15,8 +15,8 @@ static GameObject* new(char* name, void* parent, bool hasPhysics, bool hasRender
 	gameObject->force = manVec3.create(NULL, 0,0,0);
 
 	if (hasPhysics) {
-		gameObject->physCollider = manPhysCollider.new(&gameObject->position, &gameObject->rotation, &gameObject->scale, &gameObject->velocity);
-		gameObject->particle = manParticle.new(&gameObject->position, &gameObject->acceleration, &gameObject->velocity, &gameObject->force);
+		gameObject->particle = manParticle.new(&gameObject->position, &gameObject->velocity, &gameObject->acceleration, &gameObject->force);
+		gameObject->physCollider = manPhysCollider.new(&gameObject->position, &gameObject->rotation, &gameObject->scale, &gameObject->velocity, &gameObject->particle->inverseMass);
 	} else {
 		gameObject->physCollider = NULL;
 		gameObject->particle = NULL;

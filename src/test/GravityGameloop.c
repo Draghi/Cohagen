@@ -7,7 +7,6 @@
 #include "render/RenderObject.h"
 #include "render/Renderer.h"
 #include "col/CollisionDetection.h"
-#include "col/CollisionResponse.h"
 #include "physics/AnchoredGravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "gl/ShaderLoader.h"

@@ -17,15 +17,6 @@ static ColliderSimpleMesh* newSimpleMesh(int vertCount, Vec3* verts, int normCou
 	return newMesh;
 }
 
-static ColliderComplexMesh* newComplexMesh(int subMeshCount, ColliderSimpleMesh* subMeshes) {
-	ColliderComplexMesh* newMesh = malloc(sizeof(ColliderComplexMesh));
-
-	newMesh->count = subMeshCount;
-	newMesh->meshes = subMeshes;
-
-	return newMesh;
-}
-
 static ColliderSphere* newColliderSphere(Vec3* centerPos, scalar radius) {
 	ColliderSphere* newMesh = malloc(sizeof(ColliderSphere));
 
@@ -38,11 +29,17 @@ static ColliderSphere* newColliderSphere(Vec3* centerPos, scalar radius) {
 static Mat4 makeTransformationMatrix(Vec3* pos, Vec3* rot, Vec3* scale) {
 	Mat4 matrix = manMat4.createLeading(NULL, 1);
 
-	matrix = manMat4.affTranslate(&matrix, pos);
-	matrix = manMat4.affScale(&matrix, scale);
-	matrix = manMat4.affRotate(&matrix, rot->x, &xAxis);
-	matrix = manMat4.affRotate(&matrix, rot->y, &yAxis);
-	matrix = manMat4.affRotate(&matrix, rot->z, &zAxis);
+	if (pos!=NULL)
+		matrix = manMat4.affTranslate(&matrix, pos);
+
+	if (scale!=NULL)
+		matrix = manMat4.affScale(&matrix, scale);
+
+	if (rot!=NULL) {
+		matrix = manMat4.affRotate(&matrix, rot->x, &xAxis);
+		matrix = manMat4.affRotate(&matrix, rot->y, &yAxis);
+		matrix = manMat4.affRotate(&matrix, rot->z, &zAxis);
+	}
 
 	return matrix;
 }
@@ -52,15 +49,17 @@ static scalar max(scalar n1, scalar n2) {
 }
 
 static void transformSphere(SATSphere* sphere, Mat4* matrix, Vec3* vScale) {
-	Vec4 tmp = manVec4.createFromVec3(NULL, &sphere->center, 1);
+	if (sphere!=NULL) {
+		Vec4 tmp = manVec4.createFromVec3(NULL, &sphere->center, 1);
 
-	tmp = manMat4.postMulVec4(matrix, &tmp);
-	sphere->center.x = tmp.x;
-	sphere->center.y = tmp.y;
-	sphere->center.z = tmp.z;
+		tmp = manMat4.postMulVec4(matrix, &tmp);
+		sphere->center.x = tmp.x;
+		sphere->center.y = tmp.y;
+		sphere->center.z = tmp.z;
 
-	scalar scale = max(max(vScale->x, vScale->y),vScale->z);
-	sphere->radius *= scale;
+		scalar scale = max(max(vScale->x, vScale->y),vScale->z);
+		sphere->radius *= scale;
+	}
 }
 
 static ColliderSimpleMesh copyMesh(ColliderSimpleMesh* mesh) {
@@ -121,16 +120,9 @@ static void deleteSimpleMesh(ColliderSimpleMesh* mesh) {
 	free(mesh->maxPointForAxis);
 }
 
-static void deleteComplexMesh(ColliderComplexMesh* mesh) {
-	for(int i = 0; i < mesh->count; i++)
-		deleteSimpleMesh(&mesh->meshes[i]);
-
-	free(mesh->meshes);
-}
-
 static void deleteColliderSphere(ColliderSphere* mesh) {
 	//Do nothing.
 }
 
 
-const CollisionMeshManager manColMesh = {newSimpleMesh, newComplexMesh, newColliderSphere, makeTransformationMatrix, transformSphere, copyMesh, transformSimpleMesh, deleteSimpleMesh, deleteComplexMesh, deleteColliderSphere};
+const CollisionMeshManager manColMesh = {newSimpleMesh, newColliderSphere, makeTransformationMatrix, transformSphere, copyMesh, transformSimpleMesh, deleteSimpleMesh, deleteColliderSphere};

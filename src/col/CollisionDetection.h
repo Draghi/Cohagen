@@ -16,8 +16,8 @@ typedef struct CollisionResult_s {
 } CollisionResult;
 
 typedef struct CollisionDetectionManager_s {
-	bool(* checkStaticBroadphase)(PhysicsCollider* obj1, PhysicsCollider* obj2);
-	CollisionResult(* checkStaticNarrowphase)(PhysicsCollider* obj1, PhysicsCollider* obj2);
+	bool(* checkStaticBroadphase)(ColliderSphere* obj1, ColliderSphere* obj2);
+	CollisionResult(* checkStaticNarrowphase)(ColliderSimpleMesh* obj1, ColliderSimpleMesh* obj2);
 } CollisionDetectionManager;
 
 extern const CollisionDetectionManager manColDetection;

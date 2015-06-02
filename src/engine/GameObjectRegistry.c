@@ -1,7 +1,7 @@
 #include "GameObjectRegistry.h"
 
+#include "col/CollisionResolver.h"
 #include "col/CollisionDetection.h"
-#include "col/CollisionResponse.h"
 
 GameObjectRegist* new(MatrixManager* matMan) {
 	GameObjectRegist* regist = malloc(sizeof(GameObjectRegist));
@@ -9,6 +9,7 @@ GameObjectRegist* new(MatrixManager* matMan) {
 	regist->matMan = matMan;
 	regist->gameObjects = manDynamicArray.new(1, sizeof(GameObject*));
 	regist->pfRegistry = manForceRegistry.new();
+	regist->collisionResolver = manColResolver.new();
 
 	return regist;
 }
@@ -16,6 +17,7 @@ GameObjectRegist* new(MatrixManager* matMan) {
 void add(GameObjectRegist* regist, GameObject* gameObject) {
 	gameObject->pfRegistry = regist->pfRegistry;
 	manDynamicArray.append(regist->gameObjects, &gameObject);
+	manColResolver.addCollider(regist->collisionResolver, gameObject->physCollider);
 }
 
 void setShader(GameObjectRegist* regist, Shader* shader) {
@@ -47,6 +49,12 @@ void update(GameObjectRegist* regist, float tickDelta) {
 			manParticle.integrate(gameObject->particle, tickDelta);
 	}
 
+	manColResolver.reset(regist->collisionResolver);
+	manColResolver.prepare(regist->collisionResolver);
+	manColResolver.check(regist->collisionResolver);
+	manColResolver.resolve(regist->collisionResolver);
+
+	/*
 	//Do Collisions
 	for(int i = 0; i < regist->gameObjects->size; i++) {
 		for(int j = i+1; j < regist->gameObjects->size; j++) {
@@ -87,8 +95,7 @@ void update(GameObjectRegist* regist, float tickDelta) {
 				}
 			}
 		}
-	}
-
+	}*/
 }
 
 void render(GameObjectRegist* regist, float frameDelta) {
