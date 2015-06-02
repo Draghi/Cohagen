@@ -32,6 +32,8 @@ static void resetTransformMesh(TransformedCollider* tCol) {
 		tCol->collider.nPhase.minPointForAxis = NULL;
 		tCol->collider.nPhase.satMesh.norms = NULL;
 		tCol->collider.nPhase.satMesh.verts = NULL;
+		tCol->collider.nPhase.satMesh.vCount = 0;
+		tCol->collider.nPhase.satMesh.nCount = 0;
 	}
 }
 
