@@ -7,28 +7,6 @@
 #include "lib/ogl.h"
 #include "util/OGLUtil.h"
 
-#define TEX_MAX_SLOTS 16
-
-static Texture* slots[TEX_MAX_SLOTS];
-
-//////////////////////
-// Hidden Functions //
-//////////////////////
-/**
- * Finds and returns the index of the first empty slot in the slots array.
- * If it cannot find an empty slot, it will return -1.
- * @return The index of the next empty texture slot, -1 if there is none.
- */
-static int32_t findOpenSlot() {
-	int i;
-	for(i=0; i<TEX_MAX_SLOTS; i++) {
-		if (slots[i] == NULL)
-			return i;
-	}
-
-	return -1;
-}
-
 ///////////////////////////////
 //   Texture Manager Class   //
 /**@todo Add texture loading */
@@ -59,21 +37,10 @@ static Texture* new() {
  * @return True if the texture is bound, false if the texture fails to bind.
  */
 static bool bind(Texture * const tex, GLenum target, const GLuint slotID) {
-	if (slotID<TEX_MAX_SLOTS) {
-		tex->slotID = slotID;
+	glActiveTexture(GL_TEXTURE0+slotID);
+	glBindTexture(target, tex->id);
 
-		if (slots[slotID]!=NULL)
-			slots[slotID]->slotID=-1;
-
-		slots[slotID] = tex;
-
-		glActiveTexture(GL_TEXTURE0+slotID);
-		glBindTexture(target, tex->id);
-
-		return true;
-	} else {
-		return false;
-	}
+	return true;
 }
 
 /**
@@ -83,17 +50,9 @@ static bool bind(Texture * const tex, GLenum target, const GLuint slotID) {
  * @return Whether the texture was unbound. Note: If another texture bound itself to the same slot, this will fail to unbind.
  */
 static bool unbind(Texture * const tex, GLenum target) {
-	if (slots[tex->slotID] == tex) {
-		glActiveTexture(GL_TEXTURE0+tex->slotID);
-		glBindTexture(target, 0);
-
-		tex->slotID = -1;
-		slots[tex->slotID] = NULL;
-		return true;
-	} else {
-		tex->slotID = -1;
-		return true;
-	}
+	glActiveTexture(GL_TEXTURE0+tex->slotID);
+	glBindTexture(target, 0);
+	return true;
 }
 /**
  * Attempts to set the given textures data
@@ -107,9 +66,7 @@ static bool unbind(Texture * const tex, GLenum target) {
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
  */
-static bool setData(Texture *const tex, const GLubyte *const data, const GLint internalFormat, const GLint format, const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
-	int32_t slot = findOpenSlot();
-
+static bool setData(Texture *const tex, const int slot, const GLubyte *const data, const GLint internalFormat, const GLint format, const uint32_t width, const uint32_t height, const GLint minFilter, const GLint magFilter) {
 	if (slot>=0) {
 		bind(tex, GL_TEXTURE_2D, slot);
 
@@ -143,7 +100,7 @@ static bool setData(Texture *const tex, const GLubyte *const data, const GLint i
  * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
  * @return A new texture object describing the created Blank OpenGL texture.
  */
-static bool genData(Texture *const tex, const uint32_t genType, const uint32_t width, const uint32_t height, const GLenum internalFormat, const GLint format, const GLint minFilter, const GLint magFilter) {
+static bool genData(Texture *const tex, const int slot, const uint32_t genType, const uint32_t width, const uint32_t height, const GLenum internalFormat, const GLint format, const GLint minFilter, const GLint magFilter) {
 	uint32_t size = width * height * manOGLUtil.getPixelSize(internalFormat);
 	GLubyte data[size];
 
@@ -161,7 +118,7 @@ static bool genData(Texture *const tex, const uint32_t genType, const uint32_t w
 		}
 	}
 
-	return setData(tex, data, internalFormat, format, width, height, minFilter, magFilter);
+	return setData(tex, slot, data, internalFormat, format, width, height, minFilter, magFilter);
 }
 
 static void imageToTarget(Texture *const tex, int slot, const GLubyte* const data, GLenum target, GLint mipmapLevel, GLint internalFormat, GLenum format, GLenum type, const uint32_t width, const uint32_t height) {
