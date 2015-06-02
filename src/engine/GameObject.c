@@ -197,7 +197,6 @@ static void addForceGenerator(GameObject* gameObject, ParticleForceGenerator* fo
 }
 
 static void delete(GameObject* gameObject) {
-
 }
 
 const GameObjectManager manGameObj = {new, update, collide, render, setPhysicsCollider, setModel, setPositionXYZ, addPositionXYZ, setPositionVec, addPositionVec, setScaleXYZ, addScaleXYZ, setScaleVec, addScaleVec, setRotationXYZ, addRotationXYZ, setRotationVec, addRotationVec, setVelocityXYZ, addVelocityXYZ, setVelocityVec, addVelocityVec, setAccelerationXYZ, addAccelerationXYZ, setAccelerationVec, addAccelerationVec, setForceXYZ, addForceXYZ, setForceVec, addForceVec, addForceGenerator, delete};

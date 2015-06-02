@@ -73,7 +73,20 @@ void render(GameObjectRegist* regist, float frameDelta) {
 }
 
 void delete(GameObjectRegist* regist) {
+	for(int i = 0; i < regist->gameObjects->size; i++) {
+		manGameObj.delete((GameObject*)manDynamicArray.get(regist->gameObjects, i));
+	}
+	manDynamicArray.delete(regist->gameObjects);
+	free(regist->gameObjects);
 
+	manMatMan.delete(regist->matMan);
+	free(regist->matMan);
+
+	manColResolver.delete(regist->collisionResolver);
+	free(regist->collisionResolver);
+
+	manForceRegistry.delete(regist->pfRegistry);
+	free(regist->pfRegistry);
 }
 
 const GameObjectRegistManager manGameObjRegist = {new, add, setShader, setMatrixManager, getGameObject, update, render, delete};

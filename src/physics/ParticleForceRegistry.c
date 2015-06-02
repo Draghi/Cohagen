@@ -9,18 +9,15 @@ static ParticleForceRegistry *new() {
 }
 
 static void delete(ParticleForceRegistry *registry) {
-	for(int i = 0; i<registry->forceRegistrations->size; i++) {
-		manParticle.delete((Particle*)manDynamicArray.get(registry->forceRegistrations, i));
-	}
 	manDynamicArray.delete(registry->forceRegistrations);
 }
 
 static void add(ParticleForceRegistry *const registry, Particle *const particle, ParticleForceGenerator *const forceGenerator) {
-	ParticleForceRegistration *registration = malloc(sizeof(ParticleForceRegistration));
-	registration->particle = particle;
-	registration->forceGenerator = forceGenerator;
+	ParticleForceRegistration registration;
+	registration.particle = particle;
+	registration.forceGenerator = forceGenerator;
 
-	manDynamicArray.append(registry->forceRegistrations, registration);
+	manDynamicArray.append(registry->forceRegistrations, &registration);
 }
 
 static void remove(ParticleForceRegistry *const registry, Particle *const particle, const ParticleForceGenerator *const forceGenerator) {
