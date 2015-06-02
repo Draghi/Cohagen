@@ -10,9 +10,9 @@ typedef struct Camera_s Camera;
 
 
 typedef struct Camera_s {
-	Vec3 pos;
-	Vec3 rot;
-	Vec3 scl;
+	Vec3 position;
+	Vec3 rotation;
+	Vec3 scale;
 
 	//projection information
 	scalar fov;
@@ -45,8 +45,11 @@ typedef struct CameraManager_s {
 	void(* setScaleVec)(Camera* camera, Vec3* scale);
 	void(* addScaleVec)(Camera* camera, Vec3* scale);
 
-	//allows swapping the parent renderObject
-	void(* swapParentRO)(Camera* camera, RenderObject* renderObject);
+	//sets the viewport
+	void(* setViewportObject)(Camera* camera, Viewport* viewportObject);
+
+	//sets the parent renderObject
+	void(* setParentRenderObject)(Camera* camera, RenderObject* renderObject);
 
 	//allows setting of projection information
 	void(* setProjectionInfo)(scalar fov, scalar zNear, scalar zFar);
