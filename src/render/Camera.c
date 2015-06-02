@@ -1,7 +1,5 @@
 /*
  * Camera.c
- *
- *  Created on: 2 Jun 2015
  */
 
 #include "Camera.h"
@@ -11,24 +9,21 @@ static Camera* new(Vec3* position, Vec3* rotation, Vec3* scale){
 	Camera* camera = malloc(sizeof(Camera));
 
 	if (position!=NULL) {
-		camera->position = position;
+		camera->position = *position;
 	} else {
-		camera->position = malloc(sizeof(Vec3));
-		manVec3.create(camera->position, 0,0,0);
+		camera->position = manVec3.create(NULL, 0,0,0);
 	}
 
 	if (rotation!=NULL) {
-		camera->rotation = rotation;
+		camera->rotation = *rotation;
 	} else {
-		camera->rotation = malloc(sizeof(Vec3));
-		manVec3.create(camera->rotation, 0,0,0);
+		camera->rotation = manVec3.create(NULL, 0,0,0);
 	}
 
 	if (scale!=NULL) {
-		camera->scale = scale;
+		camera->scale = *scale;
 	} else {
-		camera->scale = malloc(sizeof(Vec3));
-		manVec3.create(camera->scale, 1, 1, 1);
+		camera->scale = manVec3.create(NULL, 1, 1, 1);
 	}
 
 	return camera;
@@ -111,8 +106,8 @@ void setViewportObject(Camera* camera, Viewport* viewportObject){
 	if(viewportObject != NULL){
 		camera->viewportObject = viewportObject;
 	} else {
-		camera->viewportObject = malloc(sizeof(Viewport));
-		camera->viewportObject = manViewport.new(NULL, NULL, NULL, NULL);
+		camera->viewportObject = manViewport.new(0.0, 0.0, 100, 100);
+		//camera->viewportObject = manViewport.new(NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -121,33 +116,19 @@ void setParentRenderObject(Camera* camera, RenderObject* renderObject){
 	if(renderObject != NULL){
 		camera->parentObject = renderObject;
 	} else {
-		camera->parentObject = malloc(sizef(RenderObject));
 		camera->parentObject = manRenderObj.new(NULL, NULL, NULL);
+		//camera->parentObject = manRenderObj.new(NULL, NULL, NULL);
 	}
 }
 
 //allows setting of projection information
 void setProjectionInfo(Camera* camera, scalar fov, scalar zNear, scalar zFar){
-	if(fov != NULL){
-		camera->fov = fov;
-	} else {
-		camera->fov = malloc(sizeof(scalar));
-		camera->fov = 45.0;
-	}
 
-	if(zNear != NULL){
-		camera->zNear = zNear;
-	} else {
-		camera->zNear = malloc(sizeof(scalar));
-		camera->zNear = 0.0;
-	}
+	camera->fov = fov;
 
-	if(zFar != NULL){
-		camera->zFar = zFar;
-	} else {
-		camera->zFar = malloc(sizeof(scalar));
-		camera->zFar = 1.0
-	}
+	camera->zNear = zNear;
+
+	camera->zFar = zFar;
 }
 
 void delete(Camera *const camera){
