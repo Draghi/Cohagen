@@ -7,7 +7,6 @@
 #include "render/RenderObject.h"
 #include "render/Renderer.h"
 #include "col/CollisionDetection.h"
-#include "col/CollisionResponse.h"
 #include "physics/AnchoredGravityForceGenerator.h"
 #include "physics/ParticleForceRegistry.h"
 #include "gl/ShaderLoader.h"
@@ -73,6 +72,8 @@ static void onInitOpenGL(GameLoop* self) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glEnable(GL_TEXTURE);
+	glEnable(GL_CLIP_DISTANCE0);
+
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 }
 
@@ -97,13 +98,21 @@ static void initGravityGen(GameLoop* self) {
 static void initVillage(GameLoop* self) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	data->villageShader  = manShader.newFromGroup("./data/shaders/", "houseAlt");
+	data->villageShader  = manShader.newFromGroup("./data/shaders/", "texLogZ");
 	manShader.bind(data->villageShader);
 		manShader.bindUniformInt(data->villageShader, "tex", 0);
+		manShader.bindUniformFloat(data->villageShader, "near", 0.001);
+		manShader.bindUniformFloat(data->villageShader, "FCoef", 2.0/log(1000*0.001 + 1));
 	manShader.unbind(data->villageShader);
 
 	data->villageModel = manRenderObj.new(NULL, NULL, NULL);
-	manRenderObj.setModel(data->villageModel, objLoader.genVAOFromFile("./data/models/town.obj"));
+
+	int posLoc = manShader.getAttribLocation(data->villageShader, "vPos");
+	int normLoc = manShader.getAttribLocation(data->villageShader, "vNorm");
+	int texLoc = manShader.getAttribLocation(data->villageShader, "vTex");
+	VAO* vao = objLoader.genVAOFromFile("./data/models/town.obj", posLoc, normLoc, texLoc);
+	manRenderObj.setModel(data->villageModel, vao);
+
 	manRenderObj.addTexture(data->villageModel, textureUtil.createTextureFromFile("./data/texture/town.bmp", GL_LINEAR, GL_LINEAR));
 	data->villageModel->rotation->y = 0.785398163;
 }
@@ -111,7 +120,7 @@ static void initVillage(GameLoop* self) {
 static void initGameObjRegist(GameLoop* self) {
 	MatrixManager* manMat = manMatMan.new();
 	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 2000);
+	manMatMan.pushPerspective(manMat, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.001, 1000);
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(manMat);
 	manMatMan.setMode(manMat, MATRIX_MODE_MODEL);
@@ -132,7 +141,7 @@ static void initWorld(GameLoop* self) {
 
 	PhysicsCollider* baseCollider = objLoader.loadCollisionMesh("./data/models/meteor.col.obj", NULL, NULL, NULL, NULL);
 
-	VAO* cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj");
+	VAO* cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj", 0, 1, 2);
 	RenderObject* baseRender = manRenderObj.new(NULL, NULL, NULL);
 	manRenderObj.setModel(baseRender, cubeVAO);
 
@@ -201,6 +210,11 @@ static void update(float tickDelta, Window* window, Vec3* camPos, Vec3* camRot, 
 
 	if (manKeyboard.isDown(window, KEY_LSHIFT)) {
 		rate = 0.5f;
+	}
+
+
+	if (manKeyboard.isDown(window, KEY_LCONTROL)) {
+		rate *= 0.01f;
 	}
 
 	if(manMouse.isDown(window, MOUSE_BUTTON_RIGHT)) {

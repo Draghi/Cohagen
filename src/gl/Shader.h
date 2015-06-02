@@ -180,6 +180,22 @@ typedef struct ShaderManager_s {
     void (*bindUniformBlockProgram)(const Shader *const shader, const char *uniformBlockName, GLuint uniformBindingPoint);
 
     void (*bindUniformBufferSubData)(GLuint uniformBufferObject, int startOffset, int size, const void *data);
+
+	/**
+	 * Gets the uniform location of the given name from the shader.
+	 * @param shader The shader to get the location from.
+	 * @param uniformName The name of the uniform to get.
+	 * @return The location of the uniform in the shader.
+	 */
+	int(* getUniformLocation)(const Shader *const shader, const char *uniformName);
+
+	/**
+	 * Gets the attribute location of the given name from the shader.
+	 * @param shader The shader to get the location from.
+	 * @param attribName The name of the attribute to get.
+	 * @return The location of the attribute in the shader.
+	 */
+	int(* getAttribLocation)(const Shader *const shader, const char *attribName);
 } ShaderManager;
 
 extern const ShaderManager manShader;

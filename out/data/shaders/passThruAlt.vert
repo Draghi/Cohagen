@@ -11,5 +11,6 @@ out float depth;
 
 void main() {
 	gl_Position = mvpMat * vec4(position, 1.0);
+	gl_ClipDistance[0] = dot(vec4(0,0,-1,0), gl_Position);
 	depth = gl_Position.w;
 }

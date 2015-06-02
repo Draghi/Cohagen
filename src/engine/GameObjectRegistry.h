@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "util/DynamicArray.h"
 #include "render/MatrixManager.h"
+#include "col/CollisionResolver.h"
 
 typedef struct GameObjectRegist_s {
 	/** The Shader to use when rendering.**/
@@ -14,6 +15,8 @@ typedef struct GameObjectRegist_s {
 	ParticleForceRegistry* pfRegistry;
 	/** The list of objects that make up the world.**/
 	DynamicArray* gameObjects;
+
+	CollisionResolver* collisionResolver;
 } GameObjectRegist;
 
 typedef struct GameObjectRegistManager_s {

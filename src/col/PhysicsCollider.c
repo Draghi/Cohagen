@@ -1,11 +1,11 @@
 #include "col/PhysicsCollider.h"
 
-static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity) {
+static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* velocity, scalar* inverseMass) {
 	PhysicsCollider* result = malloc(sizeof(PhysicsCollider));
 
-	if (position != NULL)
+	if (position != NULL) {
 		result->position = position;
-	else {
+	} else {
 		result->position = malloc(sizeof(Vec3));
 		manVec3.create(result->position, 0, 0, 0);
 	}
@@ -31,8 +31,13 @@ static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* v
 		manVec3.create(result->velocity, 0, 0, 0);
 	}
 
-	result->nPhase.collider = NULL;
-	result->nPhase.type = COL_TYPE_NONE;
+	if (inverseMass != NULL)
+		result->inverseMass = inverseMass;
+	else {
+		result->inverseMass = malloc(sizeof(scalar));
+		result->inverseMass = 1;
+	}
+
 	result->bPhase.center = manVec3.create(NULL, 0,0,0);
 	result->bPhase.radius = 0;
 
@@ -49,24 +54,8 @@ static void setBroadphase(PhysicsCollider* target, Vec3* offset, scalar radius) 
 	target->bPhase.radius = radius;
 }
 
-static void attachNarrowphaseSphere(PhysicsCollider* target, Vec3* offset, scalar radius) {
-	target->nPhase.type = COL_TYPE_SPHERE;
-
-	if (target->nPhase.collider == NULL)
-		target->nPhase.collider = malloc(sizeof(ColliderSphere));
-
-	manVec3.createFromVec3(&((ColliderSphere*)target->nPhase.collider)->center, offset);
-	((ColliderSphere*)target->nPhase.collider)->radius = radius;
-}
-
 static void attachNarrowphaseSimpleMesh(PhysicsCollider* target, ColliderSimpleMesh* mesh) {
-	target->nPhase.type = COL_TYPE_SIMPLE_MESH;
-	target->nPhase.collider = mesh;
+	target->nPhase = *mesh;
 }
 
-static void attachNarrowphaseComplexMesh(PhysicsCollider* target, ColliderComplexMesh* mesh) {
-	target->nPhase.type = COL_TYPE_COMPLEX_MESH;
-	target->nPhase.collider = mesh;
-}
-
-const PhysicsColliderManager manPhysCollider = {new, setBroadphase, attachNarrowphaseSphere, attachNarrowphaseSimpleMesh, attachNarrowphaseComplexMesh};
+const PhysicsColliderManager manPhysCollider = {new, setBroadphase, attachNarrowphaseSimpleMesh};

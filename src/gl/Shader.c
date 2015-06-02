@@ -201,5 +201,18 @@ static void bindUniformBufferSubData(GLuint uniformBufferObject, int startOffset
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+static int getUniformLocation(const Shader *const shader, const char *uniformName) {
+	return glGetUniformLocation(shader->program, uniformName);
+}
 
-const ShaderManager manShader = {0, bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4, genUniformBuffer, bindUniformBlockProgram, bindUniformBufferSubData};
+static int getAttribLocation(const Shader *const shader, const char *attribName) {
+	return glGetAttribLocation(shader->program, attribName);
+}
+
+// const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4, genUniformBuffer, bindUniformBlockProgram, bindUniformBufferSubData, getUniformLocation, getAttribLocation};
+
+const ShaderManager manShader = {1, bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4, genUniformBuffer, bindUniformBlockProgram, bindUniformBufferSubData, getUniformLocation, getAttribLocation};
+
+
+
+

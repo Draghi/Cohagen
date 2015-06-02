@@ -38,6 +38,7 @@ typedef struct SATMesh_s {
 } SATMesh;
 
 typedef struct SATManager_s {
+	void(* projectPoint)(SATProjection* proj, Vec3* point);
 	void(* projectSphere)(SATProjection* proj, SATSphere* sphere);
 	void(* projectMesh)(SATProjection* proj, SATMesh* mesh);
 	SATOverlap(* overlap)(SATProjection* p1, SATProjection* p2);

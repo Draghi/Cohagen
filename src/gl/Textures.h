@@ -32,8 +32,8 @@ typedef struct Texture_s Texture;
 struct TextureManager_s {
 
 	/**
-	 * Creates a new Texture stuct on the heap and links it to a new OpenGL texture.
-	 * @return A new Texture stuct linked to an OpenGL texture.
+	 * Creates a new Texture struct on the heap and links it to a new OpenGL texture.
+	 * @return A new Texture struct linked to an OpenGL texture.
 	 */
 	Texture*(* new)();
 

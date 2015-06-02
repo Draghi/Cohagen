@@ -5,8 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "util/DynamicFloatArray.h"
-#include "util/DynamicIntArray.h"
+#include "util/DynamicArray.h"
 #include "gl/VAO.h"
 #include "gl/VBO.h"
 #include "lib/ogl.h"
@@ -36,8 +35,8 @@ typedef struct ObjLoader_s {
      *  @param  tIndexStride    pointer to int, after function completes, will hold the number of textureCoord indices per face.
      */
     void (*loadObj)(    const char *const filename, 
-                        DynamicFloatArray *vertices, DynamicFloatArray *normals, DynamicFloatArray *texCoords, 
-                        DynamicIntArray *vIndices, DynamicIntArray *nIndices, DynamicIntArray *tIndices,
+                        DynamicArray *vertices, DynamicArray *normals, DynamicArray *texCoords,
+						DynamicArray *vIndices, DynamicArray *nIndices, DynamicArray *tIndices,
                         int *vertexStride, int *normalStride, int *texCoordStride,
                         int *vIndexStride, int *nIndexStride, int *tIndexStride);
     /**
@@ -48,7 +47,7 @@ typedef struct ObjLoader_s {
      *                              of indices that must be drawn to draw the object.
      *  @return                     pointer to VAO, VAO generated.
      */
-    VAO *(*genVAOFromFile)(const char *const filename);
+    VAO *(*genVAOFromFile)(const char *const filename, int vertexLocation, int normalLocation, int texcoordLocation);
 
     /**
      * Loads a simple collision mesh from a obj file.

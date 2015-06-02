@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <math.h>
+#include <stdio.h>
 
 #include "math/Precision.h"
 #include "math/Vec3.h"
@@ -118,24 +119,59 @@ static void pushIdentity(MatrixManager* manager) {
 static void pushPerspective(MatrixManager* manager, scalar fov, scalar aspect, scalar near, scalar far) {
 	Stack* stack = manager->stacks[manager->matMode];
 
-
-	scalar frustumDepth = far - near;
-	scalar oneOverDepth = 1 / frustumDepth;
-
-	scalar y1 = 1 / tan(0.5f * fov);
-	scalar x0 = -1 * y1 / aspect;
-	scalar z2 = far * oneOverDepth;
-	scalar z3 = (-far * near) * oneOverDepth;
-	scalar w2 = 1;
-	scalar w3 = 0;
-
-
 	Mat4* mat = malloc(sizeof(Mat4));
+	scalar x0, y1, z2, z3, w2;
+
+	if (far == 0) {
+		//Projection matrix without far clipping plane.
+		//Shader should implement it's own depth calculation.
+		//Based on http://chaosinmotion.com/blog/?p=555
+
+		y1 = 1 / tan(0.5f * fov);
+		x0 = -1 * y1 / aspect;
+		z2 = 0;
+		z3 = near;
+		w2 = 1;
+	} else {
+		//Projection perspective with -1 to 0 depth mapping:
+		//Based on article from: http://outerra.blogspot.com.au/2012/11/maximizing-depth-buffer-range-and.html
+
+		scalar frustumDepth = far-near;
+		scalar oneOverDepth = 1 / frustumDepth;
+
+		y1 = 1 / tan(0.5f * fov);
+		x0 = -1 * y1 / aspect;
+		z2 = near * oneOverDepth;
+		z3 = -far * near * oneOverDepth;
+		w2 = 1;
+
+
+	}
+	/* Normal projection
+	 * scalar frustumDepth = far-near;
+		scalar oneOverDepth = 1 / frustumDepth;
+
+		y1 = 1 / tan(0.5f * fov);
+		x0 = -1 * y1 / aspect;
+		z2 = (near+far) * oneOverDepth;
+		z3 = (-2*far * near) * oneOverDepth;
+		w2 = 1;
+	 */
+
 	manMat4.create(mat,
 				   x0,  0,  0,  0,
 				    0, y1,  0,  0,
 					0,  0, z2, z3,
-					0,  0, w2, w3);
+					0,  0, w2, 0);
+
+
+	Vec4 nv = manVec4.create(NULL, 0, 0, near, 1);
+	Vec4 fv = manVec4.create(NULL, 0, 0, far, 1);
+
+	Vec4 rn = manMat4.postMulVec4(mat, &nv);
+	Vec4 rf = manMat4.postMulVec4(mat, &fv);
+	printf("Near: %f\n", rn.z/rn.w);
+	printf("Far: %f\n", rf.z/rf.w);
 
 	manStack.push(stack, mat);
 }
