@@ -14,7 +14,7 @@ typedef struct RenderObject_s {
 	/** Pointer to the scale to use.**/
 	Vec3* scale;
 
-	/** Poiner to the model to use **/
+	/** Pointer to the model to use **/
 	VAO* model;
 
 	/** A dynamic array of textures. **/
@@ -23,7 +23,7 @@ typedef struct RenderObject_s {
 
 typedef struct RenderObjectManager_s {
 	/**
-	 * Creates a new renderobject.
+	 * Creates a new renderObject.
 	 * @remark The value of the pointer is store (The render object will reference them)
 	 * @param position The pointer to the position to use. NULL will allocate a new position.
 	 * @param rotation The pointer to the rotation to use. NULL will allocate a new rotation.
