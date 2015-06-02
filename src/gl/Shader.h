@@ -25,6 +25,8 @@ typedef struct Shader_s {
  */
 typedef struct ShaderManager_s {
 
+    unsigned int nextBindingPoint;
+
     /**
      *  Bind the shader program.
      *
@@ -173,6 +175,11 @@ typedef struct ShaderManager_s {
 	 */
 	void (*bindUniformUInt4)(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3);
 
+    GLuint (*genUniformBuffer)(struct ShaderManager_s *const shaderManager, unsigned int size, GLuint *uniformBindingPoint);
+
+    void (*bindUniformBlockProgram)(const Shader *const shader, const char *uniformBlockName, GLuint uniformBindingPoint);
+
+    void (*bindUniformBufferSubData)(GLuint uniformBufferObject, int startOffset, int size, const void *data);
 } ShaderManager;
 
 extern const ShaderManager manShader;

@@ -64,7 +64,7 @@ static int bindUniformFloat(const Shader *const shader, const char *uniformName,
 	return uniformLocation;
 }
 
-void bindUniformVec2(const Shader *const shader, const char *uniformName, const Vec2 *const vec){
+static void bindUniformVec2(const Shader *const shader, const char *uniformName, const Vec2 *const vec){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -74,7 +74,7 @@ void bindUniformVec2(const Shader *const shader, const char *uniformName, const 
 
 }
 
-void bindUniformVec3(const Shader *const shader, const char *uniformName, const Vec3 *const vec){
+static void bindUniformVec3(const Shader *const shader, const char *uniformName, const Vec3 *const vec){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -84,7 +84,7 @@ void bindUniformVec3(const Shader *const shader, const char *uniformName, const 
 
 }
 
-void bindUniformVec4(const Shader *const shader, const char *uniformName, const Vec4 *const vec){
+static void bindUniformVec4(const Shader *const shader, const char *uniformName, const Vec4 *const vec){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -94,7 +94,7 @@ void bindUniformVec4(const Shader *const shader, const char *uniformName, const 
 
 }
 
-void bindUniformInt2(const Shader *const shader, const char *uniformName, GLint v0, GLint v1){
+static void bindUniformInt2(const Shader *const shader, const char *uniformName, GLint v0, GLint v1){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -104,7 +104,7 @@ void bindUniformInt2(const Shader *const shader, const char *uniformName, GLint 
 
 }
 
-void bindUniformInt3(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2){
+static void bindUniformInt3(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -114,7 +114,7 @@ void bindUniformInt3(const Shader *const shader, const char *uniformName, GLint 
 
 }
 
-void bindUniformInt4(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2, GLint v3){
+static void bindUniformInt4(const Shader *const shader, const char *uniformName, GLint v0, GLint v1, GLint v2, GLint v3){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -124,7 +124,7 @@ void bindUniformInt4(const Shader *const shader, const char *uniformName, GLint 
 
 }
 
-void bindUniformUInt1(const Shader *const shader, const char *uniformName, GLuint v0){
+static void bindUniformUInt1(const Shader *const shader, const char *uniformName, GLuint v0){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -144,7 +144,7 @@ void bindUniformUInt2(const Shader *const shader, const char *uniformName, GLuin
 
 }
 
-void bindUniformUInt3(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2){
+static void bindUniformUInt3(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -154,7 +154,7 @@ void bindUniformUInt3(const Shader *const shader, const char *uniformName, GLuin
 
 }
 
-void bindUniformUInt4(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3){
+static void bindUniformUInt4(const Shader *const shader, const char *uniformName, GLuint v0, GLuint v1, GLuint v2, GLuint v3){
 	// Get uniform location
 	GLuint uniformLocation = glGetUniformLocation(shader->program, uniformName);
 
@@ -164,4 +164,42 @@ void bindUniformUInt4(const Shader *const shader, const char *uniformName, GLuin
 
 }
 
-const ShaderManager manShader = {bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4};
+static GLuint genUniformBuffer(ShaderManager *const shaderManager, unsigned int size, GLuint *uniformBindingPoint) {
+	GLuint uniformBuffer;
+
+	// Generate uniform buffer object
+	glGenBuffers(1, &uniformBuffer);
+
+	// Make buffer appropriate size
+	glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffer);
+	glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STREAM_DRAW);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	// Bind uniform buffer object to binding point
+	glBindBufferRange(GL_UNIFORM_BUFFER, shaderManager->nextBindingPoint, uniformBuffer, 0, size);
+
+	// Advance next binding point
+	++(shaderManager->nextBindingPoint);
+
+	return uniformBuffer;
+}
+
+static void bindUniformBlockProgram(const Shader *const shader, const char *uniformBlockName, GLuint uniformBindingPoint) {
+	// Get uniform block location
+	GLuint uniformBlockLocation = glGetUniformBlockIndex(shader->program, uniformBlockName);
+
+	// Associate uniform block in this program with uniform buffer object @ binding point
+	glUniformBlockBinding(shader->program, uniformBlockLocation, uniformBindingPoint);
+}
+
+static void bindUniformBufferSubData(GLuint uniformBufferObject, int startOffset, int size, const void *data) {
+	// Bind data to buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, uniformBufferObject);
+	glBufferSubData(GL_UNIFORM_BUFFER, startOffset, size, data);
+
+	// Unbind buffer
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+
+const ShaderManager manShader = {0, bind, unbind, newFromGroup, bindUniformMat4, bindUniformInt, bindUniformFloat, bindUniformVec2, bindUniformVec3, bindUniformVec4, bindUniformInt2, bindUniformInt3, bindUniformInt4, bindUniformUInt1, bindUniformUInt2, bindUniformUInt3, bindUniformUInt4, genUniformBuffer, bindUniformBlockProgram, bindUniformBufferSubData};
