@@ -31,14 +31,6 @@ static void delete(DynamicArray *const array) {
     // free(array);
 }
 
-static void freeContents(DynamicArray *const array) {
-    // for (int i = 0; i < array->size; ++i) {
-    //     free(manDynamicArray.get(array, i));
-    // }
-
-    // array->size = 0;
-}
-
 static char *get(const DynamicArray *const array, unsigned int index) {
     assert(index < array->size && "Attempt to index out-of-bounds on DynamicArray.");
 
@@ -65,4 +57,4 @@ static void append(DynamicArray *array, void *const element) {
     ++(array->size);
 }
 
-const DynamicArrayManager manDynamicArray = {new, delete, freeContents, get, append};
+const DynamicArrayManager manDynamicArray = {new, delete, get, append};

@@ -14,16 +14,18 @@ typedef struct Particle_s {
 	 *	Position of particle in world space.
 	 */
 	Vec3* 	position;
-
+	bool ownPosition;
 	/**
 	 *	Linear velocity of particle in world space.
 	 */
 	Vec3* 	velocity;
+	bool ownVelocity;
 
 	/**
 	 *	Acceleration of particle.
 	 */
 	Vec3* 	acceleration;
+	bool ownAcceleration;
 
 	/**
 	 *	Damping to apply to motion.
@@ -47,6 +49,7 @@ typedef struct Particle_s {
 	 * 	Value is reset after each integration step.
 	 */
 	Vec3* 	forceAccum;
+	bool ownForce;
 } Particle;
 
 typedef struct ParticleManager_s {

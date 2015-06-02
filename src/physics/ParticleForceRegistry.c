@@ -9,7 +9,9 @@ static ParticleForceRegistry *new() {
 }
 
 static void delete(ParticleForceRegistry *registry) {
-	manDynamicArray.freeContents(registry->forceRegistrations);
+	for(int i = 0; i<registry->forceRegistrations->size; i++) {
+		manParticle.delete((Particle*)manDynamicArray.get(registry->forceRegistrations, i));
+	}
 	manDynamicArray.delete(registry->forceRegistrations);
 }
 

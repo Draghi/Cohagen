@@ -67,7 +67,7 @@ struct TextureManager_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return A new texture object describing the created Blank OpenGL texture.
 	 */
-	bool(* genData)(Texture *const, const uint32_t, const uint32_t, const uint32_t, const GLenum, const GLint, const GLint, const GLint);
+	bool(* genData)(Texture *const, const int slot, const uint32_t, const uint32_t, const uint32_t, const GLenum, const GLint, const GLint, const GLint);
 
 	/**
 	 * Attempts to set the given textures data
@@ -81,7 +81,7 @@ struct TextureManager_s {
 	 * @param magFilter The OpenGL magnification filter to use (GL_LINEAR eg.)
 	 * @return Whether or not the data was changed. Usually only false when all texture slots are occupied.
 	 */
-	bool(* setData)(Texture* const, const GLubyte*const , const GLint, const GLint, const uint32_t, const uint32_t, const GLint, const GLint);
+	bool(* setData)(Texture* const, const int slot, const GLubyte*const , const GLint, const GLint, const uint32_t, const uint32_t, const GLint, const GLint);
 
 	/**
 	 *	Specify a two-dimensional texture image and bind to specified texture.

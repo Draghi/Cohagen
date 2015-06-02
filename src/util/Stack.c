@@ -7,7 +7,7 @@
 ////////////////////////
 
 static void changeSize(Stack* stack, uint64_t size) {
-	stack->contents = realloc(stack->contents, size);
+	stack->contents = realloc(stack->contents, sizeof(void*)*size);
 	stack->arraySize = size;
 }
 

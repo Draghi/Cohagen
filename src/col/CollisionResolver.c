@@ -9,9 +9,12 @@ static CollisionResolver* new() {
 }
 
 static void delete(CollisionResolver* collisionResolver) {
-	manDynamicArray.freeContents(collisionResolver->colliders);
-	manDynamicArray.freeContents(collisionResolver->transformedColliders);
-	manDynamicArray.freeContents(collisionResolver->collisionRecords);
+	manDynamicArray.delete(collisionResolver->colliders);
+	free(collisionResolver->colliders);
+	manDynamicArray.delete(collisionResolver->transformedColliders);
+	free(collisionResolver->transformedColliders);
+	manDynamicArray.delete(collisionResolver->collisionRecords);
+	free(collisionResolver->collisionRecords);
 }
 
 static void addCollider(CollisionResolver* collisionResolver, PhysicsCollider* collider) {
@@ -32,6 +35,8 @@ static void resetTransformMesh(TransformedCollider* tCol) {
 		tCol->collider.nPhase.minPointForAxis = NULL;
 		tCol->collider.nPhase.satMesh.norms = NULL;
 		tCol->collider.nPhase.satMesh.verts = NULL;
+		tCol->collider.nPhase.satMesh.vCount = 0;
+		tCol->collider.nPhase.satMesh.nCount = 0;
 	}
 }
 
@@ -41,7 +46,7 @@ static void reset(CollisionResolver* collisionResolver) {
 			TransformedCollider* tCol = ((TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, i));
 			resetTransformMesh(tCol);
 		}
-		manDynamicArray.freeContents(collisionResolver->transformedColliders);
+		manDynamicArray.delete(collisionResolver->transformedColliders);
 		free(collisionResolver->transformedColliders);
 	}
 	collisionResolver->transformedColliders = manDynamicArray.new(collisionResolver->colliders->size, sizeof(TransformedCollider));
@@ -68,7 +73,7 @@ static void reset(CollisionResolver* collisionResolver) {
 
 static void prepare(CollisionResolver* collisionResolver) {
 	if (collisionResolver->collisionRecords!=NULL) {
-			manDynamicArray.freeContents(collisionResolver->collisionRecords);
+			manDynamicArray.delete(collisionResolver->collisionRecords);
 			free(collisionResolver->collisionRecords);
 	}
 	collisionResolver->collisionRecords = manDynamicArray.new(1, sizeof(CollisionRecord));
@@ -152,18 +157,21 @@ void momentumCollisionResponse(Vec3* out1, Vec3* out2, Vec3 vel1, Vec3 vel2, sca
 static void resolve(CollisionResolver* collisionResolver) {
 	for(int i = 0; i < collisionResolver->collisionRecords->size; i++) {
 		CollisionRecord* cr = (CollisionRecord*)manDynamicArray.get(collisionResolver->collisionRecords, i);
-		PhysicsCollider* collider1 = *(PhysicsCollider**)manDynamicArray.get(collisionResolver->colliders, cr->collider1);
-		PhysicsCollider* collider2 = *(PhysicsCollider**)manDynamicArray.get(collisionResolver->colliders, cr->collider2);
+		TransformedCollider* collider1 = (TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, cr->collider1);
+		TransformedCollider* collider2 = (TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, cr->collider2);
 
 		Vec3 translation = manVec3.preMulScalar(cr->collisionInfo.distance/2, &cr->collisionInfo.axis);
 
-		*collider1->position = manVec3.sum(collider1->position, &translation);
+		*collider1->collider.position = manVec3.sum(collider1->collider.position, &translation);
 		translation = manVec3.invert(&translation);
-		*collider2->position = manVec3.sum(collider2->position, &translation);
+		*collider2->collider.position = manVec3.sum(collider2->collider.position, &translation);
 
-		momentumCollisionResponse(collider1->velocity,  collider2->velocity,
-		                         *collider1->velocity, *collider2->velocity,
-		                          1/(*collider1->inverseMass), 1/(*collider2->inverseMass));
+		collider1->hasMeshTransformed = false;
+		collider2->hasMeshTransformed = false;
+
+		momentumCollisionResponse(collider1->collider.velocity,  collider2->collider.velocity,
+		                         *collider1->collider.velocity, *collider2->collider.velocity,
+		                          1/(*collider1->collider.inverseMass), 1/(*collider2->collider.inverseMass));
 	}
 }
 
