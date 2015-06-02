@@ -141,7 +141,10 @@ static void initWorld(GameLoop* self) {
 
 	PhysicsCollider* baseCollider = objLoader.loadCollisionMesh("./data/models/meteor.col.obj", NULL, NULL, NULL, NULL);
 
-	VAO* cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj", 0, 1, 2);
+	int posLoc = manShader.getAttribLocation(data->villageShader, "vPos");
+	int normLoc = manShader.getAttribLocation(data->villageShader, "vNorm");
+	int texLoc = manShader.getAttribLocation(data->villageShader, "vTex");
+	VAO* cubeVAO = objLoader.genVAOFromFile("./data/models/meteor.obj", posLoc, normLoc, texLoc);
 	RenderObject* baseRender = manRenderObj.new(NULL, NULL, NULL);
 	manRenderObj.setModel(baseRender, cubeVAO);
 
