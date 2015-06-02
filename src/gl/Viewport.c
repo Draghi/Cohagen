@@ -13,6 +13,41 @@ static void setHeight(Viewport *const viewport, float newHeight);
 static float getWidth(const Viewport *const viewport);
 static void setWidth(Viewport *const viewport, float newWidth);
 
+
+static Viewport* new(float x, float y, float width, float height){
+	Viewport* viewport = malloc(sizeof(Viewport));
+
+	if(x != NULL){
+		viewport->x = x;
+	} else {
+		viewport->x = malloc(sizeof(float)); //necessary?
+		viewport->x = 0;
+	}
+
+	if(y != NULL){
+		viewport->y = y;
+	} else {
+		viewport->y = malloc(sizeof(float));
+		viewport->y = 0;
+	}
+
+	if(width > 0){
+		viewport->width = width;
+	} else {
+		viewport->width = malloc(sizeof(float));
+		viewport->width = 100;
+	}
+
+	if(height > 0){
+		viewport->height = height;
+	} else {
+		viewport->height = malloc(sizeof(float));
+		viewport->height = 100;
+	}
+
+	return viewport;
+}
+
 static void makeActive(const Viewport *const viewport) {
 	glViewport(viewport->x, viewport->y, viewport->width, viewport->height);
 }
@@ -49,4 +84,8 @@ static void setWidth(Viewport *const viewport, float newWidth){
 	viewport->width = newWidth;
 }
 
-const ViewportManager manViewport = {makeActive, getX, setX, getY, setY, getHeight, setHeight, getWidth, setWidth};
+static void delete(Viewport *const viewport){
+
+}
+
+const ViewportManager manViewport = {new, makeActive, getX, setX, getY, setY, getHeight, setHeight, getWidth, setWidth, delete};
