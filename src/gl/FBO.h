@@ -6,7 +6,6 @@
 #include"gl/FBO.h"
 #include"gl/RBO.h"
 #include"util/DynamicArray.h"
-#include"util/DynamicIntArray.h"
 
 struct FBO_s {
 	GLuint id;
