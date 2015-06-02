@@ -57,15 +57,6 @@ typedef struct DynamicArrayManager_s {
     void (*delete)(DynamicArray *array);
 
     /**
-     *  Cycle through the contents of the array and frees each element, also sets size of array to 0.
-     *  This function will crash the program if two elements of the array point to the
-     *  same location in memory or any pointer points to stack memory.
-     *
-     *  @param  array   const pointer to Dynamic Array, array to free contents of.
-     */
-    void (*freeContents)(DynamicArray *const array);
-
-    /**
      *  Attempts to return element at given index in array.
      *  Method will fail if the index given exceeds the size of the array.
      *

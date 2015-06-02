@@ -17,8 +17,8 @@ static FBO* new() {
 	fbo->width = 0;
 
 	fbo->textures = manDynamicArray.new(1, sizeof(void*));
-	fbo->renderbuffers = manDynamicArray.new(1, sizeof(void*));
-	fbo->texRelations = manDynamicArray.new(1, sizeof(void*));
+	fbo->renderbuffers = manDynamicArray.new(1, sizeof(RBO));
+	fbo->texRelations = manDynamicArray.new(1, sizeof(GLenum));
 
 	return fbo;
 }
@@ -54,11 +54,9 @@ static bool attachTexture(FBO* fbo, Texture* texture, GLenum relation) {
 		glFramebufferTexture2D(GL_FRAMEBUFFER, relation, GL_TEXTURE_2D, texture->id, 0);
 		manDynamicArray.append(fbo->textures, texture);
 
-		GLenum *heapRel = malloc(sizeof(GLenum));
-		*heapRel = relation;
-		manDynamicArray.append(fbo->texRelations, heapRel);
+		manDynamicArray.append(fbo->texRelations, &relation);
 
-		glDrawBuffers(fbo->texRelations->size, *((GLenum**)(fbo->texRelations->contents)));
+		glDrawBuffers(fbo->texRelations->size, ((GLenum*)(fbo->texRelations->contents)));
 
 		unbind(fbo);
 		return true;
@@ -83,11 +81,13 @@ static void delete(FBO* fbo) {
 	unbind(fbo);
 	glDeleteFramebuffers(1, &(fbo->id));
 
-	// Use of these free statements may crash the program if you at any point
-	// put stack memory inside the array. Remove these statements if you do.
-	manDynamicArray.freeContents(fbo->textures);
-	manDynamicArray.freeContents(fbo->texRelations);
-	manDynamicArray.freeContents(fbo->renderbuffers);
+	for(int i = 0; i < fbo->textures->size; i++) {
+		manTex.delete((Texture*)manDynamicArray.get(fbo->textures, i));
+	}
+
+	for(int i = 0; i < fbo->renderbuffers->size; i++) {
+		manRBO.delete((RBO*)manDynamicArray.get(fbo->renderbuffers, i));
+	}
 
 	manDynamicArray.delete(fbo->textures);
 	manDynamicArray.delete(fbo->texRelations);

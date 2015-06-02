@@ -14,32 +14,40 @@ static bool hasFiniteMass(Particle *const particle);
 static Particle *new(Vec3* position, Vec3* velocity, Vec3* acceleration, Vec3* force) {
 	Particle *particle = malloc(sizeof(Particle));
 
-	if (position != NULL)
+	if (position != NULL) {
 		particle->position = position;
-	else {
+		particle->ownPosition = false;
+	} else {
 		particle->position = malloc(sizeof(Vec3));
 		manVec3.create(particle->position, 0, 0, 0);
+		particle->ownPosition = true;
 	}
 
-	if (acceleration != NULL)
+	if (acceleration != NULL) {
 		particle->acceleration = acceleration;
-	else {
+		particle->ownAcceleration = false;
+	} else {
 		particle->acceleration = malloc(sizeof(Vec3));
 		manVec3.create(particle->acceleration, 0, 0, 0);
+		particle->ownAcceleration = true;
 	}
 
-	if (velocity != NULL)
+	if (velocity != NULL) {
 		particle->velocity = velocity;
-	else {
+		particle->ownVelocity = false;
+	} else {
 		particle->velocity = malloc(sizeof(Vec3));
 		manVec3.create(particle->velocity, 0, 0, 0);
+		particle->ownVelocity = true;
 	}
 
-	if (force != NULL)
+	if (force != NULL) {
 		particle->forceAccum = force;
-	else {
+		particle->ownForce = false;
+	} else {
 		particle->forceAccum = malloc(sizeof(Vec3));
 		manVec3.create(particle->forceAccum, 0, 0, 0);
+		particle->ownForce = true;
 	}
 
 	particle->damping = 0.8f;
@@ -49,7 +57,17 @@ static Particle *new(Vec3* position, Vec3* velocity, Vec3* acceleration, Vec3* f
 }
 
 static void delete(Particle *particle) {
-	free(particle);
+	if ((particle->position!=NULL) && (particle->ownPosition))
+			free(particle->position);
+
+	if ((particle->velocity!=NULL) && (particle->ownVelocity))
+			free(particle->velocity);
+
+	if ((particle->acceleration!=NULL) && (particle->ownAcceleration))
+			free(particle->acceleration);
+
+	if ((particle->forceAccum!=NULL) && (particle->ownForce))
+			free(particle->forceAccum);
 }
 
 static void integrate(Particle *const particle, scalar frameTime) {

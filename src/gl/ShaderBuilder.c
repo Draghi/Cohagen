@@ -146,15 +146,12 @@ static GLuint loadShaders(const char *const path, const char *const baseFileName
     DynamicArray *shaderList = manDynamicArray.new(8, sizeof(GLuint *));
 
     for (int i = 0; i < numTypesShaders; ++i) {
-        GLuint *temp = (GLuint *) calloc(1, sizeof(GLuint *));
-        *temp = shaders[i];
-        manDynamicArray.append(shaderList, temp);
+        manDynamicArray.append(shaderList, &shaders[i]);
     }
 
     program = linkProgram(numTypesShaders, shaderList);
 
     // Clean up shaderList
-    manDynamicArray.freeContents(shaderList);
     manDynamicArray.delete(shaderList);
 
     return program;
