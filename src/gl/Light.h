@@ -5,12 +5,18 @@
 
 #include "math/Vec4.h"
 
+/**
+ *	Represents a single OpenGL light.
+ */
 typedef struct Light_s {
 	bool 	isOn;
 	Vec3 	intensity;
 	Vec4 	pos;
 } Light;
 
+/**
+ *	Class used to manage lights.
+ */
 typedef struct LightManager_s {
 	/**
 	 *	Constructs a light that's off,

@@ -8,7 +8,12 @@
 
 typedef struct Camera_s Camera;
 
-
+/**
+ *	Camera class.
+ *
+ * 	Stores the properties of the Camera used to render
+ * 	the game world.
+ */
 typedef struct Camera_s {
 
 	/// position of the camera struct
@@ -37,6 +42,9 @@ typedef struct Camera_s {
 
 } Camera;
 
+/**
+ *	Class used to manager Camera objects.
+ */
 typedef struct CameraManager_s {
 
 	/**

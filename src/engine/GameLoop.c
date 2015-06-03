@@ -96,6 +96,7 @@ static void enterGameLoop(GameLoop* gameloop) {
 
 		gameloop->timeAccumulator += gameloop->targetFrameTime;
 
+		manWin.update(gameloop->primaryWindow);
 		while(gameloop->timeAccumulator >= gameloop->targetTickTime) {
 			gameloop->timeAccumulator -= gameloop->targetTickTime;
 
@@ -109,7 +110,6 @@ static void enterGameLoop(GameLoop* gameloop) {
 				gameloop->tickCount = 0;
 			}
 		}
-		manWin.update(gameloop->primaryWindow);
 
 		manWin.swapBuffers(gameloop->primaryWindow);
 

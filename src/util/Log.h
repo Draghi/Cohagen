@@ -7,6 +7,10 @@
 
 #define GL_LOG_FILE "./gl.log"
 
+/**
+ *  Log used to track issues with
+ *  shader compilation and linking.
+ */
 typedef struct Log_s {
     /**
      *  Initialize the log. Required to call this function

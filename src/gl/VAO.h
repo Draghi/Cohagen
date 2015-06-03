@@ -9,7 +9,9 @@
 #include "gl/EAB.h"
 #include "util/DynamicArray.h"
 
-
+/**
+ *	Represents an internal OpenGL vertex array object.
+ */
 struct VAO_s {
 	GLuint id;
 	uint32_t vertCount;
@@ -17,6 +19,9 @@ struct VAO_s {
 
 typedef struct VAO_s VAO;
 
+/**
+ *	Class used to manage vertex array objects.
+ */ 
 struct VAOManager_s {
 	/**
 	 * Creates a new VAO.

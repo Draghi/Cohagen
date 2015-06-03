@@ -5,10 +5,19 @@
 
 #include "Precision.h"
 
+/**
+ *  Size 2x1 Vector class.
+ *
+ 
+ 
+ */
 typedef struct Vec2_s {
     scalar x, y;
 } Vec2;
 
+/**
+ *  Class used to manage 2x1 Vectors.
+ */
 typedef struct Vec2Manager_s {
     /**
      *  Create a Vec2 from the given x and y components. The Vec2 is returned as the

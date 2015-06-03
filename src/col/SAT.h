@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include "math/Vec3.h"
 
+/**
+ *	Seperating Axis Theorum projection.
+ */	
 typedef struct SATProjection_s {
 	Vec3 axis;
 	scalar min;
@@ -37,6 +40,9 @@ typedef struct SATMesh_s {
 	int nCount;
 } SATMesh;
 
+/**
+ *	Manager class used to manage Seperating Axis Theorum collisions.
+ */
 typedef struct SATManager_s {
 	void(* projectPoint)(SATProjection* proj, Vec3* point);
 	void(* projectSphere)(SATProjection* proj, SATSphere* sphere);

@@ -9,11 +9,19 @@
 #include "util/FileUtil.h"
 #include "util/Bitmap.h"
 
+/**
+ * 	Skybox class.
+ * 
+ *	Holds all the data required to render a skybox.
+ */
 typedef struct Skybox_s {
 	VAO *vao;
 	Texture *tex;
 } Skybox;
 
+/**
+ *	Class used to manage skyboxes.
+ */
 typedef struct SkyboxManager_s {
 	/**
 	 *	Creates a Skybox object that uses the given images and returns

@@ -5,10 +5,18 @@
 
 #include "Precision.h"
 
+/**
+ *  3x1 Vector class.
+ *
+ *  Precision set in "Precision.h"
+ */
 typedef struct Vec3_s {
     scalar x, y, z;
 } Vec3;
 
+/**
+ * Class used to manage 3x1 Vectors.
+ */
 typedef struct Vec3Manager_s {
     /**
      *  Create a Vec3 from the given x, y and z components. The Vec3 is returned as the

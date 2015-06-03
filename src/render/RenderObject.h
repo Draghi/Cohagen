@@ -6,6 +6,9 @@
 #include "gl/Textures.h"
 #include "util/DynamicArray.h"
 
+/**
+ *	An object that can be rendered.
+ */
 typedef struct RenderObject_s {
 	/** Pointer to the position to use. **/
 	Vec3* position;
@@ -21,6 +24,9 @@ typedef struct RenderObject_s {
 	DynamicArray* textures;
 } RenderObject;
 
+/**
+ *	Manager used to manage renderable objects.
+ */
 typedef struct RenderObjectManager_s {
 	/**
 	 * Creates a new renderObject.

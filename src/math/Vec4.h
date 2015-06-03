@@ -4,10 +4,18 @@
 #include "Precision.h"
 #include "Vec3.h"
 
+/**
+ *  4x1 Vector class.
+ * 
+ *  Precision set in "Precision.h"
+ */
 typedef struct Vec4_s {
     scalar x, y, z, w;
 } Vec4;
 
+/**
+ *  Class used to manage 4x1 Vectors.
+ */ 
 typedef struct Vec4Manager_s {
     /**
      *  Create a Vec4 from the given x, y, z and w components. The Vec4 is

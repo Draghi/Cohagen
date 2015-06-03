@@ -3,10 +3,18 @@
 
 #include "math/Vec4.h"
 
+/**
+ *  4x4 Matrix class.
+ *
+ *  Precision set in "Precision.h"
+ */
 typedef struct Mat4_s {
     Vec4 data[4];
 } Mat4;
 
+/**
+ *  Class used to manage 4x4 matrices.
+ */
 typedef struct Mat4Manager_s {
     /**
      *  Returns a Mat4 object constructed from the given elements.

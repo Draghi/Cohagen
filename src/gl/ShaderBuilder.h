@@ -3,6 +3,9 @@
 
 #include "ShaderLoader.h"
 
+/**
+ *  Class used to build OpenGL shader programs from file.
+ */
 typedef struct ShaderBuilder_s {
     /**
      *  Searches for vertex, fragment and geometry shaders with the baseFileName

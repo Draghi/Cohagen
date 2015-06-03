@@ -35,7 +35,7 @@ static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* v
 		result->inverseMass = inverseMass;
 	else {
 		result->inverseMass = malloc(sizeof(scalar));
-		result->inverseMass = 1;
+		*result->inverseMass = 1;
 	}
 
 	result->bPhase.center = manVec3.create(NULL, 0,0,0);

@@ -164,13 +164,6 @@ static void pushPerspective(MatrixManager* manager, scalar fov, scalar aspect, s
 					0,  0, z2, z3,
 					0,  0, w2, 0);
 
-
-	Vec4 nv = manVec4.create(NULL, 0, 0, near, 1);
-	Vec4 fv = manVec4.create(NULL, 0, 0, far, 1);
-
-	Vec4 rn = manMat4.postMulVec4(mat, &nv);
-	Vec4 rf = manMat4.postMulVec4(mat, &fv);
-
 	manStack.push(stack, mat);
 }
 

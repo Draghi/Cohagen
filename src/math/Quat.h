@@ -7,10 +7,18 @@
 #include "Vec3.h"
 #include "Mat4.h"
 
+/**
+ *  Quaternion class.
+ *
+ *  Precision set in "Precision.h"
+ */
 typedef struct Quat_s {
     scalar x, y, z, w;
 } Quat;
 
+/**
+ *  Class used to manage Quaternions.
+ */
 typedef struct QuatManager_s {
     /**
      *  Create a Quaternion from the given x, y and z components. The Quaternion is

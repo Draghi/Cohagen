@@ -4,10 +4,18 @@
 #include "math/Precision.h"
 #include "math/Vec3.h"
 
+/**
+ *  3x3 Matrix class.
+ *
+ *  Precision set in "Precision.h"
+ */
 typedef struct Mat3_s {
     Vec3 data[3];
 } Mat3;
 
+/**
+ *  Class used to manage 3x3 matrices.
+ */
 typedef struct Mat3Manager_s {
 	/**
      *  Returns a Mat3 object constructed from the given elements.
