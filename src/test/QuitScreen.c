@@ -158,7 +158,7 @@ static void initWorld(GameLoop* self) {
 
 	const int particleCount = 20;
 	for(int i = 0; i<particleCount; i++) {
-		GameObject* gameObject = manGameObj.new("Asteroid", NULL, true, true, NULL, NULL, NULL, NULL);
+		GameObject* gameObject = manGameObj.new("Asteroid", NULL, true, true, NULL, NULL, NULL, NULL, self->primaryWindow);
 
 		manGameObj.setPositionXYZ(gameObject, 2*i*baseCollider->bPhase.radius - (particleCount*2*baseCollider->bPhase.radius)/2.0, 0, 0);
 		manParticle.setMass(gameObject->particle, 10618583169100);

@@ -10,6 +10,7 @@
 #include "physics/Particle.h"
 #include "physics/ParticleForceRegistry.h"
 #include "physics/ParticleForceGenerator.h"
+#include "glfw/Display.h"
 
 typedef struct GameObject_s GameObject;
 
@@ -57,10 +58,12 @@ typedef struct GameObject_s {
 	//Game system info
 	/** The pfRegistry to register force generators with. **/
 	ParticleForceRegistry* pfRegistry;
+
+	Window* window;
 } GameObject;
 
 typedef struct GameObjectManager_s {
-	GameObject*(* new)(char* name, void* parent, bool hasPhysics, bool hasRender, FuncOnUpdate* onUpdateCallback, FuncOnCollide* onCollideCallback, FuncOnRender* onRenderCallback, ParticleForceRegistry* pfRegistry);
+	GameObject*(* new)(char* name, void* parent, bool hasPhysics, bool hasRender, FuncOnUpdate* onUpdateCallback, FuncOnCollide* onCollideCallback, FuncOnRender* onRenderCallback, ParticleForceRegistry* pfRegistry, Window* window);
 
 	//Functions
 	void(* update)(GameObject* gameObject, float tickDelta);

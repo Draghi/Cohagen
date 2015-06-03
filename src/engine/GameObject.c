@@ -2,7 +2,7 @@
 
 #include "render/Renderer.h"
 
-static GameObject* new(char* name, void* parent, bool hasPhysics, bool hasRender, FuncOnUpdate* onUpdateCallback, FuncOnCollide* onCollideCallback, FuncOnRender* onRenderCallback, ParticleForceRegistry* pfRegistry) {
+static GameObject* new(char* name, void* parent, bool hasPhysics, bool hasRender, FuncOnUpdate* onUpdateCallback, FuncOnCollide* onCollideCallback, FuncOnRender* onRenderCallback, ParticleForceRegistry* pfRegistry,  Window* window) {
 	GameObject* gameObject = malloc(sizeof(GameObject));
 	gameObject->name = name;
 	gameObject->parent = parent;
@@ -33,6 +33,7 @@ static GameObject* new(char* name, void* parent, bool hasPhysics, bool hasRender
 	gameObject->onRenderCallback = onRenderCallback;
 
 	gameObject->pfRegistry = pfRegistry;
+	gameObject->window = window;
 
 	return gameObject;
 }

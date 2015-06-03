@@ -1,6 +1,6 @@
 #include "lib/ogl.h"
 #include "lib/glfw3.h"
-#include "test/Tests.h"
+#include "game/GameMain.h"
 
 #include <stdlib.h>
 #include <time.h>
@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
     //runNewtonsCradle();
     //runPhysicsGLFWTest();
     // runGravity();
-    runQuitScreen();
+    runGame();
 
     glfwTerminate();
 

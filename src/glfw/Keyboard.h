@@ -138,6 +138,8 @@ extern const int KEY_NUM_SUB;
 extern const int KEY_NUM_ADD;
 extern const int KEY_NUM_ENTER;
 extern const int KEY_NUM_EQUAL;
+extern const int KEY_ESCAPE;
+
 
 extern const int KEY_LSHIFT;
 extern const int KEY_LCONTROL;
