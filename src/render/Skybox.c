@@ -61,12 +61,12 @@ static Texture *genSkyboxTexture(	const char *const front, const char *back,
 		bmpRight = manBitmap.new(fRight.data, fRight.size);
 
 		if (manTex.bind(tex, GL_TEXTURE_CUBE_MAP, 0) != false) {
-			manTex.imageToTarget(tex, 0, (uint8_t *)bmpRight->pixels, GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpRight->width, bmpRight->height);
-			manTex.imageToTarget(tex, 0, (uint8_t *)bmpLeft->pixels, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpLeft->width, bmpLeft->height);
-			manTex.imageToTarget(tex, 0, (uint8_t *)bmpTop->pixels, GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpTop->width, bmpTop->height);
-			manTex.imageToTarget(tex, 0, (uint8_t *)bmpBottom->pixels, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpBottom->width, bmpBottom->height);
-			manTex.imageToTarget(tex, 0, (uint8_t *)bmpBack->pixels, GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpBack->width, bmpBack->height);
+			manTex.imageToTarget(tex, 0, (uint8_t *)bmpRight->pixels, GL_TEXTURE_CUBE_MAP_NEGATIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpRight->width, bmpRight->height);
+			manTex.imageToTarget(tex, 0, (uint8_t *)bmpLeft->pixels,  GL_TEXTURE_CUBE_MAP_POSITIVE_X, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpLeft->width, bmpLeft->height);
+			manTex.imageToTarget(tex, 0, (uint8_t *)bmpTop->pixels,   GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpTop->width, bmpTop->height);
+			manTex.imageToTarget(tex, 0, (uint8_t *)bmpBottom->pixels,GL_TEXTURE_CUBE_MAP_POSITIVE_Y, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpBottom->width, bmpBottom->height);
 			manTex.imageToTarget(tex, 0, (uint8_t *)bmpFront->pixels, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpFront->width, bmpFront->height);
+			manTex.imageToTarget(tex, 0, (uint8_t *)bmpBack->pixels,  GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE, bmpBack->width, bmpBack->height);
 
 			manTex.formatTexture(tex, 0, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			manTex.formatTexture(tex, 0, GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

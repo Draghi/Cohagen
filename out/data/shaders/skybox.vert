@@ -17,7 +17,7 @@ void main() {
 
     eyeDir.x = eyeDir.x;
     eyeDir.y = -eyeDir.y;
-    eyeDir.z = -eyeDir.z;
+    eyeDir.z = eyeDir.z;
 
     gl_Position = position;
 }
