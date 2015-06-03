@@ -5,6 +5,9 @@
 
 #define MAX_NUMBER_OF_LIGHTS 8
 
+/**
+ *	Internal OpenGL representation of a light.
+ */
 typedef struct PerLight_s {
 	Vec4 			lightWorldPos;
 	Vec4 			lightIntensity;
@@ -12,6 +15,11 @@ typedef struct PerLight_s {
 	float 			padding[3];
 } PerLight;
 
+/**
+ *	Internal OpenGL representation of a light block.
+ *
+ * 	This includes all the lights in the scene plus global lighting data.
+ */
 typedef struct LightBlock_s {
 	Vec4 		ambientIntensity;
 	float 		lightAttenuation;
@@ -21,6 +29,11 @@ typedef struct LightBlock_s {
 	PerLight 	lights[MAX_NUMBER_OF_LIGHTS];
 } LightBlock;
 
+/**
+ *	Lighting Manager, all the information necessary to light the scene.
+ *
+ * 	A list of all lights plus global lighting data.
+ */
 typedef struct LightingManager_s {
 	Light 	*lights[MAX_NUMBER_OF_LIGHTS];
 	Vec4 	ambientIntensity;
@@ -30,6 +43,9 @@ typedef struct LightingManager_s {
 	LightBlock 	lightData;
 } LightingManager;
 
+/**
+ * 	Class used to manage the lighting manager.
+ */
 typedef struct LightingManagerManager_s {
 	/**
 	 * 	Create a lighting manager with the following default values:

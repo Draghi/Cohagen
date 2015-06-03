@@ -7,6 +7,10 @@
 #include"gl/RBO.h"
 #include"util/DynamicArray.h"
 
+/**
+ *	Framebuffer object, represents an OpenGL
+ * 	Framebuffer object.
+ */
 struct FBO_s {
 	GLuint id;
 	GLuint width;
@@ -20,6 +24,9 @@ struct FBO_s {
 
 typedef struct FBO_s FBO;
 
+/**
+ *	Class used to manage Framebuffer objects.
+ */
 struct FBOManager_s {
 	FBO*(* new)();
 	bool(* bind)(FBO*);

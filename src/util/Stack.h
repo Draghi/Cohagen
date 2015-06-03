@@ -3,6 +3,9 @@
 
 #include <stdint.h>
 
+/**
+ *	Stack data structure.
+ */
 struct Stack_s {
 	void** contents;
 	uint64_t arraySize;
@@ -11,6 +14,9 @@ struct Stack_s {
 
 typedef struct Stack_s Stack;
 
+/**
+ *	Manager used to manage Stack data structures.
+ */	
 struct StackManager_s {
 	Stack*(* new)();
 

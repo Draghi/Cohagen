@@ -3,6 +3,12 @@
 
 #include "Particle.h"
 
+/**
+ *	Particle Force Generator.
+ *
+ * 	All Particle Force Generators must 'inherit' this class. Provides
+ * 	a function which is used to apply a force to a particle every tick.
+ */
 typedef struct ParticleForceGenerator_s {
 	/**
 	 *	Pointer to the start of the structure using this force generator.
@@ -20,6 +26,9 @@ typedef struct ParticleForceGenerator_s {
 	void (*updateForce)(void *const self, Particle *const particle, scalar frameTime);
 } ParticleForceGenerator;
 
+/**
+ *	Class used to manage Particle Force Generators.
+ */
 typedef struct ParticleForceGeneratorManager_s {
 	/** 
 	 *	Allocate memory for a particle forceGenerator using

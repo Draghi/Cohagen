@@ -4,10 +4,16 @@
 #include "Display.h"
 #include <stdbool.h>
 
+/**
+ *	Keyboard input wrapper.
+ */
 typedef struct Keyboard_s {
 	void* emptyStruct;
 } Keyboard;
 
+/**
+ *	Class used to manage keyboard input.
+ */
 typedef struct KeyboardManager_s {
 	/**Constructor to build a keyboard**/
 	Keyboard*(* new)();

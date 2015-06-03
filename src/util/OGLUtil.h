@@ -5,6 +5,9 @@
 
 #include "lib/ogl.h"
 
+/**
+ *	Used to manage some aspects of OpenGL behaviour.
+ */
 struct OGLUtilManager_s {
 	/**
 	 * Helper function to enable backface culling
