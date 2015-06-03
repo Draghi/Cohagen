@@ -52,9 +52,9 @@ static void bind(Camera* camera, MatrixManager* manMat){
 }
 
 static void unbind(Camera* camera, MatrixManager* manMat){
-	manMatMan.setMode(MATRIX_MODE_PROJECTION);
+	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
 	manMatMan.pop(manMat);
-	manMatMan.setMode(MATRIX_MODE_VIEW);
+	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pop(manMat);
 }
 
