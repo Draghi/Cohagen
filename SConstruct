@@ -21,7 +21,7 @@ env.Append(CFLAGS = ['-Wall', '-pedantic', '-std=c11', '-ggdb'])
 
 #Set scons to output object files to the "build" directory.
 env.VariantDir('./build', './src', duplicate=0)
-sources = [Glob("./build/*.c"), Glob("./build/*/*.c")]
+sources = [Glob("./build/*.c"), Glob("./build/*/*.c"), Glob("./build/*/*/*.c")]
 
 object_list = env.Object(source = sources)
 
