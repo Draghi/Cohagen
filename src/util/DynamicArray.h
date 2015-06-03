@@ -37,6 +37,9 @@ typedef struct DynamicArray_s {
     char *contents;
 } DynamicArray;
 
+/**
+ *  Class used to manage dynamic array objects.
+ */
 typedef struct DynamicArrayManager_s {
     /**
      *  Creates a new dynamic array with the DynamicArray provided and

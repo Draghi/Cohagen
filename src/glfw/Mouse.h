@@ -18,6 +18,9 @@ extern const int MOUSE_BUTTON_LEFT;
 extern const int MOUSE_BUTTON_RIGHT;
 extern const int MOUSE_BUTTON_MIDDLE;
 
+/**
+ *	Mouse input wrapper.
+ */
 typedef struct Mouse_s {
 	/** The old mouse x **/
 	double omx;
@@ -32,6 +35,9 @@ typedef struct Mouse_s {
 	double oamy;
 } Mouse;
 
+/**
+ *	Class used to manage mouse input.
+ */
 typedef struct MouseManager_s {
 	/**Constructor to build a Mouse**/
 	Mouse*(* new)();

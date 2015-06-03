@@ -14,6 +14,11 @@ extern const uint32_t MATRIX_MODE_VIEW;
 extern const uint32_t MATRIX_MODE_MODEL;
 extern const uint32_t MATRIX_MODE_COUNT;
 
+/**
+ *	Matrix Manager class.
+ *
+ * 	Used to provide matrix stack behaviour for transformations.
+ */
 typedef struct MatrixManager_s {
 	/** The stacks where matricies are stored */
 	Stack** stacks;
@@ -25,6 +30,9 @@ typedef struct MatrixManager_s {
 	bool initialized;
 } MatrixManager;
 
+/**
+ *	Manager class for Matrix Manager objects.
+ */
 typedef struct MatrixManagerManager_s {
 	/**
 	 * Creates a new matrix manager.

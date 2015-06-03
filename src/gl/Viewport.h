@@ -13,6 +13,9 @@ typedef struct Viewport_s {
 
 } Viewport;
 
+/**
+ *	Class used to manage Viewport objects.
+ */
 typedef struct ViewportManager_s {
 
 	/**

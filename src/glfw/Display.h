@@ -12,6 +12,9 @@ typedef struct Keyboard_s Keyboard;
 #include "lib/ogl.h"
 #include "lib/glfw3.h"
 
+/**
+ *	Window wrapper, represents a window object.
+ */
 typedef struct Window_s {
 	/** The glfw window reference **/
 	GLFWwindow* window;
@@ -35,6 +38,9 @@ typedef struct Window_s {
 	char* title;
 } Window;
 
+/**
+ *	Class used to manage Window objects.
+ */
 typedef struct WindowManager_s {
 	/**
 	 * Checks if the window is still open.

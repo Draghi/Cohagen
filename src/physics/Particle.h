@@ -9,6 +9,10 @@
 
 #include "math/Vec3.h"
 
+/**
+ *	Particle physics object, stores position, velocity
+ * 	acceleration and other movement data.
+ */
 typedef struct Particle_s {
 	/**
 	 *	Position of particle in world space.
@@ -52,6 +56,9 @@ typedef struct Particle_s {
 	bool ownForce;
 } Particle;
 
+/**
+ *	Manager for particles.
+ */
 typedef struct ParticleManager_s {
 	/** 
 	 *	Allocate new memory for a Particle instance and return a pointer

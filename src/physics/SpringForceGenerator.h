@@ -28,6 +28,9 @@ typedef struct SpringForceGenerator_s {
 	scalar restLength;
 } SpringForceGenerator;
 
+/**
+ *	Manager for Spring Force Generators.
+ */
 typedef struct SpringForceGeneratorManager_s {
 	/**
 	 *	Create a new spring force generator with the given parameters.

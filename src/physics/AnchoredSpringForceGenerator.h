@@ -33,6 +33,9 @@ typedef struct AnchoredSpringForceGenerator_s {
 	scalar restLength;
 } AnchoredSpringForceGenerator;
 
+/**
+ *	Manager for Anchored Spring Force Generators.
+ */
 typedef struct AnchoredSpringForceGeneratorManager_s {
 	/**
 	 *	Create a new AnchoredSpringForceGenerator with the given parameters.
