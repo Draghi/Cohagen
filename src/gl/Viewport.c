@@ -1,5 +1,6 @@
 #include "Viewport.h"
 
+#include <stdlib.h>
 #include "lib/ogl.h"
 #include "util/OGLUtil.h"
 
@@ -12,6 +13,29 @@ static float getHeight(const Viewport *const viewport);
 static void setHeight(Viewport *const viewport, float newHeight);
 static float getWidth(const Viewport *const viewport);
 static void setWidth(Viewport *const viewport, float newWidth);
+
+
+static Viewport* new(float x, float y, float width, float height){
+	Viewport* viewport = malloc(sizeof(Viewport));
+
+	viewport->x = x;
+
+	viewport->y = y;
+
+	if(width > 0){
+		viewport->width = width;
+	} else {
+		viewport->width = 100;
+	}
+
+	if(height > 0){
+		viewport->height = height;
+	} else {
+		viewport->height = 100;
+	}
+
+	return viewport;
+}
 
 static void makeActive(const Viewport *const viewport) {
 	glViewport(viewport->x, viewport->y, viewport->width, viewport->height);
@@ -49,4 +73,8 @@ static void setWidth(Viewport *const viewport, float newWidth){
 	viewport->width = newWidth;
 }
 
-const ViewportManager manViewport = {makeActive, getX, setX, getY, setY, getHeight, setHeight, getWidth, setWidth};
+static void delete(Viewport *const viewport){
+
+}
+
+const ViewportManager manViewport = {new, makeActive, getX, setX, getY, setY, getHeight, setHeight, getWidth, setWidth, delete};

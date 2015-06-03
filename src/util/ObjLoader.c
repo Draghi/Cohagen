@@ -567,6 +567,9 @@ static PhysicsCollider* loadCollisionMesh(const char *const filename, Vec3* posi
     manPhysCollider.attachNarrowphaseSimpleMesh(result, colMesh);
     manPhysCollider.setBroadphase(result, &center, radius);
 
+    free(optiNorms);
+    free(optiVerts);
+
     return result;
 }
 

@@ -16,6 +16,16 @@ typedef struct Viewport_s {
 typedef struct ViewportManager_s {
 
 	/**
+	 * Creates a new viewport "object".
+	 * @param x	the location along the x-axis where the viewport originates
+	 * @param y the location along the y-axis where the viewport originates
+	 * @param width the width of the viewport
+	 * @param height the height of the viewport
+	 * @return a new Camera "object".
+	 */
+	Viewport *(*new)(float x, float y, float width, float height);
+
+	/**
 	 * Makes a call to the function glViewport
 	 *
 	 * @param viewport 			pointer to Viewport object being bound
@@ -89,6 +99,14 @@ typedef struct ViewportManager_s {
 	 * @returns void
 	 */
 	void (*setWidth)(Viewport *const viewport, float newWidth);
+
+	/**
+	 * Frees the memory assigned to the viewport object pointer
+	 *
+	 * @param viewport			pointer to viewport object
+	 * @returns void
+	 */
+	void (*delete)(Viewport *const viewport);
 
 } ViewportManager;
 

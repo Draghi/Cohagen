@@ -8,22 +8,6 @@ static CollisionResolver* new() {
 	return collisionResolver;
 }
 
-static void delete(CollisionResolver* collisionResolver) {
-	manDynamicArray.delete(collisionResolver->colliders);
-	free(collisionResolver->colliders);
-	manDynamicArray.delete(collisionResolver->transformedColliders);
-	free(collisionResolver->transformedColliders);
-	manDynamicArray.delete(collisionResolver->collisionRecords);
-	free(collisionResolver->collisionRecords);
-}
-
-static void addCollider(CollisionResolver* collisionResolver, PhysicsCollider* collider) {
-	if (collider!=NULL) {
-		manDynamicArray.append(collisionResolver->colliders, &collider);
-	}
-}
-
-
 static void resetTransformMesh(TransformedCollider* tCol) {
 	if (tCol->collider.nPhase.satMesh.verts != NULL) {
 		free(tCol->collider.nPhase.maxPointForAxis);
@@ -37,6 +21,27 @@ static void resetTransformMesh(TransformedCollider* tCol) {
 		tCol->collider.nPhase.satMesh.verts = NULL;
 		tCol->collider.nPhase.satMesh.vCount = 0;
 		tCol->collider.nPhase.satMesh.nCount = 0;
+	}
+}
+
+static void delete(CollisionResolver* collisionResolver) {
+	manDynamicArray.delete(collisionResolver->colliders);
+	free(collisionResolver->colliders);
+
+	for(int i = 0; i < collisionResolver->transformedColliders->size; i++) {
+		TransformedCollider* col = (TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, i);
+		resetTransformMesh(col);
+	}
+	manDynamicArray.delete(collisionResolver->transformedColliders);
+	free(collisionResolver->transformedColliders);
+
+	manDynamicArray.delete(collisionResolver->collisionRecords);
+	free(collisionResolver->collisionRecords);
+}
+
+static void addCollider(CollisionResolver* collisionResolver, PhysicsCollider* collider) {
+	if (collider!=NULL) {
+		manDynamicArray.append(collisionResolver->colliders, &collider);
 	}
 }
 

@@ -182,16 +182,16 @@ static void onInitMisc(GameLoop* self) {
 static void onClose(GameLoop* self) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	//free(data->cubeVAO);
-
-	//free(data->villageVAO);
-	free(data->villageShader);
-	//free(data->villageTexture);
-
 	/**@todo: Add skybox delete function. **/
 	free(data->skybox->tex);
 	free(data->skybox->vao);
 	free(data->skybox);
+
+	free(data->skyboxShader);
+	free(data->villageShader);
+
+	manGameObjRegist.delete(data->gameObjRegist);
+	free(data->gameObjRegist);
 
 	manAnchoredGravityForceGenerator.delete(data->gfGen);
 }
