@@ -170,8 +170,6 @@ static void pushPerspective(MatrixManager* manager, scalar fov, scalar aspect, s
 
 	Vec4 rn = manMat4.postMulVec4(mat, &nv);
 	Vec4 rf = manMat4.postMulVec4(mat, &fv);
-	printf("Near: %f\n", rn.z/rn.w);
-	printf("Far: %f\n", rf.z/rf.w);
 
 	manStack.push(stack, mat);
 }
