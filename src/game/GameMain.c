@@ -20,7 +20,6 @@ typedef struct GameData_s {
 
 	//Quit Screen
 	RenderObject* quitScreen;
-	Shader* quitScreenShader;
 
 	//World
 	GameObjectRegist* gameObjRegist;
@@ -28,6 +27,8 @@ typedef struct GameData_s {
 	//Game
 	stateType gameState;
 	MatrixManager* matMan;
+
+	bool escStilDown;
 } GameData;
 
 static void onCreate(GameLoop* self);
@@ -65,7 +66,7 @@ static void onInitOpenGL(GameLoop* self) {
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 }
 
-static void onInitMisc(GameLoop* self) {
+static void initMatMan(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
 	data->matMan = manMatMan.new();
@@ -75,18 +76,25 @@ static void onInitMisc(GameLoop* self) {
 	manMatMan.pushIdentity(data->matMan);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
 	manMatMan.pushIdentity(data->matMan);
+}
 
-	data->quitScreenShader = manShader.newFromGroup("./data/shaders/", "texLogZ");
-	manShader.bind(data->quitScreenShader);
-		manShader.bindUniformInt(data->quitScreenShader, "tex", 0);
-		manShader.bindUniformFloat(data->quitScreenShader, "near", 0.001);
-		manShader.bindUniformFloat(data->quitScreenShader, "FCoef", 2.0/log(10000*0.001 + 1));
-	manShader.unbind(data->quitScreenShader);
+static void initGlobalShader(GameLoop* self) {
+	GameData* data = (GameData*)self->extraData;
 
+	data->globalShader = manShader.newFromGroup("./data/shaders/", "texLogZ");
+	manShader.bind(data->globalShader);
+		manShader.bindUniformInt(data->globalShader, "tex", 0);
+		manShader.bindUniformFloat(data->globalShader, "near", 0.001);
+		manShader.bindUniformFloat(data->globalShader, "FCoef", 2.0/log(10000*0.001 + 1));
+	manShader.unbind(data->globalShader);
+}
 
-	int posLoc  = manShader.getAttribLocation(data->quitScreenShader, "vPos");
-	int normLoc = manShader.getAttribLocation(data->quitScreenShader, "vNorm");
-	int texLoc  = manShader.getAttribLocation(data->quitScreenShader, "vTex");
+static void initEndScreen(GameLoop* self) {
+	GameData* data = (GameData*)self->extraData;
+
+	int posLoc  = manShader.getAttribLocation(data->globalShader, "vPos");
+	int normLoc = manShader.getAttribLocation(data->globalShader, "vNorm");
+	int texLoc  = manShader.getAttribLocation(data->globalShader, "vTex");
 
 	VAO* vao = objLoader.genVAOFromFile("./data/models/cube.obj", posLoc, normLoc, texLoc);
 	Texture* tex = textureUtil.createTextureFromFile("./data/texture/quitScreen.bmp", GL_LINEAR, GL_LINEAR);
@@ -95,9 +103,31 @@ static void onInitMisc(GameLoop* self) {
 	manRenderObj.setModel(data->quitScreen, vao);
 	manRenderObj.addTexture(data->quitScreen, tex);
 
-	data->quitScreen->scale->x = self->primaryWindow->height;
-	data->quitScreen->scale->y = self->primaryWindow->height;
-	data->quitScreen->position->z = -self->primaryWindow->height/(tan(0.5*1.152f));
+
+	float smallestDimention = self->primaryWindow->height < self->primaryWindow->width ? self->primaryWindow->height : self->primaryWindow->width;
+	data->quitScreen->scale->x = smallestDimention;
+	data->quitScreen->scale->y = smallestDimention;
+	data->quitScreen->position->z = -smallestDimention/(tan(0.5*1.152f));
+}
+
+static void initSkybox(GameLoop* self) {
+	GameData* data = (GameData*)self->extraData;
+
+	data->skybox = manSkybox.new("./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
+							         "./data/texture/purplenebula_top.bmp",   "./data/texture/purplenebula_top.bmp",
+								     "./data/texture/purplenebula_left.bmp",  "./data/texture/purplenebula_right.bmp");
+	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
+}
+
+static void onInitMisc(GameLoop* self) {
+	GameData* data = (GameData*)self->extraData;
+
+	data->mainCamera = manCamera.new(NULL, NULL, NULL);
+
+	initMatMan(self);
+	initGlobalShader(self);
+	initEndScreen(self);
+	initSkybox(self);
 
 	data->gameState = GAME_STATE;
 }
@@ -114,12 +144,47 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
 	if (data->gameState == GAME_STATE) {
+		data->mainCamera->rotation.x -= manMouse.getDY(self->primaryWindow)/100;
+		data->mainCamera->rotation.y += manMouse.getDX(self->primaryWindow)/100;
+
 		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
 			data->gameState = QUIT_STATE;
+			data->escStilDown = true;
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		}
+
 	} else if (data->gameState == QUIT_STATE) {
+		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
+			if (!data->escStilDown)
+				exit(0);
+		} else {
+			data->escStilDown = false;
+		}
 	}
+}
+
+static void bindMatricies(Shader* sha, MatrixManager* mats) {
+	manShader.bindUniformMat4(sha, "projectionMatrix", manMatMan.peekStack(mats, MATRIX_MODE_PROJECTION));
+	manShader.bindUniformMat4(sha, "viewMatrix",       manMatMan.peekStack(mats, MATRIX_MODE_VIEW));
+	manShader.bindUniformMat4(sha, "modelMatrix",      manMatMan.peekStack(mats, MATRIX_MODE_MODEL));
+}
+
+static const Vec3 xAxis = {1, 0, 0};
+static const Vec3 yAxis = {0, 1, 0};
+static const Vec3 zAxis = {0, 0, 1};
+
+static void setupCamera(MatrixManager* mats, Vec3* camPos, Vec3* camRot) {
+	manMatMan.rotate(mats, camRot->x, xAxis);
+	manMatMan.rotate(mats, camRot->y, yAxis);
+	manMatMan.rotate(mats, camRot->z, zAxis);
+	manMatMan.translate(mats, *camPos);
+}
+
+static void renderSkybox(MatrixManager* manMat, Shader* skyboxShader, Skybox* skybox) {
+	manShader.bind(skyboxShader);
+		bindMatricies(skyboxShader, manMat);
+		manSkybox.draw(skybox, skyboxShader, "cubeTexture");
+	manShader.unbind();
 }
 
 static void onRender(GameLoop* self, float frameDelta) {
@@ -128,8 +193,14 @@ static void onRender(GameLoop* self, float frameDelta) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (data->gameState == GAME_STATE) {
-
+		/** @todo replace with camera bind **/
+		manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
+		manMatMan.push(data->matMan);
+			setupCamera(data->matMan, &data->mainCamera->position, &data->mainCamera->rotation);
+			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
+		manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
+		manMatMan.pop(data->matMan);
 	} else if (data->gameState == QUIT_STATE) {
-		manRenderer.renderModel(data->quitScreen, data->quitScreenShader, data->matMan);
+		manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
 	}
 }
