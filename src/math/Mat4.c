@@ -301,20 +301,20 @@ static void getMat4Data(const Mat4 *const matrix, scalar *const data)
 static Mat4 affScale(const Mat4 *const matrix, const Vec3 *const scale) {
 	Mat4 dest = *matrix;
 
-	dest.data[0].x *= matrix->data[0].x*scale->x;
-	dest.data[0].y *= matrix->data[0].y*scale->x;
-	dest.data[0].z *= matrix->data[0].z*scale->x;
-	dest.data[0].w *= matrix->data[0].w*scale->x;
+	dest.data[0].x *= scale->x;
+	dest.data[1].x *= scale->x;
+	dest.data[2].x *= scale->x;
+    dest.data[3].x *= scale->x;
 
-	dest.data[1].x *= matrix->data[1].x*scale->y;
-	dest.data[1].y *= matrix->data[1].y*scale->y;
-	dest.data[1].z *= matrix->data[1].z*scale->y;
-	dest.data[1].w *= matrix->data[1].w*scale->y;
+	dest.data[0].y *= scale->y;
+	dest.data[1].y *= scale->y;
+	dest.data[2].y *= scale->y;
+	dest.data[3].y *= scale->y;
 
-	dest.data[2].x *= matrix->data[2].x*scale->z;
-	dest.data[2].y *= matrix->data[2].y*scale->z;
-	dest.data[2].z *= matrix->data[2].z*scale->z;
-	dest.data[2].w *= matrix->data[2].w*scale->z;
+	dest.data[0].z *= scale->z;
+	dest.data[1].z *= scale->z;
+	dest.data[2].z *= scale->z;
+	dest.data[3].z *= scale->z;
 
 	return dest;
 }
@@ -322,10 +322,10 @@ static Mat4 affScale(const Mat4 *const matrix, const Vec3 *const scale) {
 static Mat4 affTranslate(const Mat4 *const matrix, const Vec3 *const translation) {
 	Mat4 dest = *matrix;
 
-	dest.data[3].x += matrix->data[0].x * translation->x + matrix->data[1].x * translation->y + matrix->data[2].x * translation->z;
-	dest.data[3].y += matrix->data[0].y * translation->x + matrix->data[1].y * translation->y + matrix->data[2].y * translation->z;
-	dest.data[3].z += matrix->data[0].z * translation->x + matrix->data[1].z * translation->y + matrix->data[2].z * translation->z;
-	dest.data[3].w += matrix->data[0].w * translation->x + matrix->data[1].w * translation->y + matrix->data[2].w * translation->z;
+	dest.data[3].x += matrix->data[0].x * -translation->x + matrix->data[1].x * translation->y + matrix->data[2].x * -translation->z;
+	dest.data[3].y += matrix->data[0].y * -translation->x + matrix->data[1].y * translation->y + matrix->data[2].y * -translation->z;
+	dest.data[3].z += matrix->data[0].z * -translation->x + matrix->data[1].z * translation->y + matrix->data[2].z * -translation->z;
+	dest.data[3].w += matrix->data[0].w * -translation->x + matrix->data[1].w * translation->y + matrix->data[2].w * -translation->z;
 
 	return dest;
 }
@@ -343,12 +343,12 @@ static Mat4 affRotate(const Mat4 *const matrix, const scalar angle, const Vec3 *
 	scalar zz = axis->z*axis->z*invC;
 
 	scalar xy = axis->x*axis->y*invC;
-	scalar yz = axis->y*axis->z*invC;
-	scalar xz = axis->x*axis->z*invC;
+	scalar yz = axis->y*(-axis->z)*invC;
+	scalar xz = axis->x*(-axis->z)*invC;
 
 	scalar xsin = axis->x*aSin;
 	scalar ysin = axis->y*aSin;
-	scalar zsin = axis->z*aSin;
+	scalar zsin = (-axis->z)*aSin;
 
 
 	//Transform matrix by doing an explicit Vec3 multiply to each component.
