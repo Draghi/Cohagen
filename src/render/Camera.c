@@ -4,6 +4,9 @@
 
 #include "Camera.h"
 
+static const Vec3 xAxis = {1, 0, 0};
+static const Vec3 yAxis = {0, 1, 0};
+static const Vec3 zAxis = {0, 0, 1};
 
 static Camera* new(Vec3* position, Vec3* rotation, Vec3* scale){
 	Camera* camera = malloc(sizeof(Camera));
@@ -33,12 +36,24 @@ static void bind(Camera* camera, MatrixManager* manMat){
 	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
 	manMatMan.pushPerspective(manMat, camera->fov, (camera->viewport->width/camera->viewport->height), camera->zNear, camera->zFar);
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
-	manMatMan.pushIdentity(manMat);
-
+	manMatMan.push(manMat);
+	manMatMan.scale(manMat, camera->scale);
+	manMatMan.rotate(manMat, camera->rotation.x, xAxis);
+	manMatMan.rotate(manMat, camera->rotation.y, yAxis);
+	manMatMan.rotate(manMat, camera->rotation.z, zAxis);
+	manMatMan.translate(manMat, camera->position);
+	if(camera->parentObject != NULL) {
+		manMatMan.scale(manMat, *camera->parentObject->scale);
+		manMatMan.rotate(manMat, camera->parentObject->rotation->x, xAxis);
+		manMatMan.rotate(manMat, camera->parentObject->rotation->y, yAxis);
+		manMatMan.rotate(manMat, camera->parentObject->rotation->z, zAxis);
+		manMatMan.translate(manMat, *camera->parentObject->position);
+	}
 }
 
-static void unbind(){
-
+static void unbind(Camera* camera, MatrixManager* manMat){
+	manMatMan.pop(manMat);
+	manMatMan.pop(camera);
 }
 
 static void setPositionXYZ(Camera* camera, scalar x, scalar y, scalar z){
@@ -107,7 +122,6 @@ static void setViewportObject(Camera* camera, Viewport* viewportObject){
 		camera->viewport = viewportObject;
 	} else {
 		camera->viewport = manViewport.new(0.0, 0.0, 100, 100);
-		//camera->viewportObject = manViewport.new(NULL, NULL, NULL, NULL);
 	}
 }
 
@@ -117,7 +131,6 @@ static void setParentRenderObject(Camera* camera, RenderObject* renderObject){
 		camera->parentObject = renderObject;
 	} else {
 		camera->parentObject = manRenderObj.new(NULL, NULL, NULL);
-		//camera->parentObject = manRenderObj.new(NULL, NULL, NULL);
 	}
 }
 

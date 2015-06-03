@@ -52,12 +52,12 @@ typedef struct CameraManager_s {
 	/**
 	 * binds the camera object
 	 */
-	void (*bind)(Camera* camera, MatrixManager* matrixMan);
+	void (*bind)(Camera* camera, MatrixManager* manMat);
 
 	/**
 	 * unbinds the camera object
 	 */
-	void (*unbind)();
+	void (*unbind)(Camera* camera, MatrixManager* manMat);
 
 	/**
 	 * sets the position of the camera object
