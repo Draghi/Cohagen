@@ -103,7 +103,6 @@ static void initEndScreen(GameLoop* self) {
 	manRenderObj.setModel(data->quitScreen, vao);
 	manRenderObj.addTexture(data->quitScreen, tex);
 
-
 	float smallestDimention = self->primaryWindow->height < self->primaryWindow->width ? self->primaryWindow->height : self->primaryWindow->width;
 	data->quitScreen->scale->x = smallestDimention;
 	data->quitScreen->scale->y = smallestDimention;
@@ -113,9 +112,7 @@ static void initEndScreen(GameLoop* self) {
 static void initSkybox(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
-	data->skybox = manSkybox.new("./data/texture/purplenebula_front.bmp", "./data/texture/purplenebula_back.bmp",
-							         "./data/texture/purplenebula_top.bmp",   "./data/texture/purplenebula_top.bmp",
-								     "./data/texture/purplenebula_left.bmp",  "./data/texture/purplenebula_right.bmp");
+	data->skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
