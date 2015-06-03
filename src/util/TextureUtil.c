@@ -19,6 +19,8 @@ Texture* createTextureFromFile(char* filename, const GLint magFilter, const GLin
 		tex = manTex.new();
 		manTex.setData(tex, 0, (uint8_t*)bmp->pixels, GL_RGBA8, GL_RGBA, bmp->width, bmp->height, GL_NEAREST, GL_NEAREST);
 		manBitmap.delete(bmp);
+	} else {
+		printf("Failed to load texture: %s", filename);
 	}
 
 	if (f.data!=NULL)

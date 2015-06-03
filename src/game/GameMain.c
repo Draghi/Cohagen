@@ -6,6 +6,7 @@
 #include "render/Skybox.h"
 #include "util/OGLUtil.h"
 #include "util/ObjLoader.h"
+#include "game/objs/Ship.h"
 
 typedef enum stateType_s {GAME_STATE, QUIT_STATE, LIGHTING_STATE} stateType;
 
@@ -50,6 +51,10 @@ static void onCreate(GameLoop* self) {
 	self->extraData = malloc(sizeof(GameData));
 }
 
+
+/* *********** *
+ *  Init Start *
+ * *********** */
 static void onInitWindow(GameLoop* self) {
 	self->primaryWindow->isFullscreen = true;
 	self->primaryWindow->shouldCaptureMouse = true;
@@ -116,19 +121,31 @@ static void initSkybox(GameLoop* self) {
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
+GameObject* ship;
+
 static void onInitMisc(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
-	data->mainCamera = manCamera.new(NULL, NULL, NULL);
 
 	initMatMan(self);
 	initGlobalShader(self);
 	initEndScreen(self);
 	initSkybox(self);
 
+	ship = newShip(self->primaryWindow, data->globalShader);
+	data->mainCamera = manCamera.new(NULL, NULL, NULL);
+	manCamera.setParentRenderObject(data->mainCamera, ship->render);
+	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
+	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
+	data->mainCamera->position.y = 0.25;
+
+
 	data->gameState = GAME_STATE;
 }
 
+/* ************ *
+ *  Close Start *
+ * ************ */
 static void onClose(GameLoop* self) {
 
 }
@@ -137,13 +154,14 @@ static void onDestroy(GameLoop* self) {
 	free(self->extraData);
 }
 
+/* *********** *
+ *  Game Start *
+ * *********** */
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
 	if (data->gameState == GAME_STATE) {
-		data->mainCamera->rotation.x -= manMouse.getDY(self->primaryWindow)/100;
-		data->mainCamera->rotation.y += manMouse.getDX(self->primaryWindow)/100;
-
+		ship->onUpdateCallback(ship, tickDelta);
 		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
 			data->gameState = QUIT_STATE;
 			data->escStilDown = true;
@@ -170,13 +188,6 @@ static const Vec3 xAxis = {1, 0, 0};
 static const Vec3 yAxis = {0, 1, 0};
 static const Vec3 zAxis = {0, 0, 1};
 
-static void setupCamera(MatrixManager* mats, Vec3* camPos, Vec3* camRot) {
-	manMatMan.rotate(mats, camRot->x, xAxis);
-	manMatMan.rotate(mats, camRot->y, yAxis);
-	manMatMan.rotate(mats, camRot->z, zAxis);
-	manMatMan.translate(mats, *camPos);
-}
-
 static void renderSkybox(MatrixManager* manMat, Shader* skyboxShader, Skybox* skybox) {
 	manShader.bind(skyboxShader);
 		bindMatricies(skyboxShader, manMat);
@@ -190,13 +201,10 @@ static void onRender(GameLoop* self, float frameDelta) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	if (data->gameState == GAME_STATE) {
-		/** @todo replace with camera bind **/
-		manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
-		manMatMan.push(data->matMan);
-			setupCamera(data->matMan, &data->mainCamera->position, &data->mainCamera->rotation);
+		manCamera.bind(data->mainCamera, data->matMan);
 			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
-		manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
-		manMatMan.pop(data->matMan);
+			manGameObj.render(ship, frameDelta, data->globalShader, data->matMan);
+		manCamera.unbind(data->mainCamera, data->matMan);
 	} else if (data->gameState == QUIT_STATE) {
 		manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
 	}
