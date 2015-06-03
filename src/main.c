@@ -15,7 +15,8 @@ int main(int argc, char **argv) {
 
     //runNewtonsCradle();
     //runPhysicsGLFWTest();
-    runGravity();
+    // runGravity();
+    runQuitScreen();
 
     glfwTerminate();
 

@@ -9,5 +9,6 @@ void runCollisionTest();
 void runPhysCollisionTest();
 void runNewtonsCradle();
 void runGravity();
+void runQuitScreen();
 
 #endif
