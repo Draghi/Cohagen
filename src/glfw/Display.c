@@ -41,6 +41,9 @@ static Window* new() {
 	res->mouse = manMouse.new();
 	res->keyboard = manKeyboard.new();
 
+	res->isFullscreen = false;
+	res->shouldCaptureMouse = false;
+
 	return res;
 }
 
@@ -58,12 +61,7 @@ static bool openWindow(Window* window) {
 		glfwWindowHint(GLFW_DECORATED, 1);
 		glfwWindowHint(GLFW_FOCUSED, 1);
 
-		glfwWindowHint(GLFW_RED_BITS,     8);
-		glfwWindowHint(GLFW_GREEN_BITS,   8);
-		glfwWindowHint(GLFW_BLUE_BITS,    8);
-		glfwWindowHint(GLFW_ALPHA_BITS,   8);
-		glfwWindowHint(GLFW_DEPTH_BITS,   32);
-		glfwWindowHint(GLFW_STENCIL_BITS, 8);
+		glfwWindowHint(GLFW_STENCIL_BITS, 0);
 		glfwWindowHint(GLFW_STEREO, 0);
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		glfwWindowHint(GLFW_DOUBLEBUFFER, 1);
@@ -78,10 +76,32 @@ static bool openWindow(Window* window) {
 		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_ROBUSTNESS);
 		glfwWindowHint(GLFW_CONTEXT_RELEASE_BEHAVIOR, GLFW_ANY_RELEASE_BEHAVIOR);
 
-		window->window = glfwCreateWindow(window->width, window->height, window->title, NULL, NULL);
+
+		if (window->isFullscreen) {
+			const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			window->height = mode->height;
+			window->width = mode->width;
+
+			glfwWindowHint(GLFW_RED_BITS,     mode->redBits);
+			glfwWindowHint(GLFW_GREEN_BITS,   mode->greenBits);
+			glfwWindowHint(GLFW_BLUE_BITS,    mode->blueBits);
+			glfwWindowHint(GLFW_ALPHA_BITS,   8);
+			glfwWindowHint(GLFW_DEPTH_BITS,   32);
+
+			window->window = glfwCreateWindow(window->width, window->height, window->title, glfwGetPrimaryMonitor(), NULL);
+		} else {
+			glfwWindowHint(GLFW_RED_BITS,     8);
+			glfwWindowHint(GLFW_GREEN_BITS,   8);
+			glfwWindowHint(GLFW_BLUE_BITS,    8);
+			glfwWindowHint(GLFW_ALPHA_BITS,   8);
+			glfwWindowHint(GLFW_DEPTH_BITS,   32);
+			window->window = glfwCreateWindow(window->width, window->height, window->title, NULL, NULL);
+
+			if (window->window)
+				glfwSetWindowPos(window->window, window->x, window->y);
+		}
 
 		if (window->window){
-			glfwSetWindowPos(window->window, window->x, window->y);
 			makeContextCurrent(window);
 			glfwSwapInterval(1);
 			ogl_LoadFunctions();

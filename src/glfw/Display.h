@@ -31,6 +31,9 @@ typedef struct Window_s {
 	/** The y position of the window **/
 	int y;
 
+	bool isFullscreen;
+	bool shouldCaptureMouse;
+
 	/** The title of the window **/
 	char* title;
 } Window;
