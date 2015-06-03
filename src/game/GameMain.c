@@ -70,13 +70,19 @@ static void onInitMisc(GameLoop* self) {
 
 	data->matMan = manMatMan.new();
 	manMatMan.setMode(data->matMan, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.1, 100);
+	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.001, 10000);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(data->matMan);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
 	manMatMan.pushIdentity(data->matMan);
 
-	data->quitScreenShader = manShader.newFromGroup("./data/shaders/", "passThruTex");
+	data->quitScreenShader = manShader.newFromGroup("./data/shaders/", "texLogZ");
+	manShader.bind(data->quitScreenShader);
+		manShader.bindUniformInt(data->quitScreenShader, "tex", 0);
+		manShader.bindUniformFloat(data->quitScreenShader, "near", 0.001);
+		manShader.bindUniformFloat(data->quitScreenShader, "FCoef", 2.0/log(10000*0.001 + 1));
+	manShader.unbind(data->quitScreenShader);
+
 
 	int posLoc  = manShader.getAttribLocation(data->quitScreenShader, "vPos");
 	int normLoc = manShader.getAttribLocation(data->quitScreenShader, "vNorm");
@@ -88,6 +94,10 @@ static void onInitMisc(GameLoop* self) {
 	data->quitScreen = manRenderObj.new(NULL, NULL, NULL);
 	manRenderObj.setModel(data->quitScreen, vao);
 	manRenderObj.addTexture(data->quitScreen, tex);
+
+	data->quitScreen->scale->x = self->primaryWindow->height;
+	data->quitScreen->scale->y = self->primaryWindow->height;
+	data->quitScreen->position->z = -self->primaryWindow->height/(tan(0.5*1.152f));
 
 	data->gameState = GAME_STATE;
 }
@@ -106,6 +116,7 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	if (data->gameState == GAME_STATE) {
 		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
 			data->gameState = QUIT_STATE;
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		}
 	} else if (data->gameState == QUIT_STATE) {
 	}

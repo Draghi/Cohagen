@@ -1,12 +1,14 @@
 #version 330
 
-layout(location = 0) in vec3 vPos;
-layout(location = 1) in vec3 vNorm;
-layout(location = 2) in vec2 vTex;
+in vec3 vPos;
+in vec3 vNorm;
+in vec2 vTex;
+
+uniform mat4 mvpMat;
 
 out vec2 tc;
 
 void main() {
-	gl_Position = vec4(vPos, 1.0);
+	gl_Position = mvpMat*vec4(vPos, 1.0);
 	tc = vTex;
 }
