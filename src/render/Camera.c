@@ -29,90 +29,90 @@ static Camera* new(Vec3* position, Vec3* rotation, Vec3* scale){
 	return camera;
 }
 
-void bind(Camera* camera, MatrixManager* manMat, Viewport* viewport){
+static void bind(Camera* camera, MatrixManager* manMat){
 	manMatMan.setMode(manMat, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(manMat, camera->fov, (viewport->width/viewport->height), camera->zNear, camera->zFar);
+	manMatMan.pushPerspective(manMat, camera->fov, (camera->viewport->width/camera->viewport->height), camera->zNear, camera->zFar);
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(manMat);
 
 }
 
-void unbind(){
+static void unbind(){
 
 }
 
-void setPositionXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void setPositionXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->position.x = x;
 	camera->position.y = y;
 	camera->position.z = z;
 }
 
-void addPositionXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void addPositionXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->position.x += x;
 	camera->position.y += y;
 	camera->position.z += z;
 }
 
-void setPositionVec(Camera* camera, Vec3* newPosition){
+static void setPositionVec(Camera* camera, Vec3* newPosition){
 	setPositionXYZ(camera, newPosition->x, newPosition->y, newPosition->z);
 }
 
-void addPositionVec(Camera* camera, Vec3* displacement){
+static void addPositionVec(Camera* camera, Vec3* displacement){
 	addPositionXYZ(camera, displacement->x, displacement->y, displacement->z);
 }
 
-void setRotationXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void setRotationXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->rotation.x = x;
 	camera->rotation.y = y;
 	camera->rotation.z = z;
 }
 
-void addRotationXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void addRotationXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->rotation.x += x;
 	camera->rotation.y += y;
 	camera->rotation.z += z;
 }
 
-void setRotationVec(Camera* camera, Vec3* rotation){
+static void setRotationVec(Camera* camera, Vec3* rotation){
 	setRotationXYZ(camera, rotation->x, rotation->y, rotation->z);
 }
 
-void addRotationVec(Camera* camera, Vec3* rotation){
+static void addRotationVec(Camera* camera, Vec3* rotation){
 	addRotationXYZ(camera, rotation->x, rotation->y, rotation->z);
 }
 
-void setScaleXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void setScaleXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->scale.x = x;
 	camera->scale.y = y;
 	camera->scale.z = z;
 }
 
-void addScaleXYZ(Camera* camera, scalar x, scalar y, scalar z){
+static void addScaleXYZ(Camera* camera, scalar x, scalar y, scalar z){
 	camera->scale.x += x;
 	camera->scale.y += y;
 	camera->scale.z += z;
 }
 
-void setScaleVec(Camera* camera, Vec3* scale){
+static void setScaleVec(Camera* camera, Vec3* scale){
 	setScaleXYZ(camera, scale->x, scale->y, scale->z);
 }
 
-void addScaleVec(Camera* camera, Vec3* scale){
+static void addScaleVec(Camera* camera, Vec3* scale){
 	addScaleXYZ(camera, scale->x, scale->y, scale->z);
 }
 
 //sets the viewport
-void setViewportObject(Camera* camera, Viewport* viewportObject){
+static void setViewportObject(Camera* camera, Viewport* viewportObject){
 	if(viewportObject != NULL){
-		camera->viewportObject = viewportObject;
+		camera->viewport = viewportObject;
 	} else {
-		camera->viewportObject = manViewport.new(0.0, 0.0, 100, 100);
+		camera->viewport = manViewport.new(0.0, 0.0, 100, 100);
 		//camera->viewportObject = manViewport.new(NULL, NULL, NULL, NULL);
 	}
 }
 
 //sets the parent renderObject
-void setParentRenderObject(Camera* camera, RenderObject* renderObject){
+static void setParentRenderObject(Camera* camera, RenderObject* renderObject){
 	if(renderObject != NULL){
 		camera->parentObject = renderObject;
 	} else {
@@ -122,7 +122,7 @@ void setParentRenderObject(Camera* camera, RenderObject* renderObject){
 }
 
 //allows setting of projection information
-void setProjectionInfo(Camera* camera, scalar fov, scalar zNear, scalar zFar){
+static void setProjectionInfo(Camera* camera, scalar fov, scalar zNear, scalar zFar){
 
 	camera->fov = fov;
 
@@ -131,7 +131,7 @@ void setProjectionInfo(Camera* camera, scalar fov, scalar zNear, scalar zFar){
 	camera->zFar = zFar;
 }
 
-void delete(Camera *const camera){
+static void delete(Camera *const camera){
 
 }
 

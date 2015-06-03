@@ -30,7 +30,7 @@ typedef struct Camera_s {
 	scalar zFar;
 
 	///Viewport object pointer
-	Viewport* viewportObject;
+	Viewport* viewport;
 
 	///void pointer to a parent game object
 	RenderObject* parentObject;
