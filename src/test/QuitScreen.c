@@ -108,7 +108,7 @@ static void initGravityGen(GameLoop* self) {
 static void initVillage(GameLoop* self) {
 	NewtonsCradleData* data = (NewtonsCradleData*)self->extraData;
 
-	data->villageShader  = manShader.newFromGroup("./data/shaders/", "house");
+	data->villageShader  = manShader.newFromGroup("./data/shaders/", "texLogZ");
 	manShader.bind(data->villageShader);
 		manShader.bindUniformInt(data->villageShader, "tex", 0);
 	manShader.unbind(data->villageShader);
