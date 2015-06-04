@@ -5,8 +5,8 @@ static const Vec3 yAxis = {0, 1, 0};
 static const Vec3 zAxis = {0, 0, 1};
 
 static void applyTransformations(RenderObject* model, MatrixManager* matMan) {
-	manMatMan.scale(matMan, *model->scale);
 	manMatMan.translate(matMan, *model->position);
+	manMatMan.scale(matMan, *model->scale);
 	manMatMan.rotate(matMan, model->rotation->x, xAxis);
 	manMatMan.rotate(matMan, model->rotation->y, yAxis);
 	manMatMan.rotate(matMan, model->rotation->z, zAxis);

@@ -302,19 +302,19 @@ static Mat4 affScale(const Mat4 *const matrix, const Vec3 *const scale) {
 	Mat4 dest = *matrix;
 
 	dest.data[0].x *= scale->x;
-	dest.data[1].x *= scale->x;
-	dest.data[2].x *= scale->x;
-    dest.data[3].x *= scale->x;
+	dest.data[0].y *= scale->x;
+	dest.data[0].z *= scale->x;
+    dest.data[0].w *= scale->x;
 
-	dest.data[0].y *= scale->y;
+	dest.data[1].x *= scale->y;
 	dest.data[1].y *= scale->y;
-	dest.data[2].y *= scale->y;
-	dest.data[3].y *= scale->y;
+	dest.data[1].z *= scale->y;
+	dest.data[1].w *= scale->y;
 
-	dest.data[0].z *= scale->z;
-	dest.data[1].z *= scale->z;
+	dest.data[2].x *= scale->z;
+	dest.data[2].y *= scale->z;
 	dest.data[2].z *= scale->z;
-	dest.data[3].z *= scale->z;
+	dest.data[2].w *= scale->z;
 
 	return dest;
 }

@@ -47,15 +47,15 @@ static void bind(Camera* camera, MatrixManager* manMat){
 	manMatMan.rotate(manMat, camera->rotation.x, xAxis);
 	manMatMan.rotate(manMat, camera->rotation.y, yAxis);
 	manMatMan.rotate(manMat, camera->rotation.z, zAxis);
-	manMatMan.translate(manMat, camera->position);
 	manMatMan.scale(manMat, camera->scale);
+	manMatMan.translate(manMat, camera->position);
 
 	if(camera->parentObject != NULL) {
 		manMatMan.rotate(manMat, -camera->parentObject->rotation->x, xAxis);
 		manMatMan.rotate(manMat, -camera->parentObject->rotation->y, yAxis);
 		manMatMan.rotate(manMat, -camera->parentObject->rotation->z, zAxis);
-		manMatMan.translate(manMat, manVec3.invert(camera->parentObject->position));
 		manMatMan.scale(manMat, *camera->parentObject->scale);
+		manMatMan.translate(manMat, manVec3.invert(camera->parentObject->position));
 	}
 }
 
