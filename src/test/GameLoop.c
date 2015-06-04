@@ -90,25 +90,27 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_W)) {
-		camPos->x +=  rate*cos(camRot->y-1.57079632679)*tickDelta;
-		camPos->z +=  rate*sin(camRot->y-1.57079632679)*tickDelta;
-		camPos->y += -rate*sin(camRot->x)*tickDelta;
+		camPos->x +=  rate*cos(camRot->y+1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y+1.57079632679)*tickDelta;
+		camPos->y -=  rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_S)) {
-		camPos->x +=  rate*cos(camRot->y+1.57079632679)*tickDelta;
-		camPos->z +=  rate*sin(camRot->y+1.57079632679)*tickDelta;
-		camPos->y +=  rate*sin(camRot->x)*tickDelta;
+
+
+				camPos->x +=  rate*cos(camRot->y-1.57079632679)*tickDelta;
+		camPos->z +=  rate*sin(camRot->y-1.57079632679)*tickDelta;
+		camPos->y -= -rate*sin(camRot->x)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_A)) {
-		camPos->x += -rate*cos(camRot->y)*tickDelta;
-		camPos->z += -rate*sin(camRot->y)*tickDelta;
+		camPos->x += rate*cos(camRot->y)*tickDelta;
+		camPos->z += rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manKeyboard.isDown(self->primaryWindow, KEY_D)) {
-		camPos->x += rate*cos(camRot->y)*tickDelta;
-		camPos->z += rate*sin(camRot->y)*tickDelta;
+		camPos->x += -rate*cos(camRot->y)*tickDelta;
+		camPos->z += -rate*sin(camRot->y)*tickDelta;
 	}
 
 	if(manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
