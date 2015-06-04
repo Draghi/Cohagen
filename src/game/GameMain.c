@@ -188,7 +188,7 @@ static void onInitMisc(GameLoop* self) {
 	data->massLowest = 1061858316100.0f;
 	data->massHighest = 2e30;
 	data->gravityWellMass = data->massLowest + 1.0f;
-	data->massRate = 120e28;
+	data->massRate = data->massHighest / (float) 2;
 
 	// Initialize gravity well bar
 	int posLoc  = manShader.getAttribLocation(data->globalShader, "vPos");
@@ -284,28 +284,6 @@ static void renderSkybox(MatrixManager* matMan, Shader* skyboxShader, Skybox* sk
 		manShader.bindUniformMat4(skyboxShader, "modelMatrix",      manMatMan.peekStack(matMan, MATRIX_MODE_MODEL));
 		manSkybox.draw(skybox, skyboxShader, "cubeTexture");
 	manShader.unbind();
-}
-
-static void renderBar(MatrixManager *matMan, Shader *barShader, VAO *barVAO, Vec3 barPosition, Window *win) {
-	manMatMan.setMode(matMan, MATRIX_MODE_MODEL);
-	manMatMan.push(matMan);
-		manMatMan.pushIdentity(matMan);
-		manShader.bind(barShader);
-			manVAO.bind(barVAO);
-				manMatMan.translate(matMan, barPosition);
-				manShader.bindUniformMat4(barShader, "modelMatrix", manMatMan.peekStack(matMan, MATRIX_MODE_MODEL));
-				Mat4 projectionMatrix = manMat4.create(NULL, 	manWin.getFramebufferWidth(win) / (float) manWin.getFramebufferHeight(win), 0.0f, 0.0f, 0.0f,
-														0.0f, 1.0f, 0.0f, 0.0f,
-														0.0f, 0.0f, 1.0f, 0.0f,
-														0.0f, 0.0f, 0.0f, 1.0f);
-				manShader.bindUniformMat4(barShader, "projectionMatrix", &projectionMatrix);
-				// glDisable(GL_DEPTH_TEST);
-				glClear(GL_DEPTH_BUFFER_BIT);
-				manVAO.draw(barVAO);
-				// glEnable(GL_DEPTH_TEST);
-			manVAO.unbind();
-		manShader.unbind();
-	manMatMan.pop(matMan);
 }
 
 static void onRender(GameLoop* self, float frameDelta) {
