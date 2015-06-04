@@ -33,6 +33,9 @@ typedef struct GameData_s {
 	MatrixManager* matMan;
 
 	bool escStilDown;
+
+	// Mass of gravity well
+	float gravityWellMass;
 } GameData;
 
 static void onCreate(GameLoop* self);
@@ -59,7 +62,7 @@ static void onCreate(GameLoop* self) {
  *  Init Start *
  * *********** */
 static void onInitWindow(GameLoop* self) {
-	self->primaryWindow->isFullscreen = true;
+	// self->primaryWindow->isFullscreen = true;
 	self->primaryWindow->shouldCaptureMouse = true;
 }
 
@@ -150,6 +153,9 @@ static void onInitMisc(GameLoop* self) {
 	initCamera(self);
 
 	data->gameState = GAME_STATE;
+
+	// Initialize gravity well mass
+	data->gravityWellMass = 1.0f;
 }
 
 /* ************ *
@@ -169,6 +175,8 @@ static void onDestroy(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
+	printf("%f\n", data->gravityWellMass);
+
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
 
@@ -182,12 +190,15 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 		}
 
 	} else if (data->gameState == QUIT_STATE) {
-		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
-			if (!data->escStilDown)
-				exit(0);
-		} else {
-			data->escStilDown = false;
+		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) {
+			exit(0);
 		}
+		// if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
+		// 	if (!data->escStilDown)
+		// 		exit(0);
+		// } else {
+		// 	data->escStilDown = false;
+		// }
 	}
 }
 
