@@ -48,9 +48,9 @@ static void bind(Camera* camera, MatrixManager* manMat){
 	manMatMan.scale(manMat, camera->scale);
 
 	if(camera->parentObject != NULL) {
-		manMatMan.rotate(manMat, -camera->parentObject->rotation->z, zAxis);
-		manMatMan.rotate(manMat, -camera->parentObject->rotation->y, yAxis);
 		manMatMan.rotate(manMat, -camera->parentObject->rotation->x, xAxis);
+		manMatMan.rotate(manMat, -camera->parentObject->rotation->y, yAxis);
+		manMatMan.rotate(manMat, -camera->parentObject->rotation->z, zAxis);
 		manMatMan.translate(manMat, *camera->parentObject->position);
 		manMatMan.scale(manMat, *camera->parentObject->scale);
 	}
