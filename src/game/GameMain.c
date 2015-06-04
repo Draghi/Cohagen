@@ -1,6 +1,7 @@
 #include "GameMain.h"
 
 #include "game/objs/CameraController.h"
+#include "game/objs/Asteroid.h"
 #include "engine/GameObjectRegistry.h"
 #include "render/Camera.h"
 #include "render/Renderer.h"
@@ -85,7 +86,6 @@ static void onInitOpenGL(GameLoop* self) {
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE);
-	//glEnable(GL_CLIP_DISTANCE0);
 
 	manOGLUtil.setBackfaceCulling(GL_CCW);
 }
@@ -95,7 +95,7 @@ static void initMatMan(GameLoop* self) {
 
 	data->matMan = manMatMan.new();
 	manMatMan.setMode(data->matMan, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.01, 3000);
+	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.000001, 3000000);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(data->matMan);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
@@ -153,6 +153,7 @@ static void initCamera(GameLoop* self) {
 	data->speed = 20.0f;
 
 	data->gameObjRegist = manGameObjRegist.new(data->matMan);
+	manGameObjRegist.setShader(data->gameObjRegist, data->globalShader);
 	manGameObjRegist.add(data->gameObjRegist, cameraController);
 }
 
@@ -164,6 +165,22 @@ static void onInitMisc(GameLoop* self) {
 	initEndScreen(self);
 	initSkybox(self);
 	initCamera(self);
+
+	prepareAsteroids(data->globalShader);
+	int dir = 4;
+	for(int i = 0; i < dir; i++) {
+		for(int j = 0; j < dir; j++) {
+			for(int k = 0; k < dir; k++) {
+				float x, y, z;
+				x = i;
+				y = j;
+				z = k;
+				GameObject* obj = newAsteroid(self->primaryWindow, manVec3.create(NULL, x, y, z), manVec3.create(NULL, i-2,j-2, k-2), manVec3.create(NULL, dir/(float)(i*3+1), dir/(float)(i*3+1), dir/(float)(i*3+1)));
+				obj->velocity = manVec3.create(NULL, (i-dir/2)*10,(j-dir/2)*10, (k-dir/2)*10);
+				manGameObjRegist.add(data->gameObjRegist, obj);
+			}
+		}
+	}
 
 	data->gameState = GAME_STATE;
 
@@ -301,16 +318,15 @@ static void onRender(GameLoop* self, float frameDelta) {
 
 			manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
 			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
-			// manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
 
-			// glClear(GL_DEPTH_BUFFER_BIT);
+			manGameObjRegist.render(data->gameObjRegist, frameDelta);
+
+			glClear(GL_DEPTH_BUFFER_BIT);
 			manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
 			manMatMan.pushIdentity(data->matMan);
 				manRenderer.renderModel(data->gravityWellBar, data->globalShader, data->matMan);
 			manMatMan.pop(data->matMan);
 			manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
-			// MUST BE RENDERED LAST
-			// renderBar(data->matMan, data->barShader, data->bar, data->barPosition, self->primaryWindow);
 
 		manCamera.unbind(data->mainCamera, data->matMan);
 	} else if (data->gameState == QUIT_STATE) {

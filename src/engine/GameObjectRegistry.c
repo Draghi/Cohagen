@@ -53,7 +53,7 @@ void update(GameObjectRegist* regist, float tickDelta) {
 
 	int i = 0;
 	bool flag = true;
-	while(flag && i < 10) {
+	while(flag && i < 1) {
 		manColResolver.prepare(regist->collisionResolver);
 		flag = manColResolver.check(regist->collisionResolver);
 
