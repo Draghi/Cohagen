@@ -155,14 +155,20 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
 	if (data->gameState == GAME_STATE) {
-		manCamera.addRotationXYZ(data->mainCamera, manMouse.getAbsoluteDY(self->primaryWindow)/100.0, 0, manMouse.getAbsoluteDX(self->primaryWindow)/100.0);
+		/* ************** *
+		 * Camera Control *
+		 * ************** */
+		manCamera.addRotationXYZ(data->mainCamera, -manMouse.getAbsoluteDY(self->primaryWindow)/100.0, manMouse.getAbsoluteDX(self->primaryWindow)/100.0, 0);
 
-		if (data->mainCamera->rotation.x > 1.5707)
-			data->mainCamera->rotation.x = 1.5707;
+		if (data->mainCamera->rotation.x > 1.57079633)
+			data->mainCamera->rotation.x = 1.57079633;
 
-		if (data->mainCamera->rotation.x < -3.1415)
-			data->mainCamera->rotation.x = -3.1415;
+		if (data->mainCamera->rotation.x < -1.57079633)
+			data->mainCamera->rotation.x = -1.57079633;
 
+		/* ********* *
+		 * Exit Game *
+		 * ********* */
 		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
 			data->gameState = QUIT_STATE;
 			data->escStilDown = true;
@@ -200,8 +206,11 @@ static void onRender(GameLoop* self, float frameDelta) {
 	if (data->gameState == GAME_STATE) {
 		manCamera.bind(data->mainCamera, data->matMan);
 			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
+			manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
+			manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
 		manCamera.unbind(data->mainCamera, data->matMan);
 	} else if (data->gameState == QUIT_STATE) {
+		manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
 		manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
 	}
 }
