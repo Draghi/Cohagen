@@ -186,7 +186,7 @@ static void onInitMisc(GameLoop* self) {
 
 	// Initialize gravity well mass
 	data->massLowest = 1061858316100.0f;
-	data->massHighest = 2e30;
+	data->massHighest = 2e15;
 	data->gravityWellMass = data->massLowest + 1.0f;
 	data->massRate = data->massHighest / (float) 2;
 
