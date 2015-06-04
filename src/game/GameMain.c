@@ -36,7 +36,13 @@ typedef struct GameData_s {
 	bool escStilDown;
 
 	// Mass of gravity well
-	float gravityWellMass;
+	scalar gravityWellMass;
+	// Rate at which the gravity well mass increases/decreases
+	scalar massRate;
+	// Start of gravity well mass scale
+	scalar massLowest;
+	// End of gravity well mass scale
+	scalar massHighest;
 } GameData;
 
 static void onCreate(GameLoop* self);
@@ -172,7 +178,10 @@ static void onInitMisc(GameLoop* self) {
 	data->gameState = GAME_STATE;
 
 	// Initialize gravity well mass
-	data->gravityWellMass = 1.0f;
+	data->massLowest = 1061858316100.0f;
+	data->massHighest = 2e30;
+	data->gravityWellMass = data->massLowest + 1.0f;
+	data->massRate = 30e28;
 }
 
 /* ************ *
@@ -204,6 +213,21 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			data->gameState = QUIT_STATE;
 			data->escStilDown = true;
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		}
+		if (manKeyboard.isDown(self->primaryWindow, KEY_EQUAL)) {
+			if ((data->gravityWellMass + (data->massRate * tickDelta)) > data->massHighest) {
+				data->gravityWellMass = data->massHighest;
+			} else {
+				data->gravityWellMass += data->massRate * tickDelta;
+			}
+			data->gravityWellMass += data->massRate * tickDelta;
+		}
+		if (manKeyboard.isDown(self->primaryWindow, KEY_MINUS)) {
+			if ((data->gravityWellMass - (data->massRate * tickDelta) < data->massLowest)) {
+				data->gravityWellMass = data->massLowest;
+			} else {
+				data->gravityWellMass -= data->massRate * tickDelta;
+			}
 		}
 
 	} else if (data->gameState == QUIT_STATE) {
