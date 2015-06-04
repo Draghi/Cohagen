@@ -1,5 +1,7 @@
 #include "GravityWell.h"
 
+#include <string.h>
+
 static VAO* vao;
 static Texture* tex;
 static RenderObject* ro;
@@ -19,7 +21,7 @@ void prepareGrav(Shader* shader) {
 	col = objLoader.loadCollisionMesh("./data/models/grav.col.obj", NULL, NULL, NULL, NULL);
 }
 
-GameObject* newGrav(GameObjectRegist* regist, Window* window, Vec3 pos, Vec3 rot, Vec3 scl) {
+GameObject* newGrav(GameObjectRegist* regist, Window* window, scalar mass, Vec3 pos, Vec3 rot, Vec3 scl) {
 	GameObject* grav = manGameObj.new("Grav", NULL, true, true, NULL, NULL, NULL, NULL, window);
 
 	manGameObj.setPositionVec(grav, &pos);
@@ -31,7 +33,7 @@ GameObject* newGrav(GameObjectRegist* regist, Window* window, Vec3 pos, Vec3 rot
 
 	manGameObj.setPhysicsCollider(grav, col);
 	grav->particle->damping = 0;
-	grav->particle->inverseMass = 1e-15;
+	manParticle.setMass(grav->particle, mass);
 
 	AnchoredGravityForceGenerator* fg = manAnchoredGravityForceGenerator.new(grav->particle);
 

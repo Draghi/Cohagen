@@ -47,7 +47,7 @@ static void addCollider(CollisionResolver* collisionResolver, PhysicsCollider* c
 
 static void reset(CollisionResolver* collisionResolver) {
 	if (collisionResolver->transformedColliders!=NULL) {
-		for(int i = 0; i < collisionResolver->colliders->size; i++) {
+		for(int i = 0; i < collisionResolver->transformedColliders->size; i++) {
 			TransformedCollider* tCol = ((TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, i));
 			resetTransformMesh(tCol);
 		}
@@ -169,8 +169,6 @@ static void resolve(CollisionResolver* collisionResolver) {
 		TransformedCollider* collider2 = (TransformedCollider*)manDynamicArray.get(collisionResolver->transformedColliders, cr->collider2);
 
 		Vec3 translation = manVec3.preMulScalar(cr->collisionInfo.distance/2, &cr->collisionInfo.axis);
-
-		printf("HELLO - %f\n", cr->collisionInfo.distance);
 
 		if (!collider1->collider.immovable)
 			*collider1->collider.position = manVec3.sum(collider1->collider.position, &translation);

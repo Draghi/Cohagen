@@ -15,6 +15,8 @@ uniform float FCoef;
 out vec2 texCoord;
 out float logz;
 
+out vec3 pos;
+
 void main() {
 	texCoord = vTex;
 	
@@ -25,4 +27,6 @@ void main() {
 	//http://outerra.blogspot.com.au/2012/11/maximizing-depth-buffer-range-and.html
 	logz = log(max(0.5397606e-78, gl_Position.w*near + 1))*FCoef;
     gl_Position.z = (2*logz - 1)*gl_Position.w;
+    
+    pos = gl_Position.xyz;
 }

@@ -35,6 +35,8 @@ typedef struct GameData_s {
 	MatrixManager* matMan;
 
 	bool escStilDown;
+	bool lClickStillDown;
+	bool rClickStillDown;
 
 	// Mass of gravity well
 	scalar gravityWellMass;
@@ -179,9 +181,10 @@ static void onInitMisc(GameLoop* self) {
 	}
 
 	data->gameState = GAME_STATE;
+	data->lClickStillDown = false;
+	data->rClickStillDown = false;
 
 	prepareGrav(data->globalShader);
-	manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
 
 	// Initialize gravity well mass
 	data->massLowest = 1061858316100.0f;
@@ -213,6 +216,8 @@ static void onInitMisc(GameLoop* self) {
 	data->gravityWellBar->position->z = 0.1+100/(tan(0.5*1.152f));
 	data->gravityWellBar->position->x = 0;
 	data->gravityWellBar->position->y = -80;
+
+
 }
 
 /* ************ *
@@ -232,10 +237,40 @@ static void onDestroy(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
-	printf("Gravity well mass: %f\n", data->gravityWellMass);
+	//printf("Gravity well mass: %f\n", data->gravityWellMass);
 
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
+
+		if ((manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) && (!data->lClickStillDown)) {
+			data->lClickStillDown = true;
+			manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
+		} else {
+			data->lClickStillDown = false;
+		}
+
+		if ((manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) && (!data->lClickStillDown)) {
+			data->rClickStillDown = true;
+			manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, -data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
+		} else {
+			data->rClickStillDown = false;
+		}
+
+		if (manKeyboard.isDown(self->primaryWindow, KEY_EQUAL)) {
+			if ((data->gravityWellMass + (data->massRate * tickDelta)) > data->massHighest) {
+				data->gravityWellMass = data->massHighest;
+			} else {
+				data->gravityWellMass += data->massRate * tickDelta;
+			}
+		}
+
+		if (manKeyboard.isDown(self->primaryWindow, KEY_MINUS)) {
+			if ((data->gravityWellMass - (data->massRate * tickDelta) < data->massLowest)) {
+				data->gravityWellMass = data->massLowest;
+			} else {
+				data->gravityWellMass -= data->massRate * tickDelta;
+			}
+		}
 
 		/* ********* *
 		 * Exit Game *
@@ -245,21 +280,6 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			data->escStilDown = true;
 			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		}
-		if (manKeyboard.isDown(self->primaryWindow, KEY_EQUAL)) {
-			if ((data->gravityWellMass + (data->massRate * tickDelta)) > data->massHighest) {
-				data->gravityWellMass = data->massHighest;
-			} else {
-				data->gravityWellMass += data->massRate * tickDelta;
-			}
-		}
-		if (manKeyboard.isDown(self->primaryWindow, KEY_MINUS)) {
-			if ((data->gravityWellMass - (data->massRate * tickDelta) < data->massLowest)) {
-				data->gravityWellMass = data->massLowest;
-			} else {
-				data->gravityWellMass -= data->massRate * tickDelta;
-			}
-		}
-
 
 	} else if (data->gameState == QUIT_STATE) {
 		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) {

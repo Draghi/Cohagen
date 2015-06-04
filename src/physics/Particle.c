@@ -110,7 +110,7 @@ static scalar getMass(Particle *const particle) {
 }
 
 static bool hasFiniteMass(Particle *const particle) {
-	return (particle->inverseMass >= 0.0f);
+	return (particle->inverseMass != 0.0f);
 }
 
 static void setMass(Particle *const particle, scalar mass) {

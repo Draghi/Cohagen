@@ -33,9 +33,6 @@ static void updateForce(void *const self, Particle *const particle, scalar frame
 	if (mag != 0) {
 		Vec3 dir = manVec3.create(NULL, diff.x/mag, diff.y/mag, diff.z/mag);
 
-		//if (mag<1)
-		//	mag = 1;
-
 		scalar grav = GRAVITATIONAL_CONSTANT*((manParticle.getMass(fg->gravityAnchor)*manParticle.getMass(particle))/(mag*mag));
 		Vec3 force = manVec3.preMulScalar(-grav, &dir);
 
