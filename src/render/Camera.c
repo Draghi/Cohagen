@@ -29,6 +29,9 @@ static Camera* new(Vec3* position, Vec3* rotation, Vec3* scale){
 		camera->scale = manVec3.create(NULL, 1, 1, 1);
 	}
 
+	camera->parentObject = NULL;
+	camera->viewport = NULL;
+
 	return camera;
 }
 
