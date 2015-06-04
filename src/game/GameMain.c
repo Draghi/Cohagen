@@ -33,6 +33,9 @@ typedef struct GameData_s {
 	MatrixManager* matMan;
 
 	bool escStilDown;
+
+	// Mass of gravity well
+	float gravityWellMass;
 } GameData;
 
 static void onCreate(GameLoop* self);
@@ -59,7 +62,7 @@ static void onCreate(GameLoop* self) {
  *  Init Start *
  * *********** */
 static void onInitWindow(GameLoop* self) {
-	self->primaryWindow->isFullscreen = true;
+	// self->primaryWindow->isFullscreen = true;
 	self->primaryWindow->shouldCaptureMouse = true;
 }
 
@@ -135,7 +138,7 @@ static void onInitMisc(GameLoop* self) {
 
 	data->mainCamera = manCamera.new(NULL, NULL, NULL);
 	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
-	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
+	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow)));
 
 	GameObject* cameraController = newCameraController(data->mainCamera, self->primaryWindow, 20.0f, 1000.0f, 0.125f, KEY_W, KEY_S, KEY_A, KEY_D, KEY_SPACE, KEY_LSHIFT, KEY_E, KEY_Q);
 
@@ -145,6 +148,9 @@ static void onInitMisc(GameLoop* self) {
 	manGameObjRegist.add(data->gameObjRegist, cameraController);
 
 	data->gameState = GAME_STATE;
+
+	// Initialize gravity well mass
+	data->gravityWellMass = 1.0f;
 }
 
 /* ************ *
@@ -163,6 +169,8 @@ static void onDestroy(GameLoop* self) {
  * *********** */
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
+
+	printf("%f\n", data->gravityWellMass);
 
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
