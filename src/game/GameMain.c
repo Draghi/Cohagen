@@ -6,7 +6,6 @@
 #include "render/Skybox.h"
 #include "util/OGLUtil.h"
 #include "util/ObjLoader.h"
-#include "game/objs/Ship.h"
 
 typedef enum stateType_s {GAME_STATE, QUIT_STATE, LIGHTING_STATE} stateType;
 
@@ -111,7 +110,7 @@ static void initEndScreen(GameLoop* self) {
 	float smallestDimention = self->primaryWindow->height < self->primaryWindow->width ? self->primaryWindow->height : self->primaryWindow->width;
 	data->quitScreen->scale->x = smallestDimention;
 	data->quitScreen->scale->y = smallestDimention;
-	data->quitScreen->position->z = -smallestDimention/(tan(0.5*1.152f));
+	data->quitScreen->position->z = smallestDimention/(tan(0.5*1.152f));
 }
 
 static void initSkybox(GameLoop* self) {
@@ -120,8 +119,6 @@ static void initSkybox(GameLoop* self) {
 	data->skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
-
-GameObject* ship;
 
 static void onInitMisc(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
@@ -132,12 +129,9 @@ static void onInitMisc(GameLoop* self) {
 	initEndScreen(self);
 	initSkybox(self);
 
-	ship = newShip(self->primaryWindow, data->globalShader);
 	data->mainCamera = manCamera.new(NULL, NULL, NULL);
-	manCamera.setParentRenderObject(data->mainCamera, ship->render);
 	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
 	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
-	data->mainCamera->position.y = 0.25;
 
 
 	data->gameState = GAME_STATE;
@@ -161,7 +155,14 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
 	if (data->gameState == GAME_STATE) {
-		ship->onUpdateCallback(ship, tickDelta);
+		manCamera.addRotationXYZ(data->mainCamera, manMouse.getAbsoluteDY(self->primaryWindow)/100.0, 0, manMouse.getAbsoluteDX(self->primaryWindow)/100.0);
+
+		if (data->mainCamera->rotation.x > 1.5707)
+			data->mainCamera->rotation.x = 1.5707;
+
+		if (data->mainCamera->rotation.x < -3.1415)
+			data->mainCamera->rotation.x = -3.1415;
+
 		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
 			data->gameState = QUIT_STATE;
 			data->escStilDown = true;
@@ -184,10 +185,6 @@ static void bindMatricies(Shader* sha, MatrixManager* mats) {
 	manShader.bindUniformMat4(sha, "modelMatrix",      manMatMan.peekStack(mats, MATRIX_MODE_MODEL));
 }
 
-static const Vec3 xAxis = {1, 0, 0};
-static const Vec3 yAxis = {0, 1, 0};
-static const Vec3 zAxis = {0, 0, 1};
-
 static void renderSkybox(MatrixManager* manMat, Shader* skyboxShader, Skybox* skybox) {
 	manShader.bind(skyboxShader);
 		bindMatricies(skyboxShader, manMat);
@@ -203,7 +200,6 @@ static void onRender(GameLoop* self, float frameDelta) {
 	if (data->gameState == GAME_STATE) {
 		manCamera.bind(data->mainCamera, data->matMan);
 			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
-			manGameObj.render(ship, frameDelta, data->globalShader, data->matMan);
 		manCamera.unbind(data->mainCamera, data->matMan);
 	} else if (data->gameState == QUIT_STATE) {
 		manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
