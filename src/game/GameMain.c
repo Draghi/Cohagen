@@ -171,7 +171,7 @@ static void onInitMisc(GameLoop* self) {
 	data->massLowest = 1061858316100.0f;
 	data->massHighest = 2e30;
 	data->gravityWellMass = data->massLowest + 1.0f;
-	data->massRate = 30e28;
+	data->massRate = 120e28;
 
 	// Initialize gravity well bar
 	int posLoc  = manShader.getAttribLocation(data->globalShader, "vPos");
@@ -183,7 +183,7 @@ static void onInitMisc(GameLoop* self) {
 	data->barPosition = manVec3.create(NULL, -0.5f, -0.5f, 0.0f);
 
 	VAO* vao = objLoader.genVAOFromFile("./data/models/cube.obj", posLoc, normLoc, texLoc);
-	Texture* tex = textureUtil.createTextureFromFile("./data/texture/quitScreen.bmp", GL_LINEAR, GL_LINEAR);
+	Texture* tex = textureUtil.createTextureFromFile("./data/texture/powerUp.bmp", GL_LINEAR, GL_LINEAR);
 
 	data->gravityWellBar = manRenderObj.new(NULL, NULL, NULL);
 
@@ -235,7 +235,6 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			} else {
 				data->gravityWellMass += data->massRate * tickDelta;
 			}
-			data->gravityWellMass += data->massRate * tickDelta;
 		}
 		if (manKeyboard.isDown(self->primaryWindow, KEY_MINUS)) {
 			if ((data->gravityWellMass - (data->massRate * tickDelta) < data->massLowest)) {
