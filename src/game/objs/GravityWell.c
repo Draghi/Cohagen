@@ -2,9 +2,8 @@
 
 #include <string.h>
 
-static VAO* vao;
-static Texture* tex;
-static RenderObject* ro;
+static RenderObject* ro1;
+static RenderObject* ro2;
 static PhysicsCollider* col;
 
 #include "util/ObjLoader.h"
@@ -15,10 +14,18 @@ void prepareGrav(Shader* shader) {
 	int vPos = manShader.getAttribLocation(shader, "vPos");
 	int vNorm = manShader.getAttribLocation(shader, "vNorm");
 	int vTex = manShader.getAttribLocation(shader, "vTex");
-	vao = objLoader.genVAOFromFile("./data/models/grav.obj", vPos, vNorm, vTex);
-	tex = textureUtil.createTextureFromFile("./data/texture/quitScreen.bmp", GL_LINEAR, GL_LINEAR);
-	ro = manRenderObj.new(NULL, NULL, NULL);
+	VAO* vao = objLoader.genVAOFromFile("./data/models/grav.obj", vPos, vNorm, vTex);
+	Texture* tex1 = textureUtil.createTextureFromFile("./data/texture/grav.bmp", GL_LINEAR, GL_LINEAR);
+	Texture* tex2 = textureUtil.createTextureFromFile("./data/texture/antigrav.bmp", GL_LINEAR, GL_LINEAR);
+	ro1 = manRenderObj.new(NULL, NULL, NULL);
+	ro2 = manRenderObj.new(NULL, NULL, NULL);
 	col = objLoader.loadCollisionMesh("./data/models/grav.col.obj", NULL, NULL, NULL, NULL);
+
+	manRenderObj.setModel(ro1, vao);
+	manRenderObj.addTexture(ro1, tex1);
+
+	manRenderObj.setModel(ro2, vao);
+	manRenderObj.addTexture(ro2, tex2);
 }
 
 GameObject* newGrav(GameObjectRegist* regist, Window* window, scalar mass, Vec3 pos, Vec3 rot, Vec3 scl) {
@@ -27,9 +34,12 @@ GameObject* newGrav(GameObjectRegist* regist, Window* window, scalar mass, Vec3 
 	manGameObj.setPositionVec(grav, &pos);
 	manGameObj.setRotationVec(grav, &rot);
 	manGameObj.setScaleVec(grav, &scl);
-	manRenderObj.setModel(ro, vao);
-	manRenderObj.addTexture(ro, tex);
-	manGameObj.setModel(grav, ro);
+
+	if (mass>0)
+		manGameObj.setModel(grav, ro1);
+	else
+		manGameObj.setModel(grav, ro2);
+
 
 	manGameObj.setPhysicsCollider(grav, col);
 	grav->particle->damping = 0;

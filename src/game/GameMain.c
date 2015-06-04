@@ -98,7 +98,7 @@ static void initMatMan(GameLoop* self) {
 
 	data->matMan = manMatMan.new();
 	manMatMan.setMode(data->matMan, MATRIX_MODE_PROJECTION);
-	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.000001, 3000000);
+	manMatMan.pushPerspective(data->matMan, 1.152f, (float)manWin.getWidth(self->primaryWindow)/(float)manWin.getHeight(self->primaryWindow), 0.001, 30000);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
 	manMatMan.pushIdentity(data->matMan);
 	manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
@@ -111,8 +111,8 @@ static void initGlobalShader(GameLoop* self) {
 	data->globalShader = manShader.newFromGroup("./data/shaders/", "texLogZ");
 	manShader.bind(data->globalShader);
 		manShader.bindUniformInt(data->globalShader, "tex", 0);
-		manShader.bindUniformFloat(data->globalShader, "near", 0.0000001);
-		manShader.bindUniformFloat(data->globalShader, "FCoef", 2.0/log(3000*0.000001 + 1));
+		manShader.bindUniformFloat(data->globalShader, "near", 0.001);
+		manShader.bindUniformFloat(data->globalShader, "FCoef", 2.0/log(30000*0.001 + 1));
 	manShader.unbind(data->globalShader);
 }
 
@@ -148,7 +148,7 @@ static void initCamera(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
 	data->mainCamera = manCamera.new(NULL, NULL, NULL);
-	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
+	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 30000);
 	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
 
 	GameObject* cameraController = newCameraController(data->mainCamera, self->primaryWindow, 20.0f, 1000.0f, 0.125f, KEY_W, KEY_S, KEY_A, KEY_D, KEY_LSHIFT, KEY_SPACE, KEY_E, KEY_Q);
@@ -174,7 +174,8 @@ static void onInitMisc(GameLoop* self) {
 	for(int i = 0; i < dir; i++) {
 		for(int j = 0; j < dir; j++) {
 			for(int k = 0; k < dir; k++) {
-				GameObject* obj = newAsteroid(self->primaryWindow, manVec3.create(NULL, i*60-(60*dir/2-30), j*60-(60*dir/2-30), k*60-(60*dir/2-30)), manVec3.create(NULL, i-2,j-2, k-2), manVec3.create(NULL, 1, 1, 1));
+				GameObject* obj = newAsteroid(self->primaryWindow, manVec3.create(NULL, i*90-(90*dir/2-45), j*90-(90*dir/2-45), k*90-(90*dir/2-45)), manVec3.create(NULL, i-2,j-2, k-2), manVec3.create(NULL, 2, 2, 2));
+				manParticle.setMass(obj->particle, 1e10);
 				manGameObjRegist.add(data->gameObjRegist, obj);
 			}
 		}
@@ -240,17 +241,21 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
 
-		if ((manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) && (!data->lClickStillDown)) {
-			data->lClickStillDown = true;
-			manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
+		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) {
+			if (!data->lClickStillDown) {
+				data->lClickStillDown = true;
+				manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
+			}
 		} else {
 			data->lClickStillDown = false;
 		}
 
-		if ((manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) && (!data->lClickStillDown)) {
-			data->rClickStillDown = true;
-			manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, -data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
-		} else {
+		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_RIGHT)) {
+			if (!data->rClickStillDown) {
+				data->rClickStillDown = true;
+				manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, -data->gravityWellMass, manVec3.invert(&data->mainCamera->position), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
+			}
+		} else if (data->rClickStillDown) {
 			data->rClickStillDown = false;
 		}
 

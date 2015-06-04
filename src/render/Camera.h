@@ -219,7 +219,7 @@ typedef struct CameraManager_s {
 	/**
 	 * Frees the memory allocated by the Camera pointer
 	 *
-	 * @params camera		A pointer to a Camera object
+	 * @param camera		A pointer to a Camera object
 	 * @returns void
 	 */
 	void (*delete)(Camera *const camera);
