@@ -137,7 +137,7 @@ static void initEndScreen(GameLoop* self) {
 static void initSkybox(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
-	data->skybox = manSkybox.newFromGroup("./data/texture/", "purplenebula");
+	data->skybox = manSkybox.newFromGroup("./data/texture/", "deepSpace");
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
@@ -232,8 +232,6 @@ static void onDestroy(GameLoop* self) {
  * *********** */
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
-
-	printf("Gravity well mass: %f\n", data->gravityWellMass);
 
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
