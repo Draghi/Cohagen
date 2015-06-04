@@ -134,6 +134,21 @@ static void initSkybox(GameLoop* self) {
 	data->skyboxShader = manShader.newFromGroup("./data/shaders/", "skybox");
 }
 
+static void initCamera(GameLoop* self) {
+	GameData* data = (GameData*)self->extraData;
+
+	data->mainCamera = manCamera.new(NULL, NULL, NULL);
+	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
+	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
+
+	GameObject* cameraController = newCameraController(data->mainCamera, self->primaryWindow, 20.0f, 1000.0f, 0.125f, KEY_W, KEY_S, KEY_A, KEY_D, KEY_LSHIFT, KEY_SPACE, KEY_E, KEY_Q);
+
+	data->speed = 20.0f;
+
+	data->gameObjRegist = manGameObjRegist.new(data->matMan);
+	manGameObjRegist.add(data->gameObjRegist, cameraController);
+}
+
 static void onInitMisc(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
@@ -141,17 +156,7 @@ static void onInitMisc(GameLoop* self) {
 	initGlobalShader(self);
 	initEndScreen(self);
 	initSkybox(self);
-
-	data->mainCamera = manCamera.new(NULL, NULL, NULL);
-	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
-	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, manWin.getFramebufferWidth(self->primaryWindow), manWin.getFramebufferHeight(self->primaryWindow)));
-
-	GameObject* cameraController = newCameraController(data->mainCamera, self->primaryWindow, 20.0f, 1000.0f, 0.125f, KEY_W, KEY_S, KEY_A, KEY_D, KEY_SPACE, KEY_LSHIFT, KEY_E, KEY_Q);
-
-	data->speed = 20.0f;
-
-	data->gameObjRegist = manGameObjRegist.new(data->matMan);
-	manGameObjRegist.add(data->gameObjRegist, cameraController);
+	initCamera(self);
 
 	data->gameState = GAME_STATE;
 
