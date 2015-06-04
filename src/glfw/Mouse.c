@@ -45,11 +45,6 @@ static void getAbsolutePosition(Window* window, double* pos) {
 
 /**Polls mouse related "things"**/
 static void update(Window* window) {
-	if (window->shouldCaptureMouse)
-		glfwSetInputMode(window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	else
-		glfwSetInputMode(window->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-
 	double pos[2];
 	glfwGetCursorPos(window->window, &window->mouse->omx, &window->mouse->omy);
 	getAbsolutePosition(window, pos);

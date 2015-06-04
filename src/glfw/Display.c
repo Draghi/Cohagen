@@ -107,6 +107,11 @@ static bool openWindow(Window* window) {
 			ogl_LoadFunctions();
 		}
 
+		if (window->shouldCaptureMouse)
+			glfwSetInputMode(window->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		else
+			glfwSetInputMode(window->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+
 		glfwDefaultWindowHints();
 	}
 
