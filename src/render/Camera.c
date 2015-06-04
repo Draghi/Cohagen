@@ -29,6 +29,9 @@ static Camera* new(Vec3* position, Vec3* rotation, Vec3* scale){
 		camera->scale = manVec3.create(NULL, 1, 1, 1);
 	}
 
+	camera->parentObject = NULL;
+	camera->viewport = NULL;
+
 	return camera;
 }
 
@@ -41,18 +44,18 @@ static void bind(Camera* camera, MatrixManager* manMat){
 	manMatMan.setMode(manMat, MATRIX_MODE_VIEW);
 	manMatMan.push(manMat);
 
-	manMatMan.rotate(manMat, -camera->rotation.x, xAxis);
-	manMatMan.rotate(manMat, -camera->rotation.y, yAxis);
-	manMatMan.rotate(manMat, -camera->rotation.z, zAxis);
-	manMatMan.translate(manMat, manVec3.invert(&camera->position));
+	manMatMan.rotate(manMat, camera->rotation.x, xAxis);
+	manMatMan.rotate(manMat, camera->rotation.y, yAxis);
+	manMatMan.rotate(manMat, camera->rotation.z, zAxis);
 	manMatMan.scale(manMat, camera->scale);
+	manMatMan.translate(manMat, camera->position);
 
 	if(camera->parentObject != NULL) {
-		manMatMan.rotate(manMat, -camera->parentObject->rotation->z, zAxis);
-		manMatMan.rotate(manMat, -camera->parentObject->rotation->y, yAxis);
 		manMatMan.rotate(manMat, -camera->parentObject->rotation->x, xAxis);
-		manMatMan.translate(manMat, *camera->parentObject->position);
+		manMatMan.rotate(manMat, -camera->parentObject->rotation->y, yAxis);
+		manMatMan.rotate(manMat, -camera->parentObject->rotation->z, zAxis);
 		manMatMan.scale(manMat, *camera->parentObject->scale);
+		manMatMan.translate(manMat, manVec3.invert(camera->parentObject->position));
 	}
 }
 
