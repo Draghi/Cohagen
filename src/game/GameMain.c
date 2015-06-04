@@ -1,5 +1,6 @@
 #include "GameMain.h"
 
+#include "game/objs/CameraController.h"
 #include "engine/GameObjectRegistry.h"
 #include "render/Camera.h"
 #include "render/Renderer.h"
@@ -127,7 +128,6 @@ static void initSkybox(GameLoop* self) {
 static void onInitMisc(GameLoop* self) {
 	GameData* data = (GameData*)self->extraData;
 
-
 	initMatMan(self);
 	initGlobalShader(self);
 	initEndScreen(self);
@@ -137,7 +137,12 @@ static void onInitMisc(GameLoop* self) {
 	manCamera.setProjectionInfo(data->mainCamera, 1.152f, 0.001, 10000);
 	manCamera.setViewportObject(data->mainCamera, manViewport.new(0, 0, self->primaryWindow->width, self->primaryWindow->height));
 
+	GameObject* cameraController = newCameraController(data->mainCamera, self->primaryWindow, 20.0f, 1000.0f, 0.125f, KEY_W, KEY_S, KEY_A, KEY_D, KEY_SPACE, KEY_LSHIFT, KEY_E, KEY_Q);
+
 	data->speed = 20.0f;
+
+	data->gameObjRegist = manGameObjRegist.new(data->matMan);
+	manGameObjRegist.add(data->gameObjRegist, cameraController);
 
 	data->gameState = GAME_STATE;
 }
@@ -153,96 +158,6 @@ static void onDestroy(GameLoop* self) {
 	free(self->extraData);
 }
 
-static void doCameraControl(Camera* camera, Window* window, scalar rate) {
-	/* ************* *
-	 * Mouse Control *
-	 * ************* */
-	manCamera.addRotationXYZ(camera, -manMouse.getAbsoluteDY(window)/100.0, manMouse.getAbsoluteDX(window)/100.0, 0);
-
-	//Limit camera from doing flips.
-	if (camera->rotation.x > 1.57079633)
-		camera->rotation.x = 1.57079633;
-
-	if (camera->rotation.x < -1.57079633)
-		camera->rotation.x = -1.57079633;
-
-	bool moveForward  = manKeyboard.isDown(window, KEY_W);
-	bool moveBackward = manKeyboard.isDown(window, KEY_S);
-	bool moveLeft = manKeyboard.isDown(window, KEY_A);
-	bool moveRight = manKeyboard.isDown(window, KEY_D);
-	bool moveUp = manKeyboard.isDown(window, KEY_LSHIFT);
-	bool moveDown = manKeyboard.isDown(window, KEY_SPACE);
-
-	/* ************************* *
-	 * Forward and Back movement *
-	 * ************************* */
-	if ((moveForward) || (moveBackward)) {
-		//Calculate the "forward" direction.
-		Vec3 xAxis = {1, 0, 0};
-		Vec3 yAxis = {0, 1, 0};
-		Vec3 zAxis = {0, 0, 1};
-
-		Mat4 rot = manMat4.createLeading(NULL, 1);
-		rot = manMat4.affRotate(&rot, camera->rotation.x, &xAxis);
-		rot = manMat4.affRotate(&rot, camera->rotation.y, &yAxis);
-		rot = manMat4.affRotate(&rot, camera->rotation.z, &zAxis);
-
-		Vec4 forward = {0,0,1,0};
-		forward = manMat4.postMulVec4(&rot, &forward);
-
-		Vec3 movement = manVec3.create(NULL, forward.x, forward.y, -forward.z);
-		if (manVec3.magnitude(&movement)>0)
-			movement =manVec3.normalize(&movement);
-
-		if (moveForward) {
-			Vec3 forwardMovement = manVec3.preMulScalar(rate, &movement);
-			manCamera.addPositionVec(camera, &forwardMovement);
-		}
-
-		if (moveBackward) {
-			Vec3 backwardMovement = manVec3.preMulScalar(-rate, &movement);
-			manCamera.addPositionVec(camera, &backwardMovement);
-		}
-	}
-	/* *********************** *
-	 * Left and Right movement *
-	 * *********************** */
-	if ((moveLeft) || (moveRight)) {
-		Vec3 movement = manVec3.create(NULL, cos(camera->rotation.y), 0, sin(camera->rotation.y));
-		if (manVec3.magnitude(&movement)>0)
-			movement = manVec3.normalize(&movement);
-
-		if (moveRight) {
-			Vec3 rightMovement = manVec3.preMulScalar(rate, &movement);
-			manCamera.addPositionVec(camera, &rightMovement);
-		}
-
-		if (moveLeft) {
-			Vec3 leftMovement = manVec3.preMulScalar(-rate, &movement);
-			manCamera.addPositionVec(camera, &leftMovement);
-		}
-	}
-
-	/* ******************** *
-	 * Up and Down movement *
-	 * ******************** */
-	if ((moveUp) || (moveDown)) {
-		Vec3 movement = manVec3.create(NULL, 0, 1, 0);
-		if (manVec3.magnitude(&movement)>0)
-			movement =manVec3.normalize(&movement);
-
-		if (moveUp) {
-			Vec3 upMovement = manVec3.preMulScalar(-rate, &movement);
-			manCamera.addPositionVec(camera, &upMovement);
-		}
-
-		if (moveDown) {
-			Vec3 downMovement = manVec3.preMulScalar(rate, &movement);
-			manCamera.addPositionVec(camera, &downMovement);
-		}
-	}
-}
-
 /* *********** *
  *  Game Start *
  * *********** */
@@ -250,21 +165,7 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
 	if (data->gameState == GAME_STATE) {
-
-		if (manKeyboard.isDown(self->primaryWindow, KEY_Q)) {
-			data->speed -= 100*tickDelta;
-			if (data->speed<0.125)
-				data->speed = 0.125;
-		}
-
-		if (manKeyboard.isDown(self->primaryWindow, KEY_E)) {
-			data->speed += 100*tickDelta;
-			if (data->speed>1000)
-				data->speed = 1000;
-		}
-
-		//Update Camera
-		doCameraControl(data->mainCamera, self->primaryWindow, data->speed*tickDelta);
+		manGameObjRegist.update(data->gameObjRegist, tickDelta);
 
 		/* ********* *
 		 * Exit Game *
