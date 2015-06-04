@@ -42,6 +42,14 @@ typedef struct GameData_s {
 	scalar massLowest;
 	// End of gravity well mass scale
 	scalar massHighest;
+
+	// Mass of gravity well bar
+	VAO *bar;
+	Shader *barShader;
+	Vec3 barPosition;
+	Vec3 barScale;
+
+	RenderObject *gravityWellBar;
 } GameData;
 
 static void onCreate(GameLoop* self);
@@ -63,12 +71,11 @@ static void onCreate(GameLoop* self) {
 	self->extraData = malloc(sizeof(GameData));
 }
 
-
 /* *********** *
  *  Init Start *
  * *********** */
 static void onInitWindow(GameLoop* self) {
-	// self->primaryWindow->isFullscreen = true;
+	self->primaryWindow->isFullscreen = true;
 	self->primaryWindow->shouldCaptureMouse = true;
 }
 
@@ -165,6 +172,31 @@ static void onInitMisc(GameLoop* self) {
 	data->massHighest = 2e30;
 	data->gravityWellMass = data->massLowest + 1.0f;
 	data->massRate = 30e28;
+
+	// Initialize gravity well bar
+	int posLoc  = manShader.getAttribLocation(data->globalShader, "vPos");
+	int normLoc = manShader.getAttribLocation(data->globalShader, "vNorm");
+	int texLoc  = manShader.getAttribLocation(data->globalShader, "vTex");
+	
+	data->bar = objLoader.genVAOFromFile("./data/models/cube.obj", posLoc, normLoc, texLoc);
+	data->barShader = manShader.newFromGroup("./data/shaders/", "barShader");
+	data->barPosition = manVec3.create(NULL, -0.5f, -0.5f, 0.0f);
+
+	VAO* vao = objLoader.genVAOFromFile("./data/models/cube.obj", posLoc, normLoc, texLoc);
+	Texture* tex = textureUtil.createTextureFromFile("./data/texture/quitScreen.bmp", GL_LINEAR, GL_LINEAR);
+
+	data->gravityWellBar = manRenderObj.new(NULL, NULL, NULL);
+
+	manRenderObj.setModel(data->gravityWellBar, vao);
+	manRenderObj.addTexture(data->gravityWellBar, tex);
+
+	// float smallestDimension = self->primaryWindow->height < self->primaryWindow->width ? self->primaryWindow->height : self->primaryWindow->width;
+	data->gravityWellBar->scale->x = 50;
+	data->gravityWellBar->scale->y = 5;
+	data->gravityWellBar->scale->z = 0.1;
+	data->gravityWellBar->position->z = 0.1+100/(tan(0.5*1.152f));
+	data->gravityWellBar->position->x = 0;
+	data->gravityWellBar->position->y = -80;
 }
 
 /* ************ *
@@ -184,7 +216,7 @@ static void onDestroy(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
-	printf("%f\n", data->gravityWellMass);
+	printf("Gravity well mass: %f\n", data->gravityWellMass);
 
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);
@@ -213,6 +245,7 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 			}
 		}
 
+
 	} else if (data->gameState == QUIT_STATE) {
 		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) {
 			exit(0);
@@ -224,6 +257,8 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 		// 	data->escStilDown = false;
 		// }
 	}
+
+	data->gravityWellBar->scale->x = 50 * (data->gravityWellMass / (data->massHighest - data->massLowest));
 }
 
 static void renderSkybox(MatrixManager* matMan, Shader* skyboxShader, Skybox* skybox) {
@@ -233,6 +268,28 @@ static void renderSkybox(MatrixManager* matMan, Shader* skyboxShader, Skybox* sk
 		manShader.bindUniformMat4(skyboxShader, "modelMatrix",      manMatMan.peekStack(matMan, MATRIX_MODE_MODEL));
 		manSkybox.draw(skybox, skyboxShader, "cubeTexture");
 	manShader.unbind();
+}
+
+static void renderBar(MatrixManager *matMan, Shader *barShader, VAO *barVAO, Vec3 barPosition, Window *win) {
+	manMatMan.setMode(matMan, MATRIX_MODE_MODEL);
+	manMatMan.push(matMan);
+		manMatMan.pushIdentity(matMan);
+		manShader.bind(barShader);
+			manVAO.bind(barVAO);
+				manMatMan.translate(matMan, barPosition);
+				manShader.bindUniformMat4(barShader, "modelMatrix", manMatMan.peekStack(matMan, MATRIX_MODE_MODEL));
+				Mat4 projectionMatrix = manMat4.create(NULL, 	manWin.getFramebufferWidth(win) / (float) manWin.getFramebufferHeight(win), 0.0f, 0.0f, 0.0f,
+														0.0f, 1.0f, 0.0f, 0.0f,
+														0.0f, 0.0f, 1.0f, 0.0f,
+														0.0f, 0.0f, 0.0f, 1.0f);
+				manShader.bindUniformMat4(barShader, "projectionMatrix", &projectionMatrix);
+				// glDisable(GL_DEPTH_TEST);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				manVAO.draw(barVAO);
+				// glEnable(GL_DEPTH_TEST);
+			manVAO.unbind();
+		manShader.unbind();
+	manMatMan.pop(matMan);
 }
 
 static void onRender(GameLoop* self, float frameDelta) {
@@ -245,7 +302,16 @@ static void onRender(GameLoop* self, float frameDelta) {
 
 			manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
 			renderSkybox(data->matMan, data->skyboxShader, data->skybox);
-			manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
+			// manRenderer.renderModel(data->quitScreen, data->globalShader, data->matMan);
+
+			// glClear(GL_DEPTH_BUFFER_BIT);
+			manMatMan.setMode(data->matMan, MATRIX_MODE_VIEW);
+			manMatMan.pushIdentity(data->matMan);
+				manRenderer.renderModel(data->gravityWellBar, data->globalShader, data->matMan);
+			manMatMan.pop(data->matMan);
+			manMatMan.setMode(data->matMan, MATRIX_MODE_MODEL);
+			// MUST BE RENDERED LAST
+			// renderBar(data->matMan, data->barShader, data->bar, data->barPosition, self->primaryWindow);
 
 		manCamera.unbind(data->mainCamera, data->matMan);
 	} else if (data->gameState == QUIT_STATE) {
