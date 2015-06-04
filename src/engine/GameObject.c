@@ -61,6 +61,7 @@ static void render(GameObject* gameObject, float frameDelta, Shader* shader, Mat
 //Internals
 static void setPhysicsCollider(GameObject* gameObject, PhysicsCollider* collider) {
 	if (gameObject->physCollider!=NULL) {
+		gameObject->physCollider->immovable = collider->immovable;
 		gameObject->physCollider->bPhase = collider->bPhase;
 		gameObject->physCollider->nPhase = collider->nPhase;
 	}
@@ -194,7 +195,8 @@ static void addForceVec(GameObject* gameObject, Vec3* force) {
 }
 
 static void addForceGenerator(GameObject* gameObject, ParticleForceGenerator* forceGenerator) {
-	manForceRegistry.add(gameObject->pfRegistry, gameObject->particle, forceGenerator);
+	if (gameObject->particle!=NULL)
+		manForceRegistry.add(gameObject->pfRegistry, gameObject->particle, forceGenerator);
 }
 
 static void delete(GameObject* gameObject) {

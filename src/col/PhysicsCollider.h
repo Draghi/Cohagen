@@ -20,6 +20,8 @@ typedef struct PhysicsCollider_s {
 
 	ColliderSphere bPhase;
 	ColliderSimpleMesh nPhase;
+
+	bool immovable;
 } PhysicsCollider;
 
 typedef struct PhysicsColliderManager_s {

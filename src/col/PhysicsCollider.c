@@ -40,6 +40,7 @@ static PhysicsCollider* new(Vec3* position, Vec3* rotation, Vec3* scale, Vec3* v
 
 	result->bPhase.center = manVec3.create(NULL, 0,0,0);
 	result->bPhase.radius = 0;
+	result->immovable = false;
 
 	return result;
 }

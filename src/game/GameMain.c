@@ -2,6 +2,7 @@
 
 #include "game/objs/CameraController.h"
 #include "game/objs/Asteroid.h"
+#include "game/objs/GravityWell.h"
 #include "engine/GameObjectRegistry.h"
 #include "render/Camera.h"
 #include "render/Renderer.h"
@@ -164,18 +165,16 @@ static void onInitMisc(GameLoop* self) {
 	for(int i = 0; i < dir; i++) {
 		for(int j = 0; j < dir; j++) {
 			for(int k = 0; k < dir; k++) {
-				float x, y, z;
-				x = i;
-				y = j;
-				z = k;
-				GameObject* obj = newAsteroid(self->primaryWindow, manVec3.create(NULL, x, y, z), manVec3.create(NULL, i-2,j-2, k-2), manVec3.create(NULL, dir/(float)(i*3+1), dir/(float)(i*3+1), dir/(float)(i*3+1)));
-				obj->velocity = manVec3.create(NULL, (i-dir/2)*10,(j-dir/2)*10, (k-dir/2)*10);
+				GameObject* obj = newAsteroid(self->primaryWindow, manVec3.create(NULL, i*60-(60*dir/2-30), j*60-(60*dir/2-30), k*60-(60*dir/2-30)), manVec3.create(NULL, i-2,j-2, k-2), manVec3.create(NULL, 1, 1, 1));
 				manGameObjRegist.add(data->gameObjRegist, obj);
 			}
 		}
 	}
 
 	data->gameState = GAME_STATE;
+
+	prepareGrav(data->globalShader);
+	manGameObjRegist.add(data->gameObjRegist, newGrav(data->gameObjRegist, self->primaryWindow, manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 0, 0, 0), manVec3.create(NULL, 10, 10, 10)));
 
 	// Initialize gravity well mass
 	data->massLowest = 1061858316100.0f;
@@ -201,7 +200,7 @@ static void onDestroy(GameLoop* self) {
 static void onUpdate(GameLoop* self, float tickDelta) {
 	GameData* data = self->extraData;
 
-	printf("%f\n", data->gravityWellMass);
+	//printf("%f\n", data->gravityWellMass);
 
 	if (data->gameState == GAME_STATE) {
 		manGameObjRegist.update(data->gameObjRegist, tickDelta);

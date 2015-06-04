@@ -90,6 +90,7 @@ static void prepare(CollisionResolver* collisionResolver) {
 
 		Mat4 transformationMatrix = manColMesh.makeTransformationMatrix(col->position, col->rotation, col->scale);
 		tCol->collider.bPhase = col->bPhase;
+		tCol->collider.immovable = col->immovable;
 
 		manColMesh.transformSphere(&tCol->collider.bPhase, &transformationMatrix, col->scale);
 	}
@@ -145,18 +146,20 @@ static bool check(CollisionResolver* collisionResolver) {
 	return flag;
 }
 
-void momentumCollisionResponse(Vec3* out1, Vec3* out2, Vec3 vel1, Vec3 vel2, scalar mass1, scalar mass2) {
+void momentumCollisionResponse(Vec3* out1, Vec3* out2, Vec3 vel1, Vec3 vel2, scalar mass1, scalar mass2, bool immovable1, bool immovable2) {
 	scalar v1LeftM = (mass1 - mass2)/(mass1 + mass2);
 	scalar v1RightM = (2*mass2)/(mass1 + mass2);
 	Vec3 v1Left = manVec3.preMulScalar(v1LeftM, &vel1);
 	Vec3 v1Right = manVec3.preMulScalar(v1RightM, &vel2);
-	*out1 = manVec3.sum(&v1Left, &v1Right);
+	if (!immovable1)
+		*out1 = manVec3.sum(&v1Left, &v1Right);
 
 	scalar v2LeftM = (mass2 - mass1)/(mass1 + mass2);
 	scalar v2RightM = (2*mass1)/(mass1 + mass2);
 	Vec3 v2Left = manVec3.preMulScalar(v2LeftM, &vel2);
 	Vec3 v2Right = manVec3.preMulScalar(v2RightM, &vel1);
-	*out2 = manVec3.sum(&v2Left, &v2Right);
+	if (!immovable2)
+		*out2 = manVec3.sum(&v2Left, &v2Right);
 }
 
 static void resolve(CollisionResolver* collisionResolver) {
@@ -167,16 +170,29 @@ static void resolve(CollisionResolver* collisionResolver) {
 
 		Vec3 translation = manVec3.preMulScalar(cr->collisionInfo.distance/2, &cr->collisionInfo.axis);
 
-		*collider1->collider.position = manVec3.sum(collider1->collider.position, &translation);
+		printf("HELLO - %f\n", cr->collisionInfo.distance);
+
+		if (!collider1->collider.immovable)
+			*collider1->collider.position = manVec3.sum(collider1->collider.position, &translation);
+
+		if ((!collider1->collider.immovable) && (collider2->collider.immovable))
+			*collider1->collider.position = manVec3.sum(collider1->collider.position, &translation);
+
 		translation = manVec3.invert(&translation);
-		*collider2->collider.position = manVec3.sum(collider2->collider.position, &translation);
+
+		if (!collider2->collider.immovable)
+			*collider2->collider.position = manVec3.sum(collider2->collider.position, &translation);
+
+		if ((!collider2->collider.immovable) && (collider1->collider.immovable))
+			*collider2->collider.position = manVec3.sum(collider2->collider.position, &translation);
 
 		collider1->hasMeshTransformed = false;
 		collider2->hasMeshTransformed = false;
 
 		momentumCollisionResponse(collider1->collider.velocity,  collider2->collider.velocity,
 		                         *collider1->collider.velocity, *collider2->collider.velocity,
-		                          1/(*collider1->collider.inverseMass), 1/(*collider2->collider.inverseMass));
+		                          1/(*collider1->collider.inverseMass), 1/(*collider2->collider.inverseMass),
+								  collider1->collider.immovable, collider2->collider.immovable);
 	}
 }
 

@@ -98,7 +98,7 @@ static CollisionResult simpleMeshVsSimpleMesh(ColliderSimpleMesh* mesh1, Collide
 
 	if (doSimpleMeshvsSimpleMesh(&overlap, mesh1, mesh2)) {
 		SATOverlap overlap2;
-		overlap2.push = SCALAR_MAX_VAL;
+		overlap2.push = overlap.push;
 
 		if (doSimpleMeshvsSimpleMesh(&overlap2, mesh2, mesh1)) {
 			overlap2.push = -overlap2.push;
