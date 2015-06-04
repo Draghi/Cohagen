@@ -177,12 +177,15 @@ static void onUpdate(GameLoop* self, float tickDelta) {
 		}
 
 	} else if (data->gameState == QUIT_STATE) {
-		if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
-			if (!data->escStilDown)
-				exit(0);
-		} else {
-			data->escStilDown = false;
+		if (manMouse.isDown(self->primaryWindow, MOUSE_BUTTON_LEFT)) {
+			exit(0);
 		}
+		// if (manKeyboard.isDown(self->primaryWindow, KEY_ESCAPE)) {
+		// 	if (!data->escStilDown)
+		// 		exit(0);
+		// } else {
+		// 	data->escStilDown = false;
+		// }
 	}
 }
 
